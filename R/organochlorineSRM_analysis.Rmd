@@ -1,0 +1,534 @@
+---
+title: "organochlorineSRM_analysis"
+author: "Kyle Morrison, Coralie Williams, Lorenzo Ricolfi, Malgorazata Lagisz, Shinichi Nakagawa" 
+date: "2023-03-09"
+output: html_document
+---
+
+Sixty years since silent spring: A systematic evidence map and bibliometric analysis reveals the gaps, biases and limitations in the organochlorine pesticide literature 
+
+In this Rmarkdown document we provide preliminary workflow and code for:   
+
+ - **Objective 1.	Mapping: What evidence on organochlorine pesticides has been synthesized?** We identify the areas where meta-analysis has been employed to measure the effects of pesticides on human and environmental health.
+ 
+ - **Objective 2.	Critical appraisal: How robust are syntheses of organochlorine pesticide evidence?** We will evaluate the reporting quality and potential biases of the included meta-analyses to determine the reliability of their conclusions. This assessment will allow us to identify syntheses that may require revision, and to pinpoint aspects of the review methodology that require improvement.
+ 
+- **Objective 3.	Critical appraisal: What are the current methodological practices within the organochlorine pesticide literature?** We will examine the current methodological practices used in meta-analytic studies within the organochlorine pesticide literature. This will enable us to identify the prevailing approaches in this field and gain a better understanding of how meta-analytic studies are being conducted.
+ 
+ - **Objective 4.	Bibliometrics: How is synthesized organochlorine pesticide evidence connected?** We will investigate the countries and institutions that are primarily engaged in secondary research on organochlorine pesticides, and analyze the networks that exist between them. By doing so, we hope to gain insights into the collaborative relationships between different institutions and identify any patterns or trends in the distribution of research efforts.
+
+## Setup
+
+```{r setup, results="hide"}
+rm(list = ls())
+pacman::p_load(tidyverse,
+hrbrthemes, 
+patchwork,
+here,
+stringr,
+knitr,
+formatR,
+forcats,
+ggplot2,
+bibliometrix,
+igraph)
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+
+```
+
+## Load pilot data
+
+Manually extracted pilot data is stored in five separate **.csv** files representing different aspects of the data (extracted via structured predefined Google Forms - one per table). 
+
+Bibliographic data records are exported from Scopus (including cited references field) in .bib format and locally saved as **dataset.bib**. the pilot version of this file only includes bibliographic information of the meta-analytic studies. In the actual work bibliographic information will be expanded to all reviews on PFAS exposure in humans, animals and the environment.   
+
+The study identity (authors, title) has been obscured in the pilot data extraction file. It will be public in the final data extraction files.   
+
+
+```{r load pilot data}
+sd <- read_csv(here("data","ocp_srm_study_details.csv"), skip = 0)
+ocp <- read_csv(here("data", "ocp_srm_ocp_details.csv"), skip = 0)
+sub <- read_csv(here("data", "ocp_srm_subject_details.csv"), skip =0)
+im <- read_csv(here("data", "ocp_srm_impact_details.csv"), skip =0)
+sp <- read_csv(here("data", "ocp_srm_species_details.csv"), skip =0)
+```
+
+The multiple spreadsheets will need to be combined into one 
+
+```{r}
+## Merge main data with ocp 
+msp <- left_join(sd, ocp, by = "study_id")
+
+## Merge multiple spreadsheets  with subject
+msp <- left_join(msp, sub, by = "study_id")
+
+## Merge multiple spreadsheets with impact 
+msp <- left_join(msp,im, by = "study_id" )
+
+## Merge multiple spreadsheets with species 
+msp <- left_join(msp,sp, by = "study_id")
+
+# view(msp)
+```
+
+Remove extractor initials and time stamps 
+```{r}
+msp<-select( msp, -c(Timestamp.x,Timestamp.y, Timestamp.x.x, Timestamp.y.y, initials_extractor.x, initials_extractor.y, initials_extractor.x.x, initials_extractor.y.y))
+
+```
+
+
+## Objective 1.	Mapping: What evidence on organochlorine pesticides has been synthesized?
+Here we aim to identify the gaps and gluts of current meta-analysis in the organochlorine pesticide literature (i.e., which pesticides, impacts and subjects synthesis been used). 
+
+
+### Focus on ocps
+
+```{r plot OCP types barplot}
+
+ocp_count <-
+  ocp %>% 
+  separate_rows(ocp, sep = ", ") %>% 
+  count(ocp) %>% 
+  filter(!is.na(ocp)) %>% # filter out NA 
+  filter(ocp != "not reported") %>% # filter out "not reported"
+  arrange(desc(n)) %>% 
+  mutate(ocp, ocp_class = case_when(grepl("DDT", ocp) ~ "DDT ",
+                                    grepl("DDD", ocp) ~ "DDD ",
+                                    grepl("DDE", ocp) ~ "DDE",
+                                    grepl("HCH", ocp) ~ "HCH",
+                                    grepl("Chlordane",ocp) ~ "Chlordane",
+                                    grepl("BHC",ocp) ~ "HCH",
+                                    grepl("Hexachlorobenzene",ocp) ~ "Hexachlorobenzene",
+                                    grepl("Aldrin",ocp) ~ "Aldrin",
+                                    grepl("Dieldrin",ocp) ~ "Dieldrin",
+                                    grepl("Endrin",ocp) ~ "Endrin",
+                                    grepl("Endosulfan",ocp) ~ "Endosulfan",
+                                    grepl("Oxychlordane",ocp) ~ "Oxychlordane",
+                                    grepl("Lindane",ocp) ~ "HCH"))
+
+
+	
+
+
+### Graph by individual organochlorine pesticide 
+
+ocp_count_filtered <- ocp_count %>%
+  filter(n > 7)
+
+ocp_count_filtered %>%
+  ggplot(aes(x = n, y = reorder(ocp, n), color = "#007030")) +
+  geom_point(stat = "identity", size = 6, shape = 21,fill = "#007030", color = "white") +
+  geom_segment(aes(xend = 0, yend = reorder(ocp, n))) +
+  scale_color_identity(guide = "none") +
+  scale_x_continuous(name = "Article Count", expand = c(0, 0), limits = c(0, 50)) +
+  labs(y = NULL) +
+  theme_minimal() +
+  theme(axis.text.y = element_text(size = 10),
+        axis.text.x = element_text(size = 10),
+        axis.line.x = element_line(color = "gray", size = 0.5),
+        axis.line.y = element_blank(),
+        axis.ticks.x = element_blank(),
+        axis.ticks.y = element_blank(),
+        axis.title.x = element_text(size = 12),
+        axis.title.y = element_blank(),
+        panel.grid.major.y = element_blank(),
+        panel.grid.minor.y = element_blank(),
+        legend.position = "none") +
+  geom_text(data = ocp_count_filtered , aes(label = n, x = n + 2, y = reorder(ocp, n)),
+            vjust = 0.5, hjust = 0, size = 5, color = "black")
+
+```
+
+
+
+```{r plot time trends }
+
+# Overall total meta-analysis per year 
+
+msp %>%
+  count(publication_year) %>%
+  mutate(n_cumulative = cumsum(n)) %>%
+  ggplot(aes(x = publication_year, y = n_cumulative)) +
+  geom_line(color = "#007030", size = 1.2) +
+  geom_point(shape = 21, size = 3.5, fill = "#8FBF43", color = "black", stroke = 0.5, alpha = 0.7) +
+  scale_x_continuous(breaks = seq(min(msp$publication_year), max(msp$publication_year), by = 1)) +
+  theme_minimal() +
+  labs(x = "Year", y = "Cumulative Article Count") +
+  theme(panel.grid.major.y = element_line(color = "gray", linetype = "dashed"),
+    panel.grid.minor.y = element_blank(),
+    axis.line.x = element_line(size = 1.2),
+    axis.line.y = element_line(size = 1.2),
+    axis.title.x = element_text(size = 14, face = "bold"),
+    axis.title.y = element_text(size = 14, face = "bold"),
+    axis.text.x = element_text(angle = 45, hjust = 1, size = 10, color = "#666666"),
+    axis.text.y = element_text(size = 10, color = "#666666"),
+    plot.title = element_text(size = 20, face = "bold"),
+    plot.subtitle = element_text(size = 14),
+    plot.caption = element_text(size = 10, hjust = 0)) +
+  ggtitle("Cumulative Number of Articles by Publication Year") +
+  scale_color_gradient(low = "white", high = "#007030") +
+  geom_text(aes(label = n), size = 4, nudge_y = 7, color = "#666666", fontface = "bold")
+
+
+
+msp %>%
+  mutate(subjects = strsplit(subject, ",\\s+")) %>%
+  unnest(subjects) %>%
+  count(publication_year, subjects) %>%
+  group_by(subjects) %>%
+  mutate(n_cumulative = cumsum(n)) %>%
+  ggplot(aes(x = publication_year, y = n_cumulative, color = subjects)) +
+  geom_line(size = 1.2) +
+  geom_point(shape = 21, size = 3.5, stroke = 0.5, alpha = 0.7) +
+  scale_x_continuous(breaks = seq(min(msp$publication_year), max(msp$publication_year), by = 1)) +
+  theme_minimal() +
+  labs(x = "Year", y = "Cumulative Article Count") +
+  theme(panel.grid.major.y = element_line(color = "gray", linetype = "dashed"),
+    panel.grid.minor.y = element_blank(),
+    axis.line.x = element_line(size = 1.2),
+    axis.line.y = element_line(size = 1.2),
+    axis.title.x = element_text(size = 14, face = "bold"),
+    axis.title.y = element_text(size = 14, face = "bold"),
+    axis.text.x = element_text(angle = 45, hjust = 1, size = 10, color = "#666666"),
+    axis.text.y = element_text(size = 10, color = "#666666"),
+    plot.title = element_text(size = 20, face = "bold"),
+    plot.subtitle = element_text(size = 14),
+    plot.caption = element_text(size = 10, hjust = 0)) +
+  ggtitle("Cumulative Number of Articles by Publication Year") +
+  scale_color_manual(values = c("#007030", "#8FBF43", "#2E5AAC", "red")) +
+  geom_text(aes(label = n, color = subjects), size = 4, nudge_y = 7, fontface = "bold") +
+  guides(color = guide_legend(override.aes = list(size=4))) +
+  geom_point(aes(color = subjects)) +
+  scale_color_manual(values = c("#007030", "#8FBF43", "#2E5AAC", "red")) +
+  labs(color = "Subject") 
+
+```
+
+
+## subject count 
+```{r}
+# Calculate total count for each category
+total_subject_count <- sub %>% count(subject)
+
+# Calculate proportion and percentage for each category
+subject_pct <- sub %>%
+  separate_rows(subject, sep = ",\\s*") %>% 
+  count(subject) %>%
+  mutate(proportion = n/sum(total_subject_count$n),
+         percentage = proportion*100)
+
+
+ggplot(subject_pct, aes(x = percentage, y = reorder(subject, percentage), color = "#007030")) +
+  geom_point(stat = "identity", size = 6, shape = 21, fill = "#007030", color = "white") +
+  geom_segment(aes(xend = 0, yend = reorder(subject, percentage))) +
+  scale_color_identity(guide = "none") +
+  scale_x_continuous(name = "Percentage", expand = c(0, 0), limits = c(0, 100)) +
+  labs(y = NULL) +
+  theme_minimal() +
+  theme(axis.text.y = element_text(size = 10),
+        axis.text.x = element_text(size = 10),
+        axis.line.x = element_line(color = "gray", size = 0.5),
+        axis.line.y = element_blank(),
+        axis.ticks.x = element_blank(),
+        axis.ticks.y = element_blank(),
+        axis.title.x = element_text(size = 12),
+        axis.title.y = element_blank(),
+        panel.grid.major.y = element_blank(),
+        panel.grid.minor.y = element_blank(),
+        legend.position = "none") +
+  geom_text(aes(label = paste0(round(percentage, 1), "%"), x = percentage + 2, y = reorder(subject, percentage)),
+            vjust = 0.5, hjust = 0, size = 5, color = "black")
+
+
+
+```
+
+
+- **Objective 2.	Critical appraisal: How robust are syntheses of organochlorine pesticide evidence?** We will examine the included meta-analyses for their reporting quality and potential biases, in order to assess reliability of reviews’ conclusions, reveal syntheses that should be re-done, and highlight the aspects of review methodology that need to be improved.
+
+
+```{r CEESAT questions }
+question_list <- sd %>% 
+  select(starts_with("CEESAT")) %>% 
+  colnames() # select columns with CEESAT questions 
+  
+
+questions <- tibble(questions = question_list, label = c("Questions & Criteria", "Are the elements of the review question clear?","Is there an a-priori method/protocol document?","Are the search strings clearly defined?","Does the synthesis apply clearly documented inclusion criteria to all potentially relevant studies
+found during the search?","Does the synthesis demonstrate that inclusion/exclusion decisions are repeatable?","Does the synthesis conduct and report critical appraisals of the methods of each study?","Are studies objectively weighted according to methodological quality?", "Is data extraction documented, repeatable and consistent?", "Are the extracted data reported for each study?", "Is a quantitative synthesis conducted?", "Is heterogeneity in the effect of the Intervention/Exposure investigated statistically?", "Does the synthesis consider possible publication bias?")) # still need to do this 
+
+knitr::kable(questions, caption = "List of CEESAT questions with lables for plotting")
+```
+
+
+## Summary plot for CEESAT data
+
+CEESAT results are presented as a percentage of result per question
+
+```{r plot CEESAT summary }
+
+studies <- sd$author_year 
+
+ceesat_table <- sd %>%  filter(studies!="NA") %>% select(starts_with("CEE"))
+
+ceesat_studies_wide <- tibble(studies,ceesat_table)
+
+ceesat_studies_wide <- na.omit(ceesat_studies_wide)
+
+ceesat_studies_long<- pivot_longer(ceesat_studies_wide, cols = 2:17, names_to =  "question", values_to = "score")         
+
+#calculating the proportions of scores within each questions 
+count_ceesat_score <- ceesat_studies_long %>% count(score, by = question) 
+percent_ceesat_score <- count_ceesat_score %>% mutate(percent = (n/sum(n))*100)
+percent_ceesat_score <- percent_ceesat_score %>% rename(question = by)
+percent_ceesat_score$question <- as.factor(percent_ceesat_score$question)
+percent_ceesat_score$question <- factor(percent_ceesat_score$question, levels(percent_ceesat_score$question)[length(percent_ceesat_score$question):1]) #reverse the order of questions
+percent_ceesat_score$score <- as.factor(percent_ceesat_score$score)
+percent_ceesat_score$score <- factor(percent_ceesat_score$score, levels(percent_ceesat_score$score)[c(1,4,2,3)]) #set the order of levels for assessment scores:
+
+
+# Plot of CEESAT scores
+ggplot(data = percent_ceesat_score, x = question, y = percent) +
+  geom_col(mapping = aes(x = question, y = percent, fill = score), width = 0.7,
+           position = "fill", color = "black") +
+  coord_flip(ylim = c(0, 1)) +
+  guides(fill = guide_legend(reverse = TRUE)) +
+  scale_fill_manual(values = c("red","yellow","chartreuse3", "darkgoldenrod1"), name = "Score:") +
+  theme(panel.grid.major = element_blank(),panel.grid.minor = element_blank(),panel.background = element_blank()) + 
+  ylab("Proportion") + xlab("CEESAT Question")
+
+#ggsave(here("plots","figure_CEESAT_summary_pilot_v01.pdf"), width = 10, height = 8, units = "cm", scale = 2, device = cairo_pdf)
+```
+
+
+
+- **Objective 3.	Critical appraisal: What are the current methodological practices within the organochlorine pesticide literature?** We will reveal what current methodological practices are currently used in meta-analytic studies within the organochlorine pesticide literature. 
+
+```{r plot database used}
+database_count <- sd %>% 
+separate_rows(database_search, sep = ",") %>% 
+  count(database_search) %>% 
+  filter(database_search != "not reported") %>% # filter out NA 
+  arrange(desc(n))
+
+database_count %>%
+  ggplot(aes(x = n, y = reorder(database_search,n), color = "#007030")) +
+  geom_point(stat = "identity", size = 6, shape = 21,fill = "#007030", color = "white") +
+  geom_segment(aes(xend = 0, yend = reorder(database_search,n))) +
+  scale_color_identity(guide = "none") +
+  scale_x_continuous(name = "Article Count", expand = c(0, 0), limits = c(0, 50)) +
+  labs(y = NULL) +
+  theme_minimal() +
+  theme(axis.text.y = element_text(size = 10),
+        axis.text.x = element_text(size = 10),
+        axis.line.x = element_line(color = "gray", size = 0.5),
+        axis.line.y = element_blank(),
+        axis.ticks.x = element_blank(),
+        axis.ticks.y = element_blank(),
+        axis.title.x = element_text(size = 12),
+        axis.title.y = element_blank(),
+        panel.grid.major.y = element_blank(),
+        panel.grid.minor.y = element_blank(),
+        legend.position = "none") +
+  geom_text(data = database_count , aes(label = n, x = n + 2, y = reorder(database_search,n)),
+            vjust = 0.5, hjust = 0, size = 5, color = "black")
+
+```
+
+
+
+```{r plot effect size used }
+effectsize_count <- 
+  sd %>% 
+  separate_rows(effect_size, sep = ",") %>% 
+  count(effect_size) %>% 
+    filter(effect_size != "NA") %>% 
+  arrange(desc(n))
+
+effectsize_count %>%
+  ggplot(aes(x = n, y = reorder(effect_size,n), color = "#007030")) +
+  geom_point(stat = "identity", size = 6, shape = 21,fill = "#007030", color = "white") +
+  geom_segment(aes(xend = 0, yend = reorder(effect_size,n))) +
+  scale_color_identity(guide = "none") +
+  scale_x_continuous(name = "Article Count", expand = c(0, 0), limits = c(0, 70)) +
+  labs(y = NULL) +
+  theme_minimal() +
+  theme(axis.text.y = element_text(size = 10),
+        axis.text.x = element_text(size = 10),
+        axis.line.x = element_line(color = "gray", size = 0.5),
+        axis.line.y = element_blank(),
+        axis.ticks.x = element_blank(),
+        axis.ticks.y = element_blank(),
+        axis.title.x = element_text(size = 12),
+        axis.title.y = element_blank(),
+        panel.grid.major.y = element_blank(),
+        panel.grid.minor.y = element_blank(),
+        legend.position = "none") +
+  geom_text(data = effectsize_count, aes(label = n, x = n + 2, y = reorder(effect_size,n)),
+            vjust = 0.5, hjust = 0, size = 5, color = "black")
+
+
+```
+
+```{r plot software analysis}
+software_count <- 
+  msp%>% 
+  separate_rows(software_analysis, sep = ",") %>% 
+  count(software_analysis) %>% 
+    filter(software_analysis != "NA") %>% 
+  arrange(desc(n))
+
+software_count %>%
+  ggplot(aes(x = n, y = reorder(software_analysis,n), color = "#007030")) +
+  geom_point(stat = "identity", size = 6, shape = 21, fill = "#007030", color = "white") +
+  geom_segment(aes(xend = 0, yend = reorder(software_analysis,n))) +
+  scale_color_identity(guide = "none") +
+  scale_x_continuous(name = "Article Count", expand = c(0, 0), limits = c(0, 50)) +
+  labs(y = NULL) +
+  theme_minimal() +
+  theme(axis.text.y = element_text(size = 10),
+        axis.text.x = element_text(size = 10),
+        axis.line.x = element_line(color = "gray", size = 0.5),
+        axis.line.y = element_blank(),
+        axis.ticks.x = element_blank(),
+        axis.ticks.y = element_blank(),
+        axis.title.x = element_text(size = 12),
+        axis.title.y = element_blank(),
+        panel.grid.major.y = element_blank(),
+        panel.grid.minor.y = element_blank(),
+        legend.position = "none") +
+  geom_text(data = software_count, aes(label = n, x = n + 2, y = reorder(software_analysis,n)),
+            vjust = 0.5, hjust = 0, size = 5, color = "black")
+
+```
+ 
+```{r plot heterogeneity tests }
+heterogeneity_count <-  
+  sd %>% 
+  separate_rows(heterogeneity_assessment_method, sep = ", ") %>% 
+  count(heterogeneity_assessment_method) %>% 
+    filter(heterogeneity_assessment_method != "NA") %>% 
+  arrange(desc(n))
+
+heterogeneity_count %>%
+  ggplot(aes(x = n, y = reorder(heterogeneity_assessment_method,n), color = "#007030")) +
+  geom_point(stat = "identity", size = 6, shape = 21, fill = "#007030", color = "white") +
+  geom_segment(aes(xend = 0, yend = reorder(heterogeneity_assessment_method,n))) +
+  scale_color_identity(guide = "none") +
+  scale_x_continuous(name = "Article Count", expand = c(0, 0), limits = c(0, 50)) +
+  labs(y = NULL) +
+  theme_minimal() +
+  theme(axis.text.y = element_text(size = 10),
+        axis.text.x = element_text(size = 10),
+        axis.line.x = element_line(color = "gray", size = 0.5),
+        axis.line.y = element_blank(),
+        axis.ticks.x = element_blank(),
+        axis.ticks.y = element_blank(),
+        axis.title.x = element_text(size = 12),
+        axis.title.y = element_blank(),
+        panel.grid.major.y = element_blank(),
+        panel.grid.minor.y = element_blank(),
+        legend.position = "none") +
+  geom_text(data = heterogeneity_count, aes(label = n, x = n + 2, y = reorder(heterogeneity_assessment_method,n)),
+            vjust = 0.5, hjust = 0, size = 5, color = "black")
+
+
+```
+ 
+
+```{r plot sensitivity analysis}
+
+sensitivity_count <-
+  mspdata %>% 
+  separate_rows(sensitivity_analysis_method, sep = ",") %>% 
+  count(sensitivity_analysis_method) %>% 
+    filter(sensitivity_analysis_method != "NA") %>% 
+  arrange(desc(n))
+
+sensitivity_count %>% 
+ggplot(aes(x = reorder(sensitivity_analysis_method,n), y = n)) +
+   geom_bar(stat = "identity") +
+  coord_flip() +
+ scale_y_continuous(name = "Artical Count", expand = c(0,0)) +
+  theme(legend.position = "bottom", legend.box.background = element_rect(colour = "black"), 
+       legend.title = element_text(size=10),  legend.text=element_text(size = 10), 
+       axis.title.x = element_text(size = 10), axis.title.y = element_blank())
+
+```
+
+```{r plot bias types investigated}
+bias_type_count <- 
+  mspdata %>% 
+  separate_rows(bias_assessment_type, sep = ",") %>% 
+  count(bias_assessment_type) %>% 
+    filter(bias_assessment_type!= "NA") %>% 
+  arrange(desc(n))
+  
+bias_type_count %>% 
+ggplot(aes(x = reorder(bias_assessment_type,n), y = n)) +
+   geom_bar(stat = "identity") +
+  coord_flip() +
+ scale_y_continuous(name = "Artical Count", expand = c(0,0)) +
+  theme(legend.position = "bottom", legend.box.background = element_rect(colour = "black"), 
+       legend.title = element_text(size=10),  legend.text=element_text(size = 10), 
+       axis.title.x = element_text(size = 10), axis.title.y = element_blank())
+
+```
+
+```{r plot bias methods used}
+bias_method_count <- 
+  mspdata %>% 
+  separate_rows(bias_assessment_method, sep = ",") %>% 
+  count(bias_assessment_method) %>% 
+    filter(bias_assessment_method!= "NA") %>% 
+  arrange(desc(n))
+  
+bias_method_count %>% 
+ggplot(aes(x = reorder(bias_assessment_method,n), y = n)) +
+   geom_bar(stat = "identity") +
+  coord_flip() +
+ scale_y_continuous(name = "Artical Count", expand = c(0,0)) +
+  theme(legend.position = "bottom", legend.box.background = element_rect(colour = "black"), 
+       legend.title = element_text(size=10),  legend.text=element_text(size = 10), 
+       axis.title.x = element_text(size = 10), axis.title.y = element_blank())
+```
+
+```{r data vizualisation methods}
+vizualisation_count <- 
+  mspdata %>% 
+  separate_rows(visualization_method, sep = ",") %>% 
+  count(visualization_method) %>% 
+    filter(visualization_method!= "NA") %>% 
+  arrange(desc(n))
+
+vizualisation_count %>% 
+ggplot(aes(x = reorder(visualization_method,n), y = n)) +
+   geom_bar(stat = "identity") +
+  coord_flip() +
+ scale_y_continuous(name = "Artical Count", expand = c(0,0)) +
+  theme(legend.position = "bottom", legend.box.background = element_rect(colour = "black"), 
+       legend.title = element_text(size=10),  legend.text=element_text(size = 10), 
+       axis.title.x = element_text(size = 10), axis.title.y = element_blank())
+```
+
+
+```{r plot reporting guide}
+
+reporting_guide_count <- 
+  mspdata %>% 
+  separate_rows(reporting_standards_type, sep = ",") %>% 
+  count(reporting_standards_type) %>% 
+    filter(reporting_standards_type!= "NA") %>% 
+  arrange(desc(n))
+
+reporting_guide_count %>% 
+ggplot(aes(x = reorder(reporting_standards_type,n), y = n)) +
+   geom_bar(stat = "identity") +
+  coord_flip() +
+ scale_y_continuous(name = "Artical Count", expand = c(0,0)) +
+  theme(legend.position = "bottom", legend.box.background = element_rect(colour = "black"), 
+       legend.title = element_text(size=10),  legend.text=element_text(size = 10), 
+       axis.title.x = element_text(size = 10), axis.title.y = element_blank())
+```
+
+
