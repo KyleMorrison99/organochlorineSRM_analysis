@@ -31,7 +31,9 @@ formatR,
 forcats,
 ggplot2,
 bibliometrix,
-igraph)
+igraph,
+stringi,
+stringdist)
 knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
 
 ```
@@ -51,6 +53,7 @@ ocp <- read_csv(here("data", "ocp_srm_ocp_details.csv"), skip = 0)
 sub <- read_csv(here("data", "ocp_srm_subject_details.csv"), skip =0)
 im <- read_csv(here("data", "ocp_srm_impact_details.csv"), skip =0)
 sp <- read_csv(here("data", "ocp_srm_species_details.csv"), skip =0)
+bib_sco <- convert2df(here("data","bib_sco.bib"), dbsource = "scopus", format = "bibtex")
 ```
 
 The multiple spreadsheets will need to be combined into one 
@@ -248,19 +251,6 @@ ggplot(subject_pct, aes(x = percentage, y = reorder(subject, percentage), color 
 - **Objective 2.	Critical appraisal: How robust are syntheses of organochlorine pesticide evidence?** We will examine the included meta-analyses for their reporting quality and potential biases, in order to assess reliability of reviews’ conclusions, reveal syntheses that should be re-done, and highlight the aspects of review methodology that need to be improved.
 
 
-```{r CEESAT questions }
-question_list <- sd %>% 
-  select(starts_with("CEESAT")) %>% 
-  colnames() # select columns with CEESAT questions 
-  
-
-questions <- tibble(questions = question_list, label = c("Questions & Criteria", "Are the elements of the review question clear?","Is there an a-priori method/protocol document?","Are the search strings clearly defined?","Does the synthesis apply clearly documented inclusion criteria to all potentially relevant studies
-found during the search?","Does the synthesis demonstrate that inclusion/exclusion decisions are repeatable?","Does the synthesis conduct and report critical appraisals of the methods of each study?","Are studies objectively weighted according to methodological quality?", "Is data extraction documented, repeatable and consistent?", "Are the extracted data reported for each study?", "Is a quantitative synthesis conducted?", "Is heterogeneity in the effect of the Intervention/Exposure investigated statistically?", "Does the synthesis consider possible publication bias?")) # still need to do this 
-
-knitr::kable(questions, caption = "List of CEESAT questions with lables for plotting")
-```
-
-
 ## Summary plot for CEESAT data
 
 CEESAT results are presented as a percentage of result per question
@@ -293,7 +283,7 @@ ggplot(data = percent_ceesat_score, x = question, y = percent) +
            position = "fill", color = "black") +
   coord_flip(ylim = c(0, 1)) +
   guides(fill = guide_legend(reverse = TRUE)) +
-  scale_fill_manual(values = c("red","yellow","chartreuse3", "darkgoldenrod1"), name = "Score:") +
+  scale_fill_manual(values = c("#E74C3C","#FFD700","#7BCB6F", "#FFA500"), name = "Score:") +
   theme(panel.grid.major = element_blank(),panel.grid.minor = element_blank(),panel.background = element_blank()) + 
   ylab("Proportion") + xlab("CEESAT Question")
 
@@ -403,7 +393,7 @@ software_count %>%
 ```
  
 ```{r plot heterogeneity tests }
-heterogeneity_count <-  
+heterogeneity_count <-  ## REPLACE TAU SQUARED IN DATASET
   sd %>% 
   separate_rows(heterogeneity_assessment_method, sep = ", ") %>% 
   count(heterogeneity_assessment_method) %>% 
@@ -439,96 +429,550 @@ heterogeneity_count %>%
 ```{r plot sensitivity analysis}
 
 sensitivity_count <-
-  mspdata %>% 
+  sd %>% 
   separate_rows(sensitivity_analysis_method, sep = ",") %>% 
   count(sensitivity_analysis_method) %>% 
     filter(sensitivity_analysis_method != "NA") %>% 
   arrange(desc(n))
 
-sensitivity_count %>% 
-ggplot(aes(x = reorder(sensitivity_analysis_method,n), y = n)) +
-   geom_bar(stat = "identity") +
-  coord_flip() +
- scale_y_continuous(name = "Artical Count", expand = c(0,0)) +
-  theme(legend.position = "bottom", legend.box.background = element_rect(colour = "black"), 
-       legend.title = element_text(size=10),  legend.text=element_text(size = 10), 
-       axis.title.x = element_text(size = 10), axis.title.y = element_blank())
+sensitivity_count %>%
+  ggplot(aes(x = n, y = reorder(sensitivity_analysis_method,n), color = "#007030")) +
+  geom_point(stat = "identity", size = 6, shape = 21, fill = "#007030", color = "white") +
+  geom_segment(aes(xend = 0, yend = reorder(sensitivity_analysis_method,n))) +
+  scale_color_identity(guide = "none") +
+  scale_x_continuous(name = "Article Count", expand = c(0, 0), limits = c(0, 70)) +
+  labs(y = NULL) +
+  theme_minimal() +
+  theme(axis.text.y = element_text(size = 10),
+        axis.text.x = element_text(size = 10),
+        axis.line.x = element_line(color = "gray", size = 0.5),
+        axis.line.y = element_blank(),
+        axis.ticks.x = element_blank(),
+        axis.ticks.y = element_blank(),
+        axis.title.x = element_text(size = 12),
+        axis.title.y = element_blank(),
+        panel.grid.major.y = element_blank(),
+        panel.grid.minor.y = element_blank(),
+        legend.position = "none") +
+  geom_text(data = sensitivity_count, aes(label = n, x = n + 2, y = reorder(sensitivity_analysis_method,n)),
+            vjust = 0.5, hjust = 0, size = 5, color = "black")
+
 
 ```
 
 ```{r plot bias types investigated}
 bias_type_count <- 
-  mspdata %>% 
+  sd %>% 
   separate_rows(bias_assessment_type, sep = ",") %>% 
   count(bias_assessment_type) %>% 
     filter(bias_assessment_type!= "NA") %>% 
   arrange(desc(n))
   
-bias_type_count %>% 
-ggplot(aes(x = reorder(bias_assessment_type,n), y = n)) +
-   geom_bar(stat = "identity") +
-  coord_flip() +
- scale_y_continuous(name = "Artical Count", expand = c(0,0)) +
-  theme(legend.position = "bottom", legend.box.background = element_rect(colour = "black"), 
-       legend.title = element_text(size=10),  legend.text=element_text(size = 10), 
-       axis.title.x = element_text(size = 10), axis.title.y = element_blank())
+bias_type_count %>%
+  ggplot(aes(x = n, y = reorder(bias_assessment_type,n), color = "#007030")) +
+  geom_point(stat = "identity", size = 6, shape = 21, fill = "#007030", color = "white") +
+  geom_segment(aes(xend = 0, yend = reorder(bias_assessment_type,n))) +
+  scale_color_identity(guide = "none") +
+  scale_x_continuous(name = "Article Count", expand = c(0, 0), limits = c(0, 70)) +
+  labs(y = NULL) +
+  theme_minimal() +
+  theme(axis.text.y = element_text(size = 10),
+        axis.text.x = element_text(size = 10),
+        axis.line.x = element_line(color = "gray", size = 0.5),
+        axis.line.y = element_blank(),
+        axis.ticks.x = element_blank(),
+        axis.ticks.y = element_blank(),
+        axis.title.x = element_text(size = 12),
+        axis.title.y = element_blank(),
+        panel.grid.major.y = element_blank(),
+        panel.grid.minor.y = element_blank(),
+        legend.position = "none") +
+  geom_text(data = bias_type_count, aes(label = n, x = n + 2, y = reorder(bias_assessment_type,n)),
+            vjust = 0.5, hjust = 0, size = 5, color = "black")
+
 
 ```
 
 ```{r plot bias methods used}
 bias_method_count <- 
-  mspdata %>% 
+  sd %>% 
   separate_rows(bias_assessment_method, sep = ",") %>% 
   count(bias_assessment_method) %>% 
     filter(bias_assessment_method!= "NA") %>% 
   arrange(desc(n))
   
-bias_method_count %>% 
-ggplot(aes(x = reorder(bias_assessment_method,n), y = n)) +
-   geom_bar(stat = "identity") +
-  coord_flip() +
- scale_y_continuous(name = "Artical Count", expand = c(0,0)) +
-  theme(legend.position = "bottom", legend.box.background = element_rect(colour = "black"), 
-       legend.title = element_text(size=10),  legend.text=element_text(size = 10), 
-       axis.title.x = element_text(size = 10), axis.title.y = element_blank())
+bias_method_count %>%
+  ggplot(aes(x = n, y = reorder(bias_assessment_method,n), color = "#007030")) +
+  geom_point(stat = "identity", size = 6, shape = 21, fill = "#007030", color = "white") +
+  geom_segment(aes(xend = 0, yend = reorder(bias_assessment_method,n))) +
+  scale_color_identity(guide = "none") +
+  scale_x_continuous(name = "Article Count", expand = c(0, 0), limits = c(0, 70)) +
+  labs(y = NULL) +
+  theme_minimal() +
+  theme(axis.text.y = element_text(size = 10),
+        axis.text.x = element_text(size = 10),
+        axis.line.x = element_line(color = "gray", size = 0.5),
+        axis.line.y = element_blank(),
+        axis.ticks.x = element_blank(),
+        axis.ticks.y = element_blank(),
+        axis.title.x = element_text(size = 12),
+        axis.title.y = element_blank(),
+        panel.grid.major.y = element_blank(),
+        panel.grid.minor.y = element_blank(),
+        legend.position = "none") +
+  geom_text(data = bias_method_count, aes(label = n, x = n + 2, y = reorder(bias_assessment_method,n)),
+            vjust = 0.5, hjust = 0, size = 5, color = "black")
 ```
 
 ```{r data vizualisation methods}
 vizualisation_count <- 
-  mspdata %>% 
+  sd %>% 
   separate_rows(visualization_method, sep = ",") %>% 
   count(visualization_method) %>% 
     filter(visualization_method!= "NA") %>% 
   arrange(desc(n))
 
-vizualisation_count %>% 
-ggplot(aes(x = reorder(visualization_method,n), y = n)) +
-   geom_bar(stat = "identity") +
-  coord_flip() +
- scale_y_continuous(name = "Artical Count", expand = c(0,0)) +
-  theme(legend.position = "bottom", legend.box.background = element_rect(colour = "black"), 
-       legend.title = element_text(size=10),  legend.text=element_text(size = 10), 
-       axis.title.x = element_text(size = 10), axis.title.y = element_blank())
+vizualisation_count %>%
+  ggplot(aes(x = n, y = reorder(visualization_method,n), color = "#007030")) +
+  geom_point(stat = "identity", size = 6, shape = 21, fill = "#007030", color = "white") +
+  geom_segment(aes(xend = 0, yend = reorder(visualization_method,n))) +
+  scale_color_identity(guide = "none") +
+  scale_x_continuous(name = "Article Count", expand = c(0, 0), limits = c(0, 70)) +
+  labs(y = NULL) +
+  theme_minimal() +
+  theme(axis.text.y = element_text(size = 10),
+        axis.text.x = element_text(size = 10),
+        axis.line.x = element_line(color = "gray", size = 0.5),
+        axis.line.y = element_blank(),
+        axis.ticks.x = element_blank(),
+        axis.ticks.y = element_blank(),
+        axis.title.x = element_text(size = 12),
+        axis.title.y = element_blank(),
+        panel.grid.major.y = element_blank(),
+        panel.grid.minor.y = element_blank(),
+        legend.position = "none") +
+  geom_text(data = vizualisation_count, aes(label = n, x = n + 2, y = reorder(visualization_method,n)),
+            vjust = 0.5, hjust = 0, size = 5, color = "black")
 ```
 
 
 ```{r plot reporting guide}
 
 reporting_guide_count <- 
-  mspdata %>% 
+  sd %>% 
   separate_rows(reporting_standards_type, sep = ",") %>% 
   count(reporting_standards_type) %>% 
     filter(reporting_standards_type!= "NA") %>% 
   arrange(desc(n))
 
-reporting_guide_count %>% 
-ggplot(aes(x = reorder(reporting_standards_type,n), y = n)) +
-   geom_bar(stat = "identity") +
-  coord_flip() +
- scale_y_continuous(name = "Artical Count", expand = c(0,0)) +
-  theme(legend.position = "bottom", legend.box.background = element_rect(colour = "black"), 
-       legend.title = element_text(size=10),  legend.text=element_text(size = 10), 
-       axis.title.x = element_text(size = 10), axis.title.y = element_blank())
+reporting_guide_count %>%
+  ggplot(aes(x = n, y = reorder(reporting_standards_type,n), color = "#007030")) +
+  geom_point(stat = "identity", size = 6, shape = 21, fill = "#007030", color = "white") +
+  geom_segment(aes(xend = 0, yend = reorder(reporting_standards_type,n))) +
+  scale_color_identity(guide = "none") +
+  scale_x_continuous(name = "Article Count", expand = c(0, 0), limits = c(0, 70)) +
+  labs(y = NULL) +
+  theme_minimal() +
+  theme(axis.text.y = element_text(size = 10),
+        axis.text.x = element_text(size = 10),
+        axis.line.x = element_line(color = "gray", size = 0.5),
+        axis.line.y = element_blank(),
+        axis.ticks.x = element_blank(),
+        axis.ticks.y = element_blank(),
+        axis.title.x = element_text(size = 12),
+        axis.title.y = element_blank(),
+        panel.grid.major.y = element_blank(),
+        panel.grid.minor.y = element_blank(),
+        legend.position = "none") +
+  geom_text(data = reporting_guide_count, aes(label = n, x = n + 2, y = reorder(reporting_standards_type,n)),
+            vjust = 0.5, hjust = 0, size = 5, color = "black")
+```
+
+ - **Objective 4.	Bibliometrics: How is synthesized organochlorine pesticide evidence connected?** We will investigate the countries and institutions that are primarily engaged in secondary research on organochlorine pesticides, and analyze the networks that exist between them. By doing so, we hope to gain insights into the collaborative relationships between different institutions and identify any patterns or trends in the distribution of research efforts.
+
+```{r}
+fig5a <- biblioAnalysis(bib_sco)
+plot(fig5a)
+```
+## fig5b - co-occurance matrix
+```{r}
+NetMatrix_keywords <- biblioNetwork(bib_sco, analysis = "co-occurrences", network = "keywords", sep = ";")
+fig5b <- networkPlot(NetMatrix_keywords, normalize="association", n = 10, 
+                     Title = "Keyword Co-occurrences", type = "fruchterman", 
+                     size.cex = TRUE, size = 10, remove.multiple = F, 
+                     edgesize = 4, labelsize = 3, label.cex = TRUE, 
+                     edges.min = 2, label.n = 9, alpha = 0.3) 
+```
+
+## fig5c - thematic map based on keywords
+```{r}
+par(mfrow=c(1,1), mar=c(0,2,0,2))
+fig5c <- thematicMap(bib_sco, field = "ID", n = 1000, minfreq = 5, stemming = FALSE, size = 0.5, n.labels = 1, repel = TRUE)
+plot(fig5c$map)
+
+```
+
+## fig 5d - author collaboration network
+```{r}
+NetMatrix_authors <- biblioNetwork(bib_sco, analysis = "collaboration",  network = "authors", sep = ";")
+fig5d <- networkPlot(NetMatrix_authors,  n = 100, 
+                                      Title = "Author collaboration", 
+                                      type = "auto", size = 4, size.cex = TRUE, 
+                                      edgesize = 10, labelsize = 1.1)
+```
+
+## fig5e - country publications map
+```{r}
+
+bibmap <- metaTagExtraction(bib_sco, Field = "AU1_CO", sep = ";") 
+bibmap <- metaTagExtraction(bibmap, Field = "AU_CO", sep = ";") 
+#save counts in a data frame
+bibmap %>% group_by(AU1_CO) %>% count() %>% filter(!is.na(AU1_CO)) -> firstcountrycounts
+#load map data
+world_map <- map_data("world") %>% 
+  filter(! long > 180) #remove countries with longitude >180 to make equal projection-like map without artifacts
+#table(world_map$region) #note that United Kingdom is UK here
+# Format country names to match regions on the world map
+firstcountrycounts$region <- str_to_title(firstcountrycounts$AU1_CO)
+firstcountrycounts$region[firstcountrycounts$region == "Usa"] <- "USA" #Fix "Usa" to "USA" :
+firstcountrycounts$region[firstcountrycounts$region == "United Kingdom"] <- "UK" #fix to "UK"
+#(firstcountrycounts$region) %in% world_map$region #check matching
+## colour all regions on the map:
+emptymap <- tibble(region = unique(world_map$region), n = rep(0,length(unique(world_map$region)))) #create table with all counts as 0
+fullmap <- left_join(emptymap, firstcountrycounts, by = "region") #join with actual counts table
+fullmap$n <- fullmap$n.x + fullmap$n.y # make new column for fixed counts
+fullmap$n[is.na(fullmap$n)] <- 0 #change NA to 0 for regions with no counts
+fig5e <- fullmap %>% 
+  ggplot(aes(fill = n, map_id = region)) +
+  geom_map(map = world_map) +
+  expand_limits(x = world_map$long, y = world_map$lat) +
+  coord_map("moll") +
+  theme_map(line_size = 0.5) + 
+  theme(legend.position="right") +
+  scale_fill_gradient(low = "#98FB98", high = "#006400",
+                    name = "Score", na.value = "gray50",
+ limits = c(1, 20),
+      guide = guide_colorbar(direction = "vertical.")) +
+  guides(fill = guide_colourbar(barwidth = unit(15, units = "mm"), barheight = unit(20, units = "mm")))
+fig5e
+```
+
+## fig5f - country collaboration network circle plot
+```{r}
+# Extract countries from the affiliations
+bib_sco2 <- metaTagExtraction(bib_sco, Field = "AU_CO", sep = ";")
+
+# Create a network matrix of collaborations between countries
+NetMatrix_country <- biblioNetwork(bib_sco2, analysis = "collaboration", network = "countries", sep = ";")
+
+# Convert the network matrix to a standard matrix
+NetMatrix_country <- as.matrix(NetMatrix_country)
+
+# Remove the lower triangle (as this is duplication of info)
+NetMatrix_country[lower.tri(NetMatrix_country)] <- 0 
+
+# Change column and row names to title case
+colnames(NetMatrix_country) <- str_to_title(colnames(NetMatrix_country))
+rownames(NetMatrix_country) <- str_to_title(rownames(NetMatrix_country))
+
+# Change "Usa" to "USA"
+colnames(NetMatrix_country)[colnames(NetMatrix_country) == "Usa"] <- "USA"
+rownames(NetMatrix_country)[rownames(NetMatrix_country) == "Usa"] <- "USA"
+
+# Change "United Kingdom" to "UK" for easier plotting
+colnames(NetMatrix_country)[colnames(NetMatrix_country) == "United Kingdom"] <- "UK"
+rownames(NetMatrix_country)[rownames(NetMatrix_country) == "United Kingdom"] <- "UK"
+
+# Define colors for each country
+my.cols2 <- c(
+  USA = "#377eb8",
+  Spain = "#ffff33",
+  China = "#e41a1c",
+  France = "#999999",
+  Canada = "#a6cee3",
+  Denmark = "#b2df8a",
+  Netherlands = "#377eb8",
+  Belgium = "#984ea3",
+  UK = "#ffff33",
+  Australia = "#4daf4a",
+  Brazil = "#4daf4a",
+  Germany = "#b2df8a",
+  Greece = "#f781bf",
+  Korea = "#f781bf",
+  Norway = "#ff7f00",
+  Sweden = "#4daf4a",
+  Egypt = "#f781bf",
+  Italy = "#e41a1c",
+  Japan = "#1f78b4",
+  Portugal = "#984ea3",
+  Switzerland = "#984ea3",
+  Turkey = "#33a02c",
+  Austria = "#b2df8a",
+  Ireland = "#a65628",
+  Israel = "#f781bf",
+  NewZealand = "#4daf4a",
+  Russia = "#999999",
+  Singapore = "#b2df8a",
+  Finland = "#b2df8a",
+  Mexico = "#a65628",
+  Poland = "#b2df8a",
+  SouthAfrica = "#f781bf",
+  Argentina = "#ff7f00",
+  Chile = "#ff7f00",
+  CzechRepublic = "#b2df8a",
+  Iceland = "#b2df8a",
+  Peru = "#ff7f00",
+  Romania = "#fb9a99",
+  Serbia = "#fb9a99",
+  UAE = "#a65628"
+)
+
+
+# Create a chord diagram of the network matrix
+fig5f <- chordDiagram(NetMatrix_country, annotationTrack = "grid", preAllocateTracks = 1, grid.col = my.cols2)
+
+# Add a track to label each sector with its name
+circos.trackPlotRegion(track.index = 1, panel.fun = function(x, y) {
+  xlim = get.cell.meta.data("xlim")
+  ylim = get.cell.meta.data("ylim")
+  sector.name = get.cell.meta.data("sector.index")
+  circos.text(mean(xlim), ylim[1] + .1, sector.name, facing = "clockwise", niceFacing = TRUE, adj = c(0, 0.5))
+  circos.axis(h = "top", labels.cex = 0.5, major.tick.length = 0.2, sector.index = sector.name, track.index = 2)
+}, bg.border = NA)
+
+```
+
+## fig5g collaboration matrix with self citation removed
+```{r}
+
+diag(NetMatrix_country) <- 0
+
+# Create a chord diagram of the network matrix
+fig5g <- chordDiagram(NetMatrix_country, annotationTrack = "grid", preAllocateTracks = 1, grid.col = my.cols2)
+
+# Add a track to label each sector with its name
+circos.trackPlotRegion(track.index = 1, panel.fun = function(x, y) {
+  xlim = get.cell.meta.data("xlim")
+  ylim = get.cell.meta.data("ylim")
+  sector.name = get.cell.meta.data("sector.index")
+  circos.text(mean(xlim), ylim[1] + .1, sector.name, facing = "clockwise", niceFacing = TRUE, adj = c(0, 0.5))
+  circos.axis(h = "top", labels.cex = 0.5, major.tick.length = 0.2, sector.index = sector.name, track.index = 2)
+}, bg.border = NA)
+```
+
+## fig 5h contitnent collaboration 
+```{r}
+
+
+NetMatrix_continent <- NetMatrix_country
+colnames(NetMatrix_continent)[colnames(NetMatrix_continent) == "USA"] <- "North America"
+rownames(NetMatrix_continent)[rownames(NetMatrix_continent) == "USA"] <- "North America"
+
+colnames(NetMatrix_continent)[colnames(NetMatrix_continent) == "Spain"] <- "Europe"
+rownames(NetMatrix_continent)[rownames(NetMatrix_continent) == "Spain"] <- "Europe"
+
+colnames(NetMatrix_continent)[colnames(NetMatrix_continent) == "China"] <- "Asia"
+rownames(NetMatrix_continent)[rownames(NetMatrix_continent) == "China"] <- "Asia"
+
+colnames(NetMatrix_continent)[colnames(NetMatrix_continent) == "France"] <- "Europe"
+rownames(NetMatrix_continent)[rownames(NetMatrix_continent) == "France"] <- "Europe"
+
+colnames(NetMatrix_continent)[colnames(NetMatrix_continent) == "Canada"] <- "North America"
+rownames(NetMatrix_continent)[rownames(NetMatrix_continent) == "Canada"] <- "North America"
+
+colnames(NetMatrix_continent)[colnames(NetMatrix_continent) == "Denmark"] <- "Europe"
+rownames(NetMatrix_continent)[rownames(NetMatrix_continent) == "Denmark"] <- "Europe"
+
+colnames(NetMatrix_continent)[colnames(NetMatrix_continent) == "Netherlands"] <- "Europe"
+rownames(NetMatrix_continent)[rownames(NetMatrix_continent) == "Netherlands"] <- "Europe"
+
+colnames(NetMatrix_continent)[colnames(NetMatrix_continent) == "Belgium"] <- "Europe"
+rownames(NetMatrix_continent)[rownames(NetMatrix_continent) == "Belgium"] <- "Europe"
+
+colnames(NetMatrix_continent)[colnames(NetMatrix_continent) == "UK"] <- "Europe"
+rownames(NetMatrix_continent)[rownames(NetMatrix_continent) == "UK"] <- "Europe"
+
+colnames(NetMatrix_continent)[colnames(NetMatrix_continent) == "Australia"] <- "Australia"
+rownames(NetMatrix_continent)[rownames(NetMatrix_continent) == "Australia"] <- "Australia"
+
+colnames(NetMatrix_continent)[colnames(NetMatrix_continent) == "Brazil"] <- "South America"
+rownames(NetMatrix_continent)[rownames(NetMatrix_continent) == "Brazil"] <- "South America"
+
+colnames(NetMatrix_continent)[colnames(NetMatrix_continent) == "Germany"] <- "Europe"
+rownames(NetMatrix_continent)[rownames(NetMatrix_continent) == "Germany"] <- "Europe"
+
+colnames(NetMatrix_continent)[colnames(NetMatrix_continent) == "Finland"] <- "Europe"
+rownames(NetMatrix_continent)[rownames(NetMatrix_continent) == "Finland"] <- "Europe"
+
+
+colnames(NetMatrix_continent)[colnames(NetMatrix_continent) == "Greece"] <- "Europe"
+rownames(NetMatrix_continent)[rownames(NetMatrix_continent) == "Greece"] <- "Europe"
+
+colnames(NetMatrix_continent)[colnames(NetMatrix_continent) == "Korea"] <- "Asia"
+rownames(NetMatrix_continent)[rownames(NetMatrix_continent) == "Korea"] <- "Asia"
+
+colnames(NetMatrix_continent)[colnames(NetMatrix_continent) == "Norway"] <- "Europe"
+rownames(NetMatrix_continent)[rownames(NetMatrix_continent) == "Norway"] <- "Europe"
+
+colnames(NetMatrix_continent)[colnames(NetMatrix_continent) == "Sweden"] <- "Europe"
+rownames(NetMatrix_continent)[rownames(NetMatrix_continent) == "Sweden"] <- "Europe"
+
+colnames(NetMatrix_continent)[colnames(NetMatrix_continent) == "Egypt"] <- "Africa"
+rownames(NetMatrix_continent)[rownames(NetMatrix_continent) == "Egypt"] <- "Africa"
+
+colnames(NetMatrix_continent)[colnames(NetMatrix_continent) == "Italy"] <- "Europe"
+rownames(NetMatrix_continent)[rownames(NetMatrix_continent) == "Italy"] <- "Europe"
+
+colnames(NetMatrix_continent)[colnames(NetMatrix_continent) == "Japan"] <- "Asia"
+rownames(NetMatrix_continent)[rownames(NetMatrix_continent) == "Japan"] <- "Asia"
+
+colnames(NetMatrix_continent)[colnames(NetMatrix_continent) == "Portugal"] <- "Europe"
+rownames(NetMatrix_continent)[rownames(NetMatrix_continent) == "Portugal"] <- "Europe"
+
+colnames(NetMatrix_continent)[colnames(NetMatrix_continent) == "Switzerland"] <- "Europe"
+rownames(NetMatrix_continent)[rownames(NetMatrix_continent) == "Switzerland"] <- "Europe"
+
+colnames(NetMatrix_continent)[colnames(NetMatrix_continent) == "Turkey"] <- "Asia"
+rownames(NetMatrix_continent)[rownames(NetMatrix_continent) == "Turkey"] <- "Asia"
+
+colnames(NetMatrix_continent)[colnames(NetMatrix_continent) == "India"] <- "Asia"
+rownames(NetMatrix_continent)[rownames(NetMatrix_continent) == "India"] <- "Asia"
+
+colnames(NetMatrix_continent)[colnames(NetMatrix_continent) == "Iran"] <- "Asia"
+rownames(NetMatrix_continent)[rownames(NetMatrix_continent) == "Iran"] <- "Asia"
+
+colnames(NetMatrix_continent)[colnames(NetMatrix_continent) == "Costa Rica"] <- "North America"
+rownames(NetMatrix_continent)[rownames(NetMatrix_continent) == "Costa Rica"] <- "North America"
+
+colnames(NetMatrix_continent)[colnames(NetMatrix_continent) == "Czech Republic"] <- "Europe"
+rownames(NetMatrix_continent)[rownames(NetMatrix_continent) == "Czech Republic"] <- "Europe"
+
+colnames(NetMatrix_continent)[colnames(NetMatrix_continent) == "Hong Kong"] <- "Asia"
+rownames(NetMatrix_continent)[rownames(NetMatrix_continent) == "Hong Kong"] <- "Asia"
+
+colnames(NetMatrix_continent)[colnames(NetMatrix_continent) == "Iceland"] <- "Europe"
+rownames(NetMatrix_continent)[rownames(NetMatrix_continent) == "Iceland"] <- "Europe"
+
+colnames(NetMatrix_continent)[colnames(NetMatrix_continent) == "Ireland"] <- "Europe"
+rownames(NetMatrix_continent)[rownames(NetMatrix_continent) == "Ireland"] <- "Europe"
+
+colnames(NetMatrix_continent)[colnames(NetMatrix_continent) == "Mexico"] <- "North America"
+rownames(NetMatrix_continent)[rownames(NetMatrix_continent) == "Mexico"] <- "North America"
+
+colnames(NetMatrix_continent)[colnames(NetMatrix_continent) == "Romania"] <- "Europe"
+rownames(NetMatrix_continent)[rownames(NetMatrix_continent) == "Romania"] <- "Europe"
+
+colnames(NetMatrix_continent)[colnames(NetMatrix_continent) == "Slovakia"] <- "Europe"
+rownames(NetMatrix_continent)[rownames(NetMatrix_continent) == "Slovakia"] <- "Europe"
+
+colnames(NetMatrix_continent)[colnames(NetMatrix_continent) == "Ukraine"] <- "Europe"
+rownames(NetMatrix_continent)[rownames(NetMatrix_continent) == "Ukraine"] <- "Europe"
+
+colnames(NetMatrix_continent)[colnames(NetMatrix_continent) == "Australia"] <- "Oceania"
+rownames(NetMatrix_continent)[rownames(NetMatrix_continent) == "Australia"] <- "Oceania"
+
+colnames(NetMatrix_continent)[colnames(NetMatrix_continent) == "Kazakhstan"] <- "Asia"
+rownames(NetMatrix_continent)[rownames(NetMatrix_continent) == "Kazakhstan"] <- "Asia"
+
+
+# collapsing
+merge_matrix <- t(rowsum(t(NetMatrix_continent), group = colnames(NetMatrix_continent), na.rm = T))
+merge_matrix2 <- rowsum(merge_matrix, group = rownames(merge_matrix))
+# remove diagonal elements
+diag(merge_matrix2) <- 0
+# chord plot
+chordDiagramFromMatrix(merge_matrix2)
+
+# Define colors for each continent
+my.cols2 <- c(
+  Africa = "#CC79A7",
+  Asia = "#0072B2",
+  Europe = "#E69F00",
+  NorthAmerica = "#F0E442",
+  Oceania = "#009E73",
+  SouthAmerica = "#D55E00"
+)
+
+
+# Create a chord diagram of the network matrix
+fig5h <- chordDiagram(merge_matrix2, annotationTrack = "grid", preAllocateTracks = 1)
+# Add a track to label each sector with its name
+circos.trackPlotRegion(track.index = 1, panel.fun = function(x, y) {
+  xlim = get.cell.meta.data("xlim")
+  ylim = get.cell.meta.data("ylim")
+  sector.name = get.cell.meta.data("sector.index")
+  circos.text(mean(xlim), ylim[1] + 0.2, sector.name, facing = "clockwise", niceFacing = TRUE, adj = c(0, 0.5))
+  circos.axis(h = "top", labels.cex = 0.5, major.tick.length = 0.2, sector.index = sector.name, track.index = 2)
+}, bg.border = NA)
+
+```
+
+```{r}
+Publication_info_discipline <- left_join(sd, sub, by = "study_id")
+# matching with 1st author and title
+# mapping data
+fields <- Publication_info_discipline %>%
+  mutate(title = tolower(unlist(lapply(data.frame(t(str_split_fixed(paper_title, " ", n = 15)[,1:14])), 
+                                       function(x) str_c(x, collapse  = " ")))),
+         ntitle = paste(tolower(str_split_fixed(study_id, "\\_", n = 2)[,1]), title, sep = " "),
+         ntitle = trimws(ntitle)) %>% 
+  select(ntitle, subject)
+
+# bib data
+Bib_names <- bib_sco %>% rownames_to_column(., var = "mat_names") %>% 
+  mutate(TI2 = tolower(unlist(lapply(data.frame(t(str_split_fixed(TI, " ", n = 15)[,1:14])), 
+                                     function(x) str_c(x, collapse  = " ")))),
+         # stri_trans_general = getting rid of special letters
+         name2 = stri_trans_general(tolower(str_split_fixed(SR, " ", n = 2)[,1]), "latin-ascii"),
+         TI2 = paste(name2, TI2, sep= " "),
+         TI2 = trimws(TI2)) %>% 
+  select(TI2, mat_names)
+
+
+#stringdist(Bib_names$TI2, Fields$ntitle[1], method = 'osa')
+pos <- lapply(Bib_names$TI2, function(x) stringdist(fields$ntitle, x))
+pos2<- map_dbl(pos, which.min)
+# these are looking good - both have the perfect matches (at least at a glance)
+Bib_names$TI2
+Fields$ntitle[pos2]
+# now we can merge two datasets 
+Bib_names$discipline_code <- Fields$discipline_code[pos2]
+# Creating matrix for bibliometric coupling
+NetMatrix <- biblioNetwork(bib, analysis = "coupling", network = "references", sep = ";")
+# forcing into a nromal matrix
+net_matrix <- as.matrix(NetMatrix)
+diag(net_matrix) <- 0 #get rid of counts for the same papers
+# replacing names with discipline_code
+rownames(net_matrix) <- Bib_names$discipline_code
+colnames(net_matrix) <- Bib_names$discipline_code
+# reducing matrix according to discipline_code
+rect_matrix<- t(rowsum(t(net_matrix), group = colnames(net_matrix), na.rm = T))
+small_matrix <- rowsum(rect_matrix, group = rownames(rect_matrix))
+# getting rid of lower triangle (as this is duplication of info)
+small_matrix[lower.tri(small_matrix)] <- 0 
+```
+
+'' fig 5i - collaborations between pesticide ch
+```{r}
+fig5 <- ((fig5e | fig5f) /(fig5g  | fig5h))
+fig5
+```
+
+
+```{r most cited articles and authors}
+
+CR <- citations(bib_sco, field = "article", sep = ";") #list of most cited articles
+ cbind(CR$Cited[1:10]) #ten most cited articles
+ 
+CR <- citations(bib_sco, field = "author", sep = ";")
+cbind(CR$Cited[1:10]) #ten most cited authors
+``` 
+
+```{r bibliometric coupling network}
+NetMatrix_coupling <- biblioNetwork(bib_sco, analysis = "coupling", network = "references", sep = "; ")
+NetMatrix_coupling_plot <- networkPlot(NetMatrix_coupling, n = 20, 
+                                       Title = "Paper co-citation", type = "fruchterman", size=T, 
+                                       remove.multiple=FALSE, labelsize=0.8,edgesize = 5)
 ```
 
 
