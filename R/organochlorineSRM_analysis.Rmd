@@ -33,7 +33,8 @@ ggplot2,
 bibliometrix,
 igraph,
 stringi,
-stringdist)
+stringdist,
+circlize)
 knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
 
 ```
@@ -83,10 +84,9 @@ msp<-select( msp, -c(Timestamp.x,Timestamp.y, Timestamp.x.x, Timestamp.y.y, init
 
 ## Objective 1.	Mapping: What evidence on organochlorine pesticides has been synthesized?
 Here we aim to identify the gaps and gluts of current meta-analysis in the organochlorine pesticide literature (i.e., which pesticides, impacts and subjects synthesis been used). 
-```{r plot time trends }
 
-# Overall total meta-analysis per year 
-
+## Time trends 
+```{r}
 fig1 <- msp %>%
   count(publication_year) %>%
   mutate(n_cumulative = cumsum(n)) %>%
@@ -116,8 +116,6 @@ fig1
 
 
 ```{r}
-library(RColorBrewer)
-
 msp %>%
   mutate(subjects = strsplit(subject, ",\\s+")) %>%
   unnest(subjects) %>%
@@ -256,9 +254,11 @@ CEESAT results are presented as a percentage of result per question
 
 ```{r plot CEESAT summary }
 
-studies <- sd$author_year 
+studies <- msp$author_year 
 
-ceesat_table <- sd %>%  filter(studies!="NA") %>% select(starts_with("CEE"))
+ceesat_table <- msp %>%  
+  filter(studies!="NA") %>% 
+  select(starts_with("CEE"))
 
 ceesat_studies_wide <- tibble(studies,ceesat_table)
 
@@ -286,8 +286,10 @@ ggplot(data = percent_ceesat_score, x = question, y = percent) +
   theme(panel.grid.major = element_blank(),panel.grid.minor = element_blank(),panel.background = element_blank()) + 
   ylab("Proportion") + xlab("CEESAT Question")
 
-#ggsave(here("plots","figure_CEESAT_summary_pilot_v01.pdf"), width = 10, height = 8, units = "cm", scale = 2, device = cairo_pdf)
+
 ```
+
+
 
 
 
@@ -295,17 +297,18 @@ ggplot(data = percent_ceesat_score, x = question, y = percent) +
 
 ```{r plot database used}
 database_count <- sd %>% 
-separate_rows(database_search, sep = ",") %>% 
+separate_rows(database_search, sep = ",\\s*") %>% 
   count(database_search) %>% 
   filter(database_search != "not reported") %>% # filter out NA 
-  arrange(desc(n))
+  arrange(desc(n)) %>% 
+  filter(n>2)
 
 database_count %>%
   ggplot(aes(x = n, y = reorder(database_search,n), color = "#007030")) +
   geom_point(stat = "identity", size = 6, shape = 21,fill = "#007030", color = "white") +
   geom_segment(aes(xend = 0, yend = reorder(database_search,n))) +
   scale_color_identity(guide = "none") +
-  scale_x_continuous(name = "Article Count", expand = c(0, 0), limits = c(0, 50)) +
+  scale_x_continuous(name = "Article Count", expand = c(0, 0), limits = c(0, 60)) +
   labs(y = NULL) +
   theme_minimal() +
   theme(axis.text.y = element_text(size = 10),
@@ -329,9 +332,9 @@ database_count %>%
 ```{r plot effect size used }
 effectsize_count <- 
   sd %>% 
-  separate_rows(effect_size, sep = ",") %>% 
+  separate_rows(effect_size, sep = ",\\s*") %>% 
   count(effect_size) %>% 
-    filter(effect_size != "NA") %>% 
+    filter(effect_size != "NA", n>1) %>% 
   arrange(desc(n))
 
 effectsize_count %>%
@@ -362,7 +365,7 @@ effectsize_count %>%
 ```{r plot software analysis}
 software_count <- 
   msp%>% 
-  separate_rows(software_analysis, sep = ",") %>% 
+  separate_rows(software_analysis, sep = ",\\s*") %>% 
   count(software_analysis) %>% 
     filter(software_analysis != "NA") %>% 
   arrange(desc(n))
@@ -392,9 +395,9 @@ software_count %>%
 ```
  
 ```{r plot heterogeneity tests }
-heterogeneity_count <-  ## REPLACE TAU SQUARED IN DATASET
+heterogeneity_count <-  
   sd %>% 
-  separate_rows(heterogeneity_assessment_method, sep = ", ") %>% 
+  separate_rows(heterogeneity_assessment_method, sep = ",\\s*") %>% 
   count(heterogeneity_assessment_method) %>% 
     filter(heterogeneity_assessment_method != "NA") %>% 
   arrange(desc(n))
@@ -404,7 +407,7 @@ heterogeneity_count %>%
   geom_point(stat = "identity", size = 6, shape = 21, fill = "#007030", color = "white") +
   geom_segment(aes(xend = 0, yend = reorder(heterogeneity_assessment_method,n))) +
   scale_color_identity(guide = "none") +
-  scale_x_continuous(name = "Article Count", expand = c(0, 0), limits = c(0, 50)) +
+  scale_x_continuous(name = "Article Count", expand = c(0, 0), limits = c(0, 100)) +
   labs(y = NULL) +
   theme_minimal() +
   theme(axis.text.y = element_text(size = 10),
@@ -429,7 +432,7 @@ heterogeneity_count %>%
 
 sensitivity_count <-
   sd %>% 
-  separate_rows(sensitivity_analysis_method, sep = ",") %>% 
+  separate_rows(sensitivity_analysis_method, sep = ",\\s*") %>% 
   count(sensitivity_analysis_method) %>% 
     filter(sensitivity_analysis_method != "NA") %>% 
   arrange(desc(n))
@@ -462,7 +465,7 @@ sensitivity_count %>%
 ```{r plot bias types investigated}
 bias_type_count <- 
   sd %>% 
-  separate_rows(bias_assessment_type, sep = ",") %>% 
+  separate_rows(bias_assessment_type, sep = ",\\s*") %>% 
   count(bias_assessment_type) %>% 
     filter(bias_assessment_type!= "NA") %>% 
   arrange(desc(n))
@@ -472,7 +475,7 @@ bias_type_count %>%
   geom_point(stat = "identity", size = 6, shape = 21, fill = "#007030", color = "white") +
   geom_segment(aes(xend = 0, yend = reorder(bias_assessment_type,n))) +
   scale_color_identity(guide = "none") +
-  scale_x_continuous(name = "Article Count", expand = c(0, 0), limits = c(0, 70)) +
+  scale_x_continuous(name = "Article Count", expand = c(0, 0), limits = c(0, 75)) +
   labs(y = NULL) +
   theme_minimal() +
   theme(axis.text.y = element_text(size = 10),
@@ -495,7 +498,7 @@ bias_type_count %>%
 ```{r plot bias methods used}
 bias_method_count <- 
   sd %>% 
-  separate_rows(bias_assessment_method, sep = ",") %>% 
+  separate_rows(bias_assessment_method, sep = ",\\s*") %>% 
   count(bias_assessment_method) %>% 
     filter(bias_assessment_method!= "NA") %>% 
   arrange(desc(n))
@@ -526,7 +529,7 @@ bias_method_count %>%
 ```{r data vizualisation methods}
 vizualisation_count <- 
   sd %>% 
-  separate_rows(visualization_method, sep = ",") %>% 
+  separate_rows(visualization_method, sep = ",\\s*") %>% 
   count(visualization_method) %>% 
     filter(visualization_method!= "NA") %>% 
   arrange(desc(n))
@@ -536,7 +539,7 @@ vizualisation_count %>%
   geom_point(stat = "identity", size = 6, shape = 21, fill = "#007030", color = "white") +
   geom_segment(aes(xend = 0, yend = reorder(visualization_method,n))) +
   scale_color_identity(guide = "none") +
-  scale_x_continuous(name = "Article Count", expand = c(0, 0), limits = c(0, 70)) +
+  scale_x_continuous(name = "Article Count", expand = c(0, 0), limits = c(0, 100)) +
   labs(y = NULL) +
   theme_minimal() +
   theme(axis.text.y = element_text(size = 10),
@@ -559,7 +562,7 @@ vizualisation_count %>%
 
 reporting_guide_count <- 
   sd %>% 
-  separate_rows(reporting_standards_type, sep = ",") %>% 
+  separate_rows(reporting_standards_type, sep = ",\\s*") %>% 
   count(reporting_standards_type) %>% 
     filter(reporting_standards_type!= "NA") %>% 
   arrange(desc(n))
@@ -606,7 +609,7 @@ fig5b <- networkPlot(NetMatrix_keywords, normalize="association", n = 10,
 ## fig5c - thematic map based on keywords
 ```{r}
 par(mfrow=c(1,1), mar=c(0,2,0,2))
-fig5c <- thematicMap(bib_sco, field = "ID", n = 1000, minfreq = 5, stemming = FALSE, size = 0.5, n.labels = 1, repel = TRUE)
+fig5c <- thematicMap(bib_sco, field = "ID", n = 2000, minfreq = 5, stemming = FALSE, size = 0.5, n.labels = 1, repel = TRUE)
 plot(fig5c$map)
 
 ```
@@ -626,11 +629,13 @@ fig5d <- networkPlot(NetMatrix_authors,  n = 100,
 bibmap <- metaTagExtraction(bib_sco, Field = "AU1_CO", sep = ";") 
 bibmap <- metaTagExtraction(bibmap, Field = "AU_CO", sep = ";") 
 #save counts in a data frame
-bibmap %>% group_by(AU1_CO) %>% count() %>% filter(!is.na(AU1_CO)) -> firstcountrycounts
+firstcountrycounts <- bibmap %>% 
+  group_by(AU1_CO) %>%
+  count() %>% 
+  filter(!is.na(AU1_CO))  
 #load map data
 world_map <- map_data("world") %>% 
   filter(! long > 180) #remove countries with longitude >180 to make equal projection-like map without artifacts
-#table(world_map$region) #note that United Kingdom is UK here
 # Format country names to match regions on the world map
 firstcountrycounts$region <- str_to_title(firstcountrycounts$AU1_CO)
 firstcountrycounts$region[firstcountrycounts$region == "Usa"] <- "USA" #Fix "Usa" to "USA" :
@@ -643,17 +648,34 @@ fullmap$n <- fullmap$n.x + fullmap$n.y # make new column for fixed counts
 fullmap$n[is.na(fullmap$n)] <- 0 #change NA to 0 for regions with no counts
 fig5e <- fullmap %>% 
   ggplot(aes(fill = n, map_id = region)) +
-  geom_map(map = world_map) +
+  geom_map(map = world_map, color = "black") +
   expand_limits(x = world_map$long, y = world_map$lat) +
   coord_map("moll") +
-  theme_map(line_size = 0.5) + 
   theme(legend.position="right") +
   scale_fill_gradient(low = "#98FB98", high = "#006400",
-                    name = "Score", na.value = "gray50",
+                    name = "Score", na.value = "gray70",
  limits = c(1, 20),
       guide = guide_colorbar(direction = "vertical.")) +
   guides(fill = guide_colourbar(barwidth = unit(15, units = "mm"), barheight = unit(20, units = "mm")))
 fig5e
+```
+
+## Map of europe 
+```{r}
+fig5f <- fullmap %>% 
+  ggplot(aes(fill = n, map_id = region)) +
+  geom_map(map = world_map, color = "black") +
+  coord_map("moll", ylim = c(30, 75), xlim = c(-25, 45)) + # set limits for Europe
+  theme(legend.position = "right") +
+  scale_fill_gradient(low = "#98FB98", high = "#006400",
+                      name = "Score", na.value = "gray70",
+                      limits = c(1, 10),
+                      guide = guide_colorbar(direction = "vertical.")) +
+  guides(fill = guide_colourbar(barwidth = unit(15, units = "mm"), barheight = unit(20, units = "mm")))
+
+fig5f
+
+
 ```
 
 ## fig5f - country collaboration network circle plot
@@ -698,20 +720,20 @@ my.cols2 <- c(
   Germany = "#b2df8a",
   Greece = "#f781bf",
   Korea = "#f781bf",
+  Ireland = "#a65628",
   Norway = "#ff7f00",
   Sweden = "#4daf4a",
   Egypt = "#f781bf",
   Italy = "#e41a1c",
   Japan = "#1f78b4",
-  Portugal = "#984ea3",
   Switzerland = "#984ea3",
   Turkey = "#33a02c",
   Austria = "#b2df8a",
-  Ireland = "#a65628",
   Israel = "#f781bf",
   NewZealand = "#4daf4a",
   Russia = "#999999",
   Singapore = "#b2df8a",
+  Portugal = "#984ea3",
   Finland = "#b2df8a",
   Mexico = "#a65628",
   Poland = "#b2df8a",
@@ -736,7 +758,7 @@ circos.trackPlotRegion(track.index = 1, panel.fun = function(x, y) {
   ylim = get.cell.meta.data("ylim")
   sector.name = get.cell.meta.data("sector.index")
   circos.text(mean(xlim), ylim[1] + .1, sector.name, facing = "clockwise", niceFacing = TRUE, adj = c(0, 0.5))
-  circos.axis(h = "top", labels.cex = 0.5, major.tick.length = 0.2, sector.index = sector.name, track.index = 2)
+  circos.axis(h = "top", labels.cex = 0.5, major.tick.length = 0.5, sector.index = sector.name, track.index = 2)
 }, bg.border = NA)
 
 ```
@@ -885,9 +907,9 @@ chordDiagramFromMatrix(merge_matrix2)
 # Define colors for each continent
 my.cols2 <- c(
   Africa = "#CC79A7",
+  NorthAmerica = "#F0E442",
   Asia = "#0072B2",
   Europe = "#E69F00",
-  NorthAmerica = "#F0E442",
   Oceania = "#009E73",
   SouthAmerica = "#D55E00"
 )
@@ -910,12 +932,15 @@ circos.trackPlotRegion(track.index = 1, panel.fun = function(x, y) {
 Publication_info_discipline <- left_join(sd, sub, by = "study_id")
 # matching with 1st author and title
 # mapping data
+library(stringi)
+
 fields <- Publication_info_discipline %>%
-  mutate(title = tolower(unlist(lapply(data.frame(t(str_split_fixed(paper_title, " ", n = 15)[,1:14])), 
-                                       function(x) str_c(x, collapse  = " ")))),
-         ntitle = paste(tolower(str_split_fixed(study_id, "\\_", n = 2)[,1]), title, sep = " "),
+  mutate(title = tolower(unlist(lapply(data.frame(t(stri_split_fixed(paper_title, " ", n = 15)[,1:14])), 
+                                       function(x) stri_c(x, collapse  = " ")))),
+         ntitle = paste(tolower(stri_split_fixed(study_id, "\\_", n = 2)[,1]), title, sep = " "),
          ntitle = trimws(ntitle)) %>% 
   select(ntitle, subject)
+
 
 # bib data
 Bib_names <- bib_sco %>% rownames_to_column(., var = "mat_names") %>% 
@@ -949,12 +974,6 @@ rect_matrix<- t(rowsum(t(net_matrix), group = colnames(net_matrix), na.rm = T))
 small_matrix <- rowsum(rect_matrix, group = rownames(rect_matrix))
 # getting rid of lower triangle (as this is duplication of info)
 small_matrix[lower.tri(small_matrix)] <- 0 
-```
-
-'' fig 5i - collaborations between pesticide ch
-```{r}
-fig5 <- ((fig5e | fig5f) /(fig5g  | fig5h))
-fig5
 ```
 
 
