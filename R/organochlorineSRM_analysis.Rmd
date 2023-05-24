@@ -1,23 +1,45 @@
 ---
-title: "organochlorineSRM_analysis"
+title: "Sixty years since Silent Spring: towards a balanced view of the organochlorine pesticide literature "
 author: "Kyle Morrison, Coralie Williams, Lorenzo Ricolfi, Malgorazata Lagisz, Shinichi Nakagawa" 
 date: "2023-03-09"
-output: html_document
+output: 
+  rmdformats::robobook:
+    code_folding: show
+    code_download: true
+    toc_depth: 4
+editor_options: 
+  chunk_output_type: console
 ---
+```{r setup, include = FALSE}
+rm(list = ls())
+# knitr setting
+knitr::opts_chunk$set(
+  message = FALSE,
+  warning = FALSE, 
+  cache = TRUE,
+  echo=TRUE
+)
+```
 
-Sixty years since silent spring: A systematic evidence map and bibliometric analysis reveals the gaps, biases and limitations in the organochlorine pesticide literature 
 
-In this Rmarkdown document we provide preliminary workflow and code for:   
 
- - **Objective 1.	Mapping: What evidence on organochlorine pesticides has been synthesized?** We identify the areas where meta-analysis has been employed to measure the effects of pesticides on human and environmental health.
+
+In this Rmarkdown document we provide the following workflow:   
+
+- Objective 0. To investigate current literature characteristics such as time trend
+
+- Objective 1 . To explore the various characteristics of the organochlorine pesticides literature such as the pesticides used, the impacts elicited in response and the subjects that were investigated. 
+
+- Objective 2. To investigate current methodological practices within meta-analysis investigating the impacts of organochlorine pesticides. We will investigate how they currently search for existing literature, which effect sizes are used, how they adjust for heterogeneity and how they account for risk of bias. 
  
- - **Objective 2.	Critical appraisal: How robust are syntheses of organochlorine pesticide evidence?** We will evaluate the reporting quality and potential biases of the included meta-analyses to determine the reliability of their conclusions. This assessment will allow us to identify syntheses that may require revision, and to pinpoint aspects of the review methodology that require improvement.
+ - Objective 3 - To investigate current reporting practices in existing meta-analyses examining the impacts of organochlorine pesticides.
  
-- **Objective 3.	Critical appraisal: What are the current methodological practices within the organochlorine pesticide literature?** We will examine the current methodological practices used in meta-analytic studies within the organochlorine pesticide literature. This will enable us to identify the prevailing approaches in this field and gain a better understanding of how meta-analytic studies are being conducted.
+ - Objective 4 - To investigate the research outputs across different countries and continents and investigate the degree of cross-country collaboration.
  
- - **Objective 4.	Bibliometrics: How is synthesized organochlorine pesticide evidence connected?** We will investigate the countries and institutions that are primarily engaged in secondary research on organochlorine pesticides, and analyze the networks that exist between them. By doing so, we hope to gain insights into the collaborative relationships between different institutions and identify any patterns or trends in the distribution of research efforts.
 
-## Setup
+# **Load packages and data**
+
+## Load Packages 
 
 ```{r setup, results="hide"}
 rm(list = ls())
@@ -43,9 +65,8 @@ knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
 
 Manually extracted pilot data is stored in five separate **.csv** files representing different aspects of the data (extracted via structured predefined Google Forms - one per table). 
 
-Bibliographic data records are exported from Scopus (including cited references field) in .bib format and locally saved as **dataset.bib**. the pilot version of this file only includes bibliographic information of the meta-analytic studies. In the actual work bibliographic information will be expanded to all reviews on PFAS exposure in humans, animals and the environment.   
+Bibliographic data records are exported from Scopus (including cited references field) in .bib format and locally saved as **scopus.bib**. 
 
-The study identity (authors, title) has been obscured in the pilot data extraction file. It will be public in the final data extraction files.   
 
 
 ```{r load pilot data}
@@ -57,46 +78,51 @@ sp <- read_csv(here("data", "ocp_srm_species_details.csv"), skip =0)
 bib_sco <- convert2df(here("data","bib_sco.bib"), dbsource = "scopus", format = "bibtex")
 ```
 
-The multiple spreadsheets will need to be combined into one 
+# Objective 0. To investigate current literature characteristics such as time trend
 
-```{r}
-## Merge main data with ocp 
-msp <- left_join(sd, ocp, by = "study_id")
 
-## Merge multiple spreadsheets  with subject
-msp <- left_join(msp, sub, by = "study_id")
 
-## Merge multiple spreadsheets with impact 
-msp <- left_join(msp,im, by = "study_id" )
 
-## Merge multiple spreadsheets with species 
-msp <- left_join(msp,sp, by = "study_id")
 
-# view(msp)
-```
 
-Remove extractor initials and time stamps 
-```{r}
-msp<-select( msp, -c(Timestamp.x,Timestamp.y, Timestamp.x.x, Timestamp.y.y, initials_extractor.x, initials_extractor.y, initials_extractor.x.x, initials_extractor.y.y))
 
-```
 
 
 ## Objective 1.	Mapping: What evidence on organochlorine pesticides has been synthesized?
-Here we aim to identify the gaps and gluts of current meta-analysis in the organochlorine pesticide literature (i.e., which pesticides, impacts and subjects synthesis been used). 
+
 
 ## Time trends 
 ```{r}
-fig1 <- msp %>%
+# Transform the data
+sd1 <- sd %>%
   count(publication_year) %>%
-  mutate(n_cumulative = cumsum(n)) %>%
-  ggplot(aes(x = publication_year, y = n_cumulative)) +
-  geom_line(color = "#007030", size = 1) +
-  geom_point(shape = 21, size = 3, fill = "#8FBF43", color = "black", stroke = 0.5, alpha = 0.7) +
-  scale_x_continuous(breaks = seq(min(msp$publication_year), max(msp$publication_year), by = 2)) +
+  mutate(n_cumulative = cumsum(n))
+
+# Calculate the maximum y scale for the secondary axis
+max_scale <- max(sd$n)
+
+# Create the plot
+fig1 <- sd1 %>% 
+  ggplot( aes(x = publication_year, y = n_cumulative)) +
+  
+  # Add the non-cumulative count as a bar plot
+  geom_col(aes(y = n), fill = "#A65475", alpha = 0.7) +
+  
+  # Add the cumulative count as a line plot
+  geom_line(aes(y = n_cumulative), color = "#54A76A", size = 1, linetype = "solid") +
+  
+  # Highlight points on the line
+  geom_point(aes(y = n_cumulative), shape = 21, size = 3, fill = "#54A76A", stroke = 0) +
+  
+  # Set the x-axis breaks
+  scale_x_continuous(breaks = seq(min(sd1$publication_year), max(sd1$publication_year), by = 2)) +
+  
+  # Set the y-axis scales and labels
+  scale_y_continuous("Cumulative Article Count", sec.axis = sec_axis(~.*max_scale, name = "Article Count")) +
+  
+  # Set the plot theme
   theme_minimal() +
-  labs(x = "Year", y = "Cumulative Article Count") +
-  theme(panel.grid.major.y = element_line(color = "gray", linetype = "dashed"),
+  theme( panel.grid.major.y = element_line(color = "gray", linetype = "dashed"),
     panel.grid.minor.y = element_blank(),
     axis.line.x = element_line(size = 1.2),
     axis.line.y = element_line(size = 1.2),
@@ -106,27 +132,45 @@ fig1 <- msp %>%
     axis.text.y = element_text(size = 10, color = "#666666"),
     plot.title = element_text(size = 20, face = "bold"),
     plot.subtitle = element_text(size = 14),
-    plot.caption = element_text(size = 10, hjust = 0)) +
-  # ggtitle("Cumulative Number of Articles by Publication Year") +
-  scale_color_gradient(low = "white", high = "#007030") +
+    plot.caption = element_text(size = 10, hjust = 0)
+  ) +
+  labs(x = "Year") +
+  
+  # Add labels for each point
   geom_text(aes(label = n), size = 4, nudge_y = 4, color = "#666666", fontface = "bold")
+
+# Display the plot
 fig1
 
 ```
 
 
 ```{r}
-msp %>%
+# Join 'sd' and 'sub' data frames by 'study_id'
+sd_sub <- left_join(sd, sub, by = "study_id")
+
+sd_sub %>%
+  # Split 'subject' column by comma followed by one or more spaces
   mutate(subjects = strsplit(subject, ",\\s+")) %>%
+  # Expand list column 'subjects' into multiple rows
   unnest(subjects) %>%
+  # Count number of articles by 'publication_year' and 'subjects'
   count(publication_year, subjects) %>%
+  # Reorder 'subjects' by count 'n'
   group_by(subjects = reorder(subjects, n)) %>%
+  # Compute cumulative count of articles
   mutate(n_cumulative = cumsum(n)) %>%
+  # Create a plot
   ggplot(aes(x = publication_year, y = n_cumulative, fill = subjects)) +
+  # Add a filled area plot
   geom_area(size = 1.2, alpha = 0.7) +
-  scale_x_continuous(breaks = seq(min(msp$publication_year), max(msp$publication_year), by = 2)) +
+  # Set the x-axis breaks
+  scale_x_continuous(breaks = seq(min(sd_sub$publication_year), max(sd_sub$publication_year), by = 2)) +
+  # Set the plot theme
   theme_minimal() +
+  # Set the labels for the axes
   labs(x = "Year", y = "Cumulative Article Count") +
+  # Customize the appearance of the plot
   theme(panel.grid.major.y = element_line(color = "gray", linetype = "dashed"),
         panel.grid.minor.y = element_blank(),
         axis.line.x = element_line(size = 1.2),
@@ -138,9 +182,12 @@ msp %>%
         plot.title = element_text(size = 20, face = "bold"),
         plot.subtitle = element_text(size = 14),
         plot.caption = element_text(size = 10, hjust = 0)) +
+  # Set the fill color palette and label
   scale_fill_brewer(palette = "Dark2") +
   labs(fill = "Subject") +
+  # Customize the legend
   guides(fill = guide_legend(override.aes = list(size=4)))
+
 
 ```
 
