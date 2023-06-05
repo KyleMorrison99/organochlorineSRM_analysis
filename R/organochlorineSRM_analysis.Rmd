@@ -61,6 +61,7 @@ knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
 
 ```
 
+
 ## Load data
 
 Manually extracted pilot data is stored in five separate **.csv** files representing different aspects of the data (extracted via structured predefined Google Forms - one per table). 
@@ -90,28 +91,17 @@ sd1 <- sd %>%
 # Calculate the maximum y scale for the secondary axis
 max_scale <- max(sd$n)
 
-# Create the plot
-fig1 <- sd1 %>% 
-  ggplot( aes(x = publication_year, y = n_cumulative)) +
-  
-  # Add the non-cumulative count as a bar plot
-  geom_col(aes(y = n), fill = "#A65475", alpha = 0.7) +
-  
-  # Add the cumulative count as a line plot
-  geom_line(aes(y = n_cumulative), color = "#54A76A", size = 1, linetype = "solid") +
-  
-  # Highlight points on the line
-  geom_point(aes(y = n_cumulative), shape = 21, size = 3, fill = "#54A76A", stroke = 0) +
-  
-  # Set the x-axis breaks
-  scale_x_continuous(breaks = seq(min(sd1$publication_year), max(sd1$publication_year), by = 2)) +
-  
-  # Set the y-axis scales and labels
-  scale_y_continuous("Cumulative Article Count", sec.axis = sec_axis(~.*max_scale, name = "Article Count")) +
-  
-  # Set the plot theme
+# Create the annual count plot
+annual_plot <- sd1 %>%
+  ggplot(aes(x = publication_year, y = n)) +
+  geom_col(fill = "#A65475", alpha = 0.7) +
+  geom_text(aes(label = n), position = position_stack(vjust = 0.6), fontface = "bold", color = "white", size = 3, hjust = 0.4) +
+  scale_x_continuous(breaks = seq(min(sd1$publication_year), max(sd1$publication_year), by = 1)) +
+  scale_y_continuous("Annual Article Count", limits = c(0,15)) +
+  labs(x = "Year") +
   theme_minimal() +
-  theme( panel.grid.major.y = element_line(color = "gray", linetype = "dashed"),
+  theme( 
+    panel.grid.major.y = element_line(color = "gray", linetype = "dashed"),
     panel.grid.minor.y = element_blank(),
     axis.line.x = element_line(size = 1.2),
     axis.line.y = element_line(size = 1.2),
@@ -122,56 +112,54 @@ fig1 <- sd1 %>%
     plot.title = element_text(size = 20, face = "bold"),
     plot.subtitle = element_text(size = 14),
     plot.caption = element_text(size = 10, hjust = 0)
-  ) +
+  ) 
+
+# Create the cumulative count plot
+cumulative_plot <- sd1 %>%
+  ggplot(aes(x = publication_year, y = n_cumulative)) +
+  geom_line(color = "#54A76A", size = 1, linetype = "solid") +
+  geom_point(shape = 21, size = 3, fill = "#54A76A", stroke = 0) +
+  geom_text(aes(label = n_cumulative), hjust = -0.2, vjust = 1, size = 3, color = "black") +
+  scale_x_continuous(breaks = seq(min(sd1$publication_year), max(sd1$publication_year), by = 1)) +
+  scale_y_continuous("Cumulative Article Count", limits = c(0,120)) +
   labs(x = "Year") +
-  
-  # Add labels for each point
-  geom_text(aes(label = n), size = 4, nudge_y = 4, color = "#666666", fontface = "bold")
+  theme_minimal() +
+  theme( 
+    panel.grid.major.y = element_line(color = "gray", linetype = "dashed"),
+    panel.grid.minor.y = element_blank(),
+    axis.line.x = element_line(size = 1.2),
+    axis.line.y = element_line(size = 1.2),
+    axis.title.x = element_text(size = 14, face = "bold"),
+    axis.title.y = element_text(size = 14, face = "bold"),
+    axis.text.x = element_text(angle = 45, hjust = 1, size = 10, color = "#666666"),
+    axis.text.y = element_text(size = 10, color = "#666666"),
+    plot.title = element_text(size = 20, face = "bold"),
+    plot.subtitle = element_text(size = 14),
+    plot.caption = element_text(size = 10, hjust = 0)
+  )
 
-# Display the plot
+# Combine the two plots
+fig1 <- annual_plot / cumulative_plot
+
 fig1
-
 ```
 
 
 
 ## Figure x - Total number of meta-analysis per subject 
 ```{r}
-# Join 'sd' and 'sub' data frames by 'study_id'
 sd_sub <- left_join(sd, sub, by = "study_id")
 
-sd_sub %>%
-  # Split 'subject' column by comma followed by one or more spaces
+# Create the annual count plot
+subject_bar_plot <- sd_sub %>%
   mutate(subjects = strsplit(subject, ",\\s+")) %>%
-  
-  # Expand list column 'subjects' into multiple rows
   unnest(subjects) %>%
-  
-  # Count number of articles by 'publication_year' and 'subjects'
   count(publication_year, subjects) %>%
-  
-  # Reorder 'subjects' by count 'n'
   group_by(subjects = reorder(subjects, n)) %>%
-  
-  # Compute cumulative count of articles
-  mutate(n_cumulative = cumsum(n)) %>%
-  
-  # Create a plot
-  ggplot(aes(x = publication_year, y = n_cumulative, fill = subjects)) +
-  
-  # Add a filled area plot
-  geom_area(size = 1.2, alpha = 0.7) +
-  
-  # Set the x-axis breaks
-  scale_x_continuous(breaks = seq(min(sd_sub$publication_year), max(sd_sub$publication_year), by = 2)) +
-  
-  # Set the plot theme
+  ggplot(aes(x = as.factor(publication_year), y = n, fill = subjects)) +
+  geom_bar(stat = "identity", position = "stack", alpha = 0.7) +
   theme_minimal() +
-  
-  # Set the labels for the axes
-  labs(x = "Year", y = "Cumulative Article Count") +
-  
-  # Customize the appearance of the plot
+  labs(x = "Year", y = "Article Count") +
   theme(panel.grid.major.y = element_line(color = "gray", linetype = "dashed"),
         panel.grid.minor.y = element_blank(),
         axis.line.x = element_line(size = 1.2),
@@ -183,15 +171,39 @@ sd_sub %>%
         plot.title = element_text(size = 20, face = "bold"),
         plot.subtitle = element_text(size = 14),
         plot.caption = element_text(size = 10, hjust = 0)) +
-  
-  # Set the fill color palette and label
   scale_fill_brewer(palette = "Dark2") +
-  
   labs(fill = "Subject") +
-  
-  # Customize the legend
   guides(fill = guide_legend(override.aes = list(size=4)))
 
+# Create the cumulative count plot
+subject_cumulative_plot <-  sd_sub %>%
+  mutate(subjects = strsplit(subject, ",\\s+")) %>%
+  unnest(subjects) %>%
+  count(publication_year, subjects) %>%
+  group_by(subjects = reorder(subjects, n)) %>%
+  mutate(n_cumulative = cumsum(n)) %>%
+  ggplot(aes(x = publication_year, y = n_cumulative, fill = subjects)) +
+  geom_area(size = 1.2, alpha = 0.7) +
+  scale_x_continuous(breaks = seq(min(sd_sub$publication_year), max(sd_sub$publication_year), by = 1)) +
+  theme_minimal() +
+  labs(x = "Year", y = "Cumulative Article Count") +
+  theme(panel.grid.major.y = element_line(color = "gray", linetype = "dashed"),
+        panel.grid.minor.y = element_blank(),
+        axis.line.x = element_line(size = 1.2),
+        axis.line.y = element_line(size = 1.2),
+        axis.title.x = element_text(size = 14, face = "bold"),
+        axis.title.y = element_text(size = 14, face = "bold"),
+        axis.text.x = element_text(angle = 45, hjust = 1, size = 10, color = "#666666"),
+        axis.text.y = element_text(size = 10, color = "#666666"),
+        plot.title = element_text(size = 20, face = "bold"),
+        plot.subtitle = element_text(size = 14),
+        plot.caption = element_text(size = 10, hjust = 0)) +
+  scale_fill_brewer(palette = "Dark2") +
+  labs(fill = "Subject") +
+  guides(fill = guide_legend(override.aes = list(size=4)))
+
+figs1 <- subject_bar_plot /  subject_cumulative_plot
+figs1
 
 ```
 
