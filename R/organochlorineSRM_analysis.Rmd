@@ -56,7 +56,8 @@ bibliometrix,
 igraph,
 stringi,
 stringdist,
-circlize)
+circlize,
+ggalluvial)
 knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
 
 ```
@@ -158,6 +159,7 @@ subject_bar_plot <- sd_sub %>%
   group_by(subjects = reorder(subjects, n)) %>%
   ggplot(aes(x = as.factor(publication_year), y = n, fill = subjects)) +
   geom_bar(stat = "identity", position = "stack", alpha = 0.7) +
+  scale_y_continuous("Annual Article Count", limits = c(0,15)) +
   theme_minimal() +
   labs(x = "Year", y = "Article Count") +
   theme(panel.grid.major.y = element_line(color = "gray", linetype = "dashed"),
@@ -173,7 +175,7 @@ subject_bar_plot <- sd_sub %>%
         plot.caption = element_text(size = 10, hjust = 0)) +
   scale_fill_brewer(palette = "Dark2") +
   labs(fill = "Subject") +
-  guides(fill = guide_legend(override.aes = list(size=4)))
+  guides(fill = guide_legend(override.aes = list(size=3)))
 
 # Create the cumulative count plot
 subject_cumulative_plot <-  sd_sub %>%
@@ -184,6 +186,7 @@ subject_cumulative_plot <-  sd_sub %>%
   mutate(n_cumulative = cumsum(n)) %>%
   ggplot(aes(x = publication_year, y = n_cumulative, fill = subjects)) +
   geom_area(size = 1.2, alpha = 0.7) +
+  scale_y_continuous("Cumulative Article Count", limits = c(0,115)) +
   scale_x_continuous(breaks = seq(min(sd_sub$publication_year), max(sd_sub$publication_year), by = 1)) +
   theme_minimal() +
   labs(x = "Year", y = "Cumulative Article Count") +
@@ -200,7 +203,7 @@ subject_cumulative_plot <-  sd_sub %>%
         plot.caption = element_text(size = 10, hjust = 0)) +
   scale_fill_brewer(palette = "Dark2") +
   labs(fill = "Subject") +
-  guides(fill = guide_legend(override.aes = list(size=4)))
+  guides(fill = guide_legend(override.aes = list(size=3)))
 
 figs1 <- subject_bar_plot /  subject_cumulative_plot
 figs1
@@ -208,286 +211,37 @@ figs1
 ```
 
 
-# Objective 1.	Mapping: What evidence on organochlorine pesticides has been synthesized?
+# Objective 1. To characterise the organochlorine pesticides literature such as the pesticides used, the impacts elicited in response and the subjects that were investigated. 
 
 ## Figure x - Total count of each organochlorine used in meta-analysis
 
 ```{r}
-
-
+# Transform the data 
 ocp_count <-
   ocp %>% 
-  separate_rows(ocp, sep = ", ") %>% 
+  separate_rows(ocp, sep = ",\\s+") %>% 
   count(ocp) %>% 
   filter(!is.na(ocp)) %>% # filter out NA 
  filter(ocp != "not reported") %>% 
   arrange(desc(n)) %>% 
-  mutate(ocp = ifelse(n <= 5, "other",
-  as.character(ocp))) %>% 
+  mutate(ocp = ifelse(n <= 5, "other", as.character(ocp))) %>% 
   
 ## I NEED TO LIST ALL THE OTHERS HERE WITH THEIR COUNTS
   group_by(ocp) %>% 
   summarise(n =sum(n))
 
-ocp_count %>%
-  ggplot(aes(x = n, y = reorder(ocp, n), color = "#007030")) +
-  geom_point(stat = "identity", size = 6, shape = 21,fill = "#007030", color = "white") +
-  geom_segment(aes(xend = 0, yend = reorder(ocp, n))) +
-  scale_color_identity(guide = "none") +
-  scale_x_continuous(name = "Count", expand = c(0, 0), limits = c(0, 75)) +
-  labs(y = NULL) +
-  theme_minimal() +
-  theme(axis.text.y = element_text(size = 10),
-        axis.text.x = element_text(size = 10),
-        axis.line.x = element_line(color = "gray", size = 0.5),
-        axis.line.y = element_blank(),
-        axis.ticks.x = element_blank(),
-        axis.ticks.y = element_blank(),
-        axis.title.x = element_text(size = 12),
-        axis.title.y = element_blank(),
-        panel.grid.major.y = element_blank(),
-        panel.grid.minor.y = element_blank(),
-        legend.position = "none") +
-  geom_text(aes(label = n, x = n + 4, y = reorder(ocp, n)),
-            vjust = 0.5, hjust = 0, size = 5, color = "black")
-
-figy
-```
-
-
-
-
-
-## Figure x - Total proportion of meta-analysis per subject 
-note: some meta-analysis may contribute to multiple sections if involve multiple subjects 
-```{r}
-# Calculate total count for each category
-total_subject_count <- sub %>% count(subject)
-
-# Calculate proportion and percentage for each category
-subject_pct <- sub %>%
-  separate_rows(subject, sep = ",\\s*") %>% 
-  count(subject) %>%
-  mutate(proportion = n/sum(total_subject_count$n),
+ocp_pct <- ocp_count %>%
+  mutate(proportion = n/sum(ocp_count$n),
          percentage = proportion*100)
 
-subject_pct %>% 
-ggplot( aes(x = percentage, y = reorder(subject, percentage), color = "#007030")) +
-  geom_point(stat = "identity", size = 6, shape = 21, fill = "#007030", color = "white") +
-  geom_segment(aes(xend = 0, yend = reorder(subject, percentage))) +
-  scale_color_identity(guide = "none") +
-  scale_x_continuous(name = "Percentage", expand = c(0, 0), limits = c(0, 100)) +
-  labs(y = NULL) +
-  theme_minimal() +
-  theme(axis.text.y = element_text(size = 10),
-        axis.text.x = element_text(size = 10),
-        axis.line.x = element_line(color = "gray", size = 0.5),
-        axis.line.y = element_blank(),
-        axis.ticks.x = element_blank(),
-        axis.ticks.y = element_blank(),
-        axis.title.x = element_text(size = 12),
-        axis.title.y = element_blank(),
-        panel.grid.major.y = element_blank(),
-        panel.grid.minor.y = element_blank(),
-        legend.position = "none") +
-  geom_text(aes(label = paste0(round(percentage, 1), "%"), x = percentage + 2, y = reorder(subject, percentage)),
-            vjust = 0.5, hjust = 0, size = 5, color = "black")
-
-
-
-```
-
-# Objective 2. To investigate current methodological practices within meta-analysis investigating the impacts of organochlorine pesticides. We will investigate how they currently search for existing literature, which effect sizes are used, how they adjust for heterogeneity and how they account for risk of bias. 
-
-## Figure x - Total count of each database used to search the literature within each meta-analysis
-
-```{r}
-database_count <- sd %>% 
-separate_rows(database_search, sep = ",\\s*") %>% 
-  count(database_search) %>% 
-  filter(database_search != "not reported") %>% # filter out NA 
-  arrange(desc(n)) %>% 
-  filter(n>2)
-
-database_count %>%
-  ggplot(aes(x = n, y = reorder(database_search,n), color = "#007030")) +
-  geom_point(stat = "identity", size = 6, shape = 21,fill = "#007030", color = "white") +
-  geom_segment(aes(xend = 0, yend = reorder(database_search,n))) +
-  scale_color_identity(guide = "none") +
-  scale_x_continuous(name = "Article Count", expand = c(0, 0), limits = c(0, 60)) +
-  labs(y = NULL) +
-  theme_minimal() +
-  theme(axis.text.y = element_text(size = 10),
-        axis.text.x = element_text(size = 10),
-        axis.line.x = element_line(color = "gray", size = 0.5),
-        axis.line.y = element_blank(),
-        axis.ticks.x = element_blank(),
-        axis.ticks.y = element_blank(),
-        axis.title.x = element_text(size = 12),
-        axis.title.y = element_blank(),
-        panel.grid.major.y = element_blank(),
-        panel.grid.minor.y = element_blank(),
-        legend.position = "none") +
-  geom_text(data = database_count , aes(label = n, x = n + 2, y = reorder(database_search,n)),
-            vjust = 0.5, hjust = 0, size = 5, color = "black")
-
-```
-
-
-## Figure x - Total count of each effect size measure used within each meta-analysis
-
-```{r plot effect size used }
-effectsize_count <- 
-  sd %>% 
-  separate_rows(effect_size, sep = ",\\s*") %>% 
-  count(effect_size) %>% 
-    filter(effect_size != "NA", n>1) %>% 
-  arrange(desc(n))
-
-effectsize_count %>%
-  ggplot(aes(x = n, y = reorder(effect_size,n), color = "#007030")) +
-  geom_point(stat = "identity", size = 6, shape = 21,fill = "#007030", color = "white") +
-  geom_segment(aes(xend = 0, yend = reorder(effect_size,n))) +
-  scale_color_identity(guide = "none") +
-  scale_x_continuous(name = "Article Count", expand = c(0, 0), limits = c(0, 70)) +
-  labs(y = NULL) +
-  theme_minimal() +
-  theme(axis.text.y = element_text(size = 10),
-        axis.text.x = element_text(size = 10),
-        axis.line.x = element_line(color = "gray", size = 0.5),
-        axis.line.y = element_blank(),
-        axis.ticks.x = element_blank(),
-        axis.ticks.y = element_blank(),
-        axis.title.x = element_text(size = 12),
-        axis.title.y = element_blank(),
-        panel.grid.major.y = element_blank(),
-        panel.grid.minor.y = element_blank(),
-        legend.position = "none") +
-  geom_text(data = effectsize_count, aes(label = n, x = n + 2, y = reorder(effect_size,n)),
-            vjust = 0.5, hjust = 0, size = 5, color = "black")
-
-
-```
-
-## Figure x - Total count of each software used to analyse the data within each meta-analysis
-
-```{r}
-software_count <- 
-  msp%>% 
-  separate_rows(software_analysis, sep = ",\\s*") %>% 
-  count(software_analysis) %>% 
-    filter(software_analysis != "NA") %>% 
-  arrange(desc(n))
-
-software_count %>%
-  ggplot(aes(x = n, y = reorder(software_analysis,n), color = "#007030")) +
-  geom_point(stat = "identity", size = 6, shape = 21, fill = "#007030", color = "white") +
-  geom_segment(aes(xend = 0, yend = reorder(software_analysis,n))) +
-  scale_color_identity(guide = "none") +
-  scale_x_continuous(name = "Article Count", expand = c(0, 0), limits = c(0, 50)) +
-  labs(y = NULL) +
-  theme_minimal() +
-  theme(axis.text.y = element_text(size = 10),
-        axis.text.x = element_text(size = 10),
-        axis.line.x = element_line(color = "gray", size = 0.5),
-        axis.line.y = element_blank(),
-        axis.ticks.x = element_blank(),
-        axis.ticks.y = element_blank(),
-        axis.title.x = element_text(size = 12),
-        axis.title.y = element_blank(),
-        panel.grid.major.y = element_blank(),
-        panel.grid.minor.y = element_blank(),
-        legend.position = "none") +
-  geom_text(data = software_count, aes(label = n, x = n + 2, y = reorder(software_analysis,n)),
-            vjust = 0.5, hjust = 0, size = 5, color = "black")
-
-```
-
-## Figure x - Total count of each heterogeneity test used within each meta-analysis
-```{r}
-heterogeneity_count <-  
-  sd %>% 
-  separate_rows(heterogeneity_assessment_method, sep = ",\\s*") %>% 
-  count(heterogeneity_assessment_method) %>% 
-    filter(heterogeneity_assessment_method != "NA") %>% 
-  arrange(desc(n))
-
-heterogeneity_count %>%
-  ggplot(aes(x = n, y = reorder(heterogeneity_assessment_method,n), color = "#007030")) +
-  geom_point(stat = "identity", size = 6, shape = 21, fill = "#007030", color = "white") +
-  geom_segment(aes(xend = 0, yend = reorder(heterogeneity_assessment_method,n))) +
-  scale_color_identity(guide = "none") +
-  scale_x_continuous(name = "Article Count", expand = c(0, 0), limits = c(0, 100)) +
-  labs(y = NULL) +
-  theme_minimal() +
-  theme(axis.text.y = element_text(size = 10),
-        axis.text.x = element_text(size = 10),
-        axis.line.x = element_line(color = "gray", size = 0.5),
-        axis.line.y = element_blank(),
-        axis.ticks.x = element_blank(),
-        axis.ticks.y = element_blank(),
-        axis.title.x = element_text(size = 12),
-        axis.title.y = element_blank(),
-        panel.grid.major.y = element_blank(),
-        panel.grid.minor.y = element_blank(),
-        legend.position = "none") +
-  geom_text(data = heterogeneity_count, aes(label = n, x = n + 2, y = reorder(heterogeneity_assessment_method,n)),
-            vjust = 0.5, hjust = 0, size = 5, color = "black")
-
-
-```
- 
-
-## Figure xx - Total count for each sensitivity analysis used in each meta-analysis
-```{r}
-
-sensitivity_count <-
-  sd %>% 
-  separate_rows(sensitivity_analysis_method, sep = ",\\s*") %>% 
-  count(sensitivity_analysis_method) %>% 
-    filter(sensitivity_analysis_method != "NA") %>% 
-  arrange(desc(n))
-
-sensitivity_count %>%
-  ggplot(aes(x = n, y = reorder(sensitivity_analysis_method,n), color = "#007030")) +
-  geom_point(stat = "identity", size = 6, shape = 21, fill = "#007030", color = "white") +
-  geom_segment(aes(xend = 0, yend = reorder(sensitivity_analysis_method,n))) +
-  scale_color_identity(guide = "none") +
-  scale_x_continuous(name = "Article Count", expand = c(0, 0), limits = c(0, 70)) +
-  labs(y = NULL) +
-  theme_minimal() +
-  theme(axis.text.y = element_text(size = 10),
-        axis.text.x = element_text(size = 10),
-        axis.line.x = element_line(color = "gray", size = 0.5),
-        axis.line.y = element_blank(),
-        axis.ticks.x = element_blank(),
-        axis.ticks.y = element_blank(),
-        axis.title.x = element_text(size = 12),
-        axis.title.y = element_blank(),
-        panel.grid.major.y = element_blank(),
-        panel.grid.minor.y = element_blank(),
-        legend.position = "none") +
-  geom_text(data = sensitivity_count, aes(label = n, x = n + 2, y = reorder(sensitivity_analysis_method,n)),
-            vjust = 0.5, hjust = 0, size = 5, color = "black")
-
-
-```
-
-
-## Figure x - Total count of each type of between study bias investiagted in each meta-analysis
-```{r}
-bias_type_count <- 
-  sd %>% 
-  separate_rows(bias_assessment_type, sep = ",\\s*") %>% 
-  count(bias_assessment_type) %>% 
-    filter(bias_assessment_type!= "NA") %>% 
-  arrange(desc(n))
-  
-bias_type_count %>%
-  ggplot(aes(x = n, y = reorder(bias_assessment_type,n), color = "#007030")) +
-  geom_point(stat = "identity", size = 6, shape = 21, fill = "#007030", color = "white") +
-  geom_segment(aes(xend = 0, yend = reorder(bias_assessment_type,n))) +
-  scale_color_identity(guide = "none") +
+# Create the count plot 
+ocp_count %>%
+  ggplot(aes(x = n, y = reorder(ocp, n), fill = "#007030")) +
+  geom_bar(stat = "identity", width = 0.6, alpha = 0.7) +
+  geom_text(data = ocp_pct, aes(label = paste0("(", round(percentage, 0), "%)")), 
+            position = position_dodge(width = 0.9), hjust = -0.9, size = 3, color = "black", fontface = "bold") +
+  geom_text(aes(label = n, x = n + 0.5, y = reorder(ocp, n)), vjust = 0.5, hjust = 0, size = 4, color = "black") +
+  scale_fill_identity(guide = "none") +
   scale_x_continuous(name = "Article Count", expand = c(0, 0), limits = c(0, 75)) +
   labs(y = NULL) +
   theme_minimal() +
@@ -501,111 +255,542 @@ bias_type_count %>%
         axis.title.y = element_blank(),
         panel.grid.major.y = element_blank(),
         panel.grid.minor.y = element_blank(),
-        legend.position = "none") +
-  geom_text(data = bias_type_count, aes(label = n, x = n + 2, y = reorder(bias_assessment_type,n)),
-            vjust = 0.5, hjust = 0, size = 5, color = "black")
+        legend.position = "none")
+ 
+```
+
+## Figure x - Total proportion of meta-analysis per subject 
+note: some meta-analysis may contribute to multiple sections if involve multiple subjects 
+```{r}
+# Calculate total count for each category
+subject_count <- 
+  sub %>% 
+    separate_rows(subject, sep = ",\\s+") %>% 
+    count(subject)
+
+# Calculate proportion and percentage for each category
+subject_pct <- subject_count %>%
+  mutate(proportion = n/sum(subject_count$n),
+         percentage = proportion*100)
+
+# Create the count plot
+subject_count %>%
+  ggplot(aes(x = n, y = reorder(subject, n), fill = "#007030")) +
+  geom_bar(stat = "identity", width = 0.3 , alpha = 0.7) +
+  geom_text(data = subject_pct, aes(label = paste0("(", round(percentage, 0), "%)")), 
+            position = position_dodge(width = 0.9), hjust = -0.7, size = 3, color = "black", fontface = "bold") +
+  geom_text(aes(label = n, x = n + 0.5, y = reorder(subject, n)), vjust = 0.5, hjust = 0, size = 4, color = "black") +
+  scale_fill_identity(guide = "none") +
+  scale_x_continuous(name = "Article Count", expand = c(0, 0), limits = c(0, 90)) +
+  labs(y = NULL) +
+  theme_minimal() +
+  theme(axis.text.y = element_text(size = 10),
+        axis.text.x = element_text(size = 10),
+        axis.line.x = element_line(color = "gray", size = 0.5),
+        axis.line.y = element_blank(),
+        axis.ticks.x = element_blank(),
+        axis.ticks.y = element_blank(),
+        axis.title.x = element_text(size = 12),
+        axis.title.y = element_blank(),
+        panel.grid.major.y = element_blank(),
+        panel.grid.minor.y = element_blank(),
+        legend.position = "none")
+
+```
+
+
+```{r}
+# Calculate total count for each category
+impact_count <- 
+  im %>% 
+    separate_rows(impact, sep = ",\\s+") %>% 
+    count(impact) %>% 
+  filter(impact != "NA") %>%
+  mutate(impact = ifelse(n<= 1, "other", as.character(impact))) %>% 
+    group_by(impact) %>%
+  summarise(n = sum(n))
+
+# Calculate proportion and percentage for each category
+impact_pct <- impact_count %>%
+  mutate(proportion = n/sum(impact_count$n),
+         percentage = proportion*100)
+
+# Generate a graph
+impact_count %>%
+  ggplot(aes(x = n, y = reorder(impact, n), fill = "#007030")) +
+  geom_bar(stat = "identity", width = 0.3 , alpha = 0.7) +
+  geom_text(data = impact_pct, aes(label = paste0("(", round(percentage, 1), "%)")), 
+            position = position_dodge(width = 0.9), hjust = -0.7, size = 3, color = "black", fontface = "bold") +
+  geom_text(aes(label = n, x = n, y = reorder(impact, n)), vjust = 0.5, hjust = -0.2, size = 4, color = "black") +
+  scale_fill_identity(guide = "none") +
+  scale_x_continuous(name = "Article Count", limits = c(0, max(impact_count$n)*1.2)) +
+  labs(y = NULL) +
+  theme_minimal() +
+  theme(
+    axis.text.y = element_text(size = 10),
+    axis.text.x = element_text(size = 10),
+    axis.line.x = element_line(color = "gray", size = 0.5),
+    axis.line.y = element_blank(),
+    axis.ticks.x = element_blank(),
+    axis.ticks.y = element_blank(),
+    axis.title.x = element_text(size = 12),
+    axis.title.y = element_blank(),
+    panel.grid.major.y = element_blank(),
+    panel.grid.minor.y = element_blank(),
+    legend.position = "none"
+  )
+
+```
+
+
+# Objective 2. To investigate current methodological practices within meta-analysis investigating the impacts of organochlorine pesticides. We will investigate how they currently search for existing literature, which effect sizes are used, how they adjust for heterogeneity and how they account for risk of bias. 
+
+## Figure x - Total count of each database used to search the literature within each meta-analysis
+```{r}
+# Calculate the total count for each category
+database_count <- sd %>% 
+  separate_rows(database_search, sep = ",\\s+") %>% 
+  count(database_search) %>% 
+  filter(database_search != "not reported") %>% 
+  arrange(desc(n)) %>% 
+  mutate(database_search = ifelse(n<= 2, "other", as.character(database_search))) %>% 
+    group_by(database_search) %>%
+  summarise(n = sum(n))
+
+
+# Calculate proportion and percentage for each category
+database_pct <- database_count %>%
+  mutate(proportion = n / sum(database_count$n),
+         percentage = proportion * 100)
+
+# Create the count plot
+database_count %>%
+  ggplot(aes(x = n, y = reorder(database_search, n), fill = "#007030")) +
+  geom_bar(stat = "identity", width = 0.3 , alpha = 0.7) +
+  geom_text(data = database_pct, aes(label = paste0("(", round(percentage, 0), "%)")), 
+            position = position_dodge(width = 0.9), hjust = -0.7, size = 3, color = "black", fontface = "bold") +
+  geom_text(aes(label = n, x = n, y = reorder(database_search, n)), vjust = 0.5, hjust = -0.1, size = 4, color = "black") +
+  scale_fill_identity(guide = "none") +
+  scale_x_continuous(name = "Article Count", limits = c(0, 60)) +
+  labs(y = NULL) +
+  theme_minimal() +
+  theme(
+    axis.text.y = element_text(size = 10),
+    axis.text.x = element_text(size = 10),
+    axis.line.x = element_line(color = "gray", size = 0.5),
+    axis.line.y = element_blank(),
+    axis.ticks.x = element_blank(),
+    axis.ticks.y = element_blank(),
+    axis.title.x = element_text(size = 12),
+    axis.title.y = element_blank(),
+    panel.grid.major.y = element_blank(),
+    panel.grid.minor.y = element_blank(),
+    legend.position = "none"
+  )
 
 
 ```
 
+```{r}
+
+
+df <- im %>%
+  left_join(ocp, by = "study_id") %>%
+  left_join(sub, by = "study_id") 
+
+df <- df %>% 
+    separate_rows(subject, sep = ",\\s+") %>% 
+    separate_rows(ocp, sep = ",\\s+") %>% 
+    separate_rows(impact, sep = ",\\s+")
+
+# Preprocess dataset to count frequencies
+df <- df %>%
+  group_by(ocp, subject, impact) %>%
+  summarise(freq = n()) %>%
+  ungroup()
+
+# Filter out ocp with count <= 5
+df_filtered <- df %>%
+  group_by(ocp) %>%
+  filter(sum(freq) > 5)
+
+df_filtered1 <- df_filtered %>% 
+  group_by(impact) %>% 
+    filter(sum(freq) > 4)
+
+
+# Define a vector with the desired order of the subjects
+subject_order <- c("environment", "non-human animal", "human")  
+
+# Transform 'subject' into an ordered factor
+df_filtered1$subject <- factor(df_filtered1$subject, levels = subject_order, ordered = TRUE)
+
+# Create alluvial plot
+ggplot(data = df_filtered1,
+       aes(axis1 = ocp, axis2 = subject, axis3 = impact, y = freq)) +
+  scale_x_discrete(limits = c("OCP", "Subject", "Impact"), expand = c(.1, .35)) +
+  xlab("Variables") +
+  geom_alluvium(aes(fill = subject)) +
+  geom_stratum(width = 7/10, fill = "white", color = "black") +
+  geom_text(stat = "stratum", aes(label = after_stat(stratum)), size = 3) +
+  theme_minimal() +
+  scale_fill_brewer(palette = "Dark2")
+
+
+
+
+
+```
+
+## Figure x - Total count of each effect size measure used within each meta-analysis
+```{r plot effect size used }
+# Calculate the total count for each category
+effectsize_count <- sd %>% 
+  separate_rows(effect_size, sep = ",\\s+") %>% 
+  count(effect_size) %>%
+  filter(effect_size != "NA") %>%
+  mutate(effect_size = ifelse(n<= 2, "other", as.character(effect_size))) %>% 
+    group_by(effect_size) %>%
+  summarise(n = sum(n))
+
+# Calculate proportion and percentage for each category
+effectsize_pct <- effectsize_count %>%
+  mutate(proportion = n / sum(effectsize_count$n),
+         percentage = proportion * 100)
+
+# Create the count plot
+effectsize_count %>%
+  ggplot(aes(x = n, y = reorder(effect_size, n), fill = "#007030")) +
+  geom_bar(stat = "identity", width = 0.3 , alpha = 0.7) +
+  geom_text(data = effectsize_pct, aes(label = paste0("(", round(percentage, 0), "%)")), 
+            position = position_dodge(width = 0.9), hjust = -0.7, size = 3, color = "black", fontface = "bold") +
+  geom_text(aes(label = n, x = n, y = reorder(effect_size, n)), vjust = 0.5, hjust = -0.2, size = 4, color = "black") +
+  scale_fill_identity(guide = "none") +
+  scale_x_continuous(name = "Article Count", limits = c(0, 60)) +
+  labs(y = NULL) +
+  theme_minimal() +
+  theme(
+    axis.text.y = element_text(size = 10),
+    axis.text.x = element_text(size = 10),
+    axis.line.x = element_line(color = "gray", size = 0.5),
+    axis.line.y = element_blank(),
+    axis.ticks.x = element_blank(),
+    axis.ticks.y = element_blank(),
+    axis.title.x = element_text(size = 12),
+    axis.title.y = element_blank(),
+    panel.grid.major.y = element_blank(),
+    panel.grid.minor.y = element_blank(),
+    legend.position = "none"
+  )
+
+
+
+
+```
+
+## Figure x - Total count of each software used to analyse the data within each meta-analysis
+```{r}
+# Calculate the total count for each category
+software_count <- sd %>% 
+  separate_rows(software_analysis, sep = ",\\s+") %>% 
+  count(software_analysis) %>%
+  filter(software_analysis != "NA") %>%
+  mutate(software_analysis = ifelse(n<= 2, "other", as.character(software_analysis))) %>% 
+    group_by(software_analysis) %>%
+  summarise(n = sum(n))
+
+# Calculate proportion and percentage for each category
+software_pct <- software_count %>%
+  mutate(proportion = n / sum(software_count$n),
+         percentage = proportion * 100)
+
+# Create the count plot
+software_count %>%
+  ggplot(aes(x = n, y = reorder(software_analysis, n), fill = "#007030")) +
+  geom_bar(stat = "identity", width = 0.3 , alpha = 0.7) +
+  geom_text(data = software_pct, aes(label = paste0("(", round(percentage, 0), "%)")), 
+            position = position_dodge(width = 0.9), hjust = -0.7, size = 3, color = "black", fontface = "bold") +
+  geom_text(aes(label = n, x = n, y = reorder(software_analysis, n)), vjust = 0.5, hjust = -0.2, size = 4, color = "black") +
+  scale_fill_identity(guide = "none") +
+  scale_x_continuous(name = "Article Count", limits = c(0, 60)) +
+  labs(y = NULL) +
+  theme_minimal() +
+  theme(
+    axis.text.y = element_text(size = 10),
+    axis.text.x = element_text(size = 10),
+    axis.line.x = element_line(color = "gray", size = 0.5),
+    axis.line.y = element_blank(),
+    axis.ticks.x = element_blank(),
+    axis.ticks.y = element_blank(),
+    axis.title.x = element_text(size = 12),
+    axis.title.y = element_blank(),
+    panel.grid.major.y = element_blank(),
+    panel.grid.minor.y = element_blank(),
+    legend.position = "none"
+  )
+
+
+```
+
+## Figure x - Total count of each heterogeneity test used within each meta-analysis
+```{r}
+# Calculate the total count for each category
+heterogeneity_count <- sd %>% 
+  separate_rows(heterogeneity_assessment_method, sep = ",\\s+") %>% 
+  count(heterogeneity_assessment_method) %>%
+  filter(heterogeneity_assessment_method != "NA") %>%
+  mutate(heterogeneity_assessment_method = ifelse(n<= 2, "other", as.character(heterogeneity_assessment_method))) %>% 
+    group_by(heterogeneity_assessment_method) %>%
+  summarise(n = sum(n))
+
+# Calculate proportion and percentage for each category
+heterogeneity_pct <- heterogeneity_count %>%
+  mutate(proportion = n / sum(heterogeneity_count$n),
+         percentage = proportion * 100)
+
+# Create the count plot
+heterogeneity_count %>%
+  ggplot(aes(x = n, y = reorder(heterogeneity_assessment_method, n), fill = "#007030")) +
+  geom_bar(stat = "identity", width = 0.3 , alpha = 0.7) +
+  geom_text(data = heterogeneity_pct, aes(label = paste0("(", round(percentage, 0), "%)")), 
+            position = position_dodge(width = 0.9), hjust = -0.7, size = 3, color = "black", fontface = "bold") +
+  geom_text(aes(label = n, x = n, y = reorder(heterogeneity_assessment_method, n)), vjust = 0.5, hjust = -0.2, size = 4, color = "black") +
+  scale_fill_identity(guide = "none") +
+  scale_x_continuous(name = "Article Count", limits = c(0, 100)) +
+  labs(y = NULL) +
+  theme_minimal() +
+  theme(
+    axis.text.y = element_text(size = 10),
+    axis.text.x = element_text(size = 10),
+    axis.line.x = element_line(color = "gray", size = 0.5),
+    axis.line.y = element_blank(),
+    axis.ticks.x = element_blank(),
+    axis.ticks.y = element_blank(),
+    axis.title.x = element_text(size = 12),
+    axis.title.y = element_blank(),
+    panel.grid.major.y = element_blank(),
+    panel.grid.minor.y = element_blank(),
+    legend.position = "none"
+  )
+
+
+
+```
+ 
+## Figure xx - Total count for each sensitivity analysis used in each meta-analysis
+```{r}
+# Calculate the total count for each category
+sensitivity_count <- sd %>% 
+  separate_rows(sensitivity_analysis_method, sep = ",\\s+") %>% 
+  count(sensitivity_analysis_method) %>%
+  filter(sensitivity_analysis_method != "NA") %>%
+  mutate(sensitivity_analysis_method = ifelse(n<= 1, "other", as.character(sensitivity_analysis_method))) %>% 
+    group_by(sensitivity_analysis_method) %>%
+  summarise(n = sum(n))
+
+# Calculate proportion and percentage for each category
+sensitivity_pct <- sensitivity_count %>%
+  mutate(proportion = n / sum(sensitivity_count$n),
+         percentage = proportion * 100)
+
+# Create the count plot
+sensitivity_count %>%
+  ggplot(aes(x = n, y = reorder(sensitivity_analysis_method, n), fill = "#007030")) +
+  geom_bar(stat = "identity", width = 0.3 , alpha = 0.7) +
+  geom_text(data = sensitivity_pct, aes(label = paste0("(", round(percentage, 0), "%)")), 
+            position = position_dodge(width = 0.9), hjust = -0.7, size = 3, color = "black", fontface = "bold") +
+  geom_text(aes(label = n, x = n, y = reorder(sensitivity_analysis_method, n)), vjust = 0.5, hjust = -0.2, size = 4, color = "black") +
+  scale_fill_identity(guide = "none") +
+  scale_x_continuous(name = "Article Count", limits = c(0, 40)) +
+  labs(y = NULL) +
+  theme_minimal() +
+  theme(
+    axis.text.y = element_text(size = 10),
+    axis.text.x = element_text(size = 10),
+    axis.line.x = element_line(color = "gray", size = 0.5),
+    axis.line.y = element_blank(),
+    axis.ticks.x = element_blank(),
+    axis.ticks.y = element_blank(),
+    axis.title.x = element_text(size = 12),
+    axis.title.y = element_blank(),
+    panel.grid.major.y = element_blank(),
+    panel.grid.minor.y = element_blank(),
+    legend.position = "none"
+  )
+
+```
+
+## Figure x - Total count of each type of between study bias investiagted in each meta-analysis
+```{r}
+# Calculate the total count for each category
+bias_type_count <- sd %>% 
+  separate_rows(bias_assessment_type, sep = ",\\s+") %>% 
+  count(bias_assessment_type) %>%
+  filter(bias_assessment_type != "NA") %>%
+    group_by(bias_assessment_type) %>%
+  summarise(n = sum(n))
+
+# Calculate proportion and percentage for each category
+bias_type_pct <- bias_type_count %>%
+  mutate(proportion = n / sum(bias_type_count$n),
+         percentage = proportion * 100)
+
+# Create the count plot
+bias_type_count %>%
+  ggplot(aes(x = n, y = reorder(bias_assessment_type, n), fill = "#007030")) +
+  geom_bar(stat = "identity", width = 0.3 , alpha = 0.7) +
+  geom_text(data = bias_type_pct, aes(label = paste0("(", round(percentage, 0), "%)")), 
+            position = position_dodge(width = 0.9), hjust = -0.7, size = 3, color = "black", fontface = "bold") +
+  geom_text(aes(label = n, x = n, y = reorder(bias_assessment_type, n)), vjust = 0.5, hjust = -0.2, size = 4, color = "black") +
+  scale_fill_identity(guide = "none") +
+  scale_x_continuous(name = "Article Count", limits = c(0, 75)) +
+  labs(y = NULL) +
+  theme_minimal() +
+  theme(
+    axis.text.y = element_text(size = 10),
+    axis.text.x = element_text(size = 10),
+    axis.line.x = element_line(color = "gray", size = 0.5),
+    axis.line.y = element_blank(),
+    axis.ticks.x = element_blank(),
+    axis.ticks.y = element_blank(),
+    axis.title.x = element_text(size = 12),
+    axis.title.y = element_blank(),
+    panel.grid.major.y = element_blank(),
+    panel.grid.minor.y = element_blank(),
+    legend.position = "none"
+  )
+
+
+
+```
 
 ## Figure x - Total count for each statistical methodology to investigate within study bias used in each meta-analysis
 ```{r}
-bias_method_count <- 
-  sd %>% 
-  separate_rows(bias_assessment_method, sep = ",\\s*") %>% 
-  count(bias_assessment_method) %>% 
-    filter(bias_assessment_method!= "NA") %>% 
-  arrange(desc(n))
-  
+# Calculate the total count for each category
+bias_method_count <- sd %>% 
+  separate_rows(bias_assessment_method, sep = ",\\s+") %>% 
+  count(bias_assessment_method) %>%
+  filter(bias_assessment_method != "NA") %>%
+    group_by(bias_assessment_method) %>%
+  summarise(n = sum(n))
+
+# Calculate proportion and percentage for each category
+bias_method_pct <- bias_method_count %>%
+  mutate(proportion = n / sum(bias_method_count$n),
+         percentage = proportion * 100)
+
+# Create the count plot
 bias_method_count %>%
-  ggplot(aes(x = n, y = reorder(bias_assessment_method,n), color = "#007030")) +
-  geom_point(stat = "identity", size = 6, shape = 21, fill = "#007030", color = "white") +
-  geom_segment(aes(xend = 0, yend = reorder(bias_assessment_method,n))) +
-  scale_color_identity(guide = "none") +
-  scale_x_continuous(name = "Article Count", expand = c(0, 0), limits = c(0, 70)) +
+  ggplot(aes(x = n, y = reorder(bias_assessment_method, n), fill = "#007030")) +
+  geom_bar(stat = "identity", width = 0.3 , alpha = 0.7) +
+  geom_text(data = bias_method_pct, aes(label = paste0("(", round(percentage, 0), "%)")), 
+            position = position_dodge(width = 0.9), hjust = -0.7, size = 3, color = "black", fontface = "bold") +
+  geom_text(aes(label = n, x = n, y = reorder(bias_assessment_method, n)), vjust = 0.5, hjust = -0.2, size = 4, color = "black") +
+  scale_fill_identity(guide = "none") +
+  scale_x_continuous(name = "Article Count", limits = c(0, 70)) +
   labs(y = NULL) +
   theme_minimal() +
-  theme(axis.text.y = element_text(size = 10),
-        axis.text.x = element_text(size = 10),
-        axis.line.x = element_line(color = "gray", size = 0.5),
-        axis.line.y = element_blank(),
-        axis.ticks.x = element_blank(),
-        axis.ticks.y = element_blank(),
-        axis.title.x = element_text(size = 12),
-        axis.title.y = element_blank(),
-        panel.grid.major.y = element_blank(),
-        panel.grid.minor.y = element_blank(),
-        legend.position = "none") +
-  geom_text(data = bias_method_count, aes(label = n, x = n + 2, y = reorder(bias_assessment_method,n)),
-            vjust = 0.5, hjust = 0, size = 5, color = "black")
-```
+  theme(
+    axis.text.y = element_text(size = 10),
+    axis.text.x = element_text(size = 10),
+    axis.line.x = element_line(color = "gray", size = 0.5),
+    axis.line.y = element_blank(),
+    axis.ticks.x = element_blank(),
+    axis.ticks.y = element_blank(),
+    axis.title.x = element_text(size = 12),
+    axis.title.y = element_blank(),
+    panel.grid.major.y = element_blank(),
+    panel.grid.minor.y = element_blank(),
+    legend.position = "none"
+  )
 
+```
 
 ## Figure x - Total count for each methodology used to visualise the results of the meta-analsis
 ```{r}
-vizualisation_count <- 
-  sd %>% 
-  separate_rows(visualization_method, sep = ",\\s*") %>% 
-  count(visualization_method) %>% 
-   filter(visualization_method!= "NA") %>% 
-  arrange(desc(n))
+# Calculate the total count for each category
+visualization_count <- sd %>% 
+  separate_rows(visualization_method, sep = ",\\s+") %>% 
+  count(visualization_method) %>%
+  filter(visualization_method != "NA") %>%
+  mutate(visualization_method = ifelse(n<= 2, "other", as.character(visualization_method))) %>% 
+    group_by(visualization_method) %>%
+  summarise(n = sum(n))
 
-vizualisation_count %>%
-  ggplot(aes(x = n, y = reorder(visualization_method,n), color = "#007030")) +
-  geom_point(stat = "identity", size = 6, shape = 21, fill = "#007030", color = "white") +
-  geom_segment(aes(xend = 0, yend = reorder(visualization_method,n))) +
-  scale_color_identity(guide = "none") +
-  scale_x_continuous(name = "Article Count", expand = c(0, 0), limits = c(0, 100)) +
+# Calculate proportion and percentage for each category
+visualization_pct <- visualization_count %>%
+  mutate(proportion = n / sum(visualization_count$n),
+         percentage = proportion * 100)
+
+# Create the count plot
+visualization_count %>%
+  ggplot(aes(x = n, y = reorder(visualization_method, n), fill = "#007030")) +
+  geom_bar(stat = "identity", width = 0.3 , alpha = 0.7) +
+  geom_text(data = visualization_pct, aes(label = paste0("(", round(percentage, 0), "%)")), 
+            position = position_dodge(width = 0.9), hjust = -0.7, size = 3, color = "black", fontface = "bold") +
+  geom_text(aes(label = n, x = n, y = reorder(visualization_method, n)), vjust = 0.5, hjust = -0.2, size = 4, color = "black") +
+  scale_fill_identity(guide = "none") +
+  scale_x_continuous(name = "Article Count", limits = c(0, 100)) +
   labs(y = NULL) +
   theme_minimal() +
-  theme(axis.text.y = element_text(size = 10),
-        axis.text.x = element_text(size = 10),
-        axis.line.x = element_line(color = "gray", size = 0.5),
-        axis.line.y = element_blank(),
-        axis.ticks.x = element_blank(),
-        axis.ticks.y = element_blank(),
-        axis.title.x = element_text(size = 12),
-        axis.title.y = element_blank(),
-        panel.grid.major.y = element_blank(),
-        panel.grid.minor.y = element_blank(),
-        legend.position = "none") +
-  geom_text(data = vizualisation_count, aes(label = n, x = n + 2, y = reorder(visualization_method,n)),
-            vjust = 0.5, hjust = 0, size = 5, color = "black")
-```
+  theme(
+    axis.text.y = element_text(size = 10),
+    axis.text.x = element_text(size = 10),
+    axis.line.x = element_line(color = "gray", size = 0.5),
+    axis.line.y = element_blank(),
+    axis.ticks.x = element_blank(),
+    axis.ticks.y = element_blank(),
+    axis.title.x = element_text(size = 12),
+    axis.title.y = element_blank(),
+    panel.grid.major.y = element_blank(),
+    panel.grid.minor.y = element_blank(),
+    legend.position = "none"
+  )
 
+```
 
 ## Figure x - Total count for each reporting guideline followed in each meta-analysis
 ```{r}
 
-reporting_guide_count <- 
-  sd %>% 
-  separate_rows(reporting_standards_type, sep = ",\\s*") %>% 
-  count(reporting_standards_type) %>% 
-   filter(reporting_standards_type!= "NA") %>% 
-  arrange(desc(n))
+# Calculate the total count for each category
+reporting_guide_count <- sd %>% 
+  separate_rows(reporting_standards_type, sep = ",\\s+") %>% 
+  count(reporting_standards_type) %>%
+  filter(reporting_standards_type != "NA") %>%
+  mutate(reporting_standards_type = ifelse(n<= 2, "other", as.character(reporting_standards_type))) %>% 
+    group_by(reporting_standards_type) %>%
+  summarise(n = sum(n))
 
+# Calculate proportion and percentage for each category
+reporting_guide_pct <- reporting_guide_count %>%
+  mutate(proportion = n / sum(reporting_guide_count$n),
+         percentage = proportion * 100)
+
+# Create the count plot
 reporting_guide_count %>%
-  ggplot(aes(x = n, y = reorder(reporting_standards_type,n), color = "#007030")) +
-  geom_point(stat = "identity", size = 6, shape = 21, fill = "#007030", color = "white") +
-  geom_segment(aes(xend = 0, yend = reorder(reporting_standards_type,n))) +
-  scale_color_identity(guide = "none") +
-  scale_x_continuous(name = "Article Count", expand = c(0, 0), limits = c(0, 80)) +
+  ggplot(aes(x = n, y = reorder(reporting_standards_type, n), fill = "#007030")) +
+  geom_bar(stat = "identity", width = 0.3 , alpha = 0.7) +
+  geom_text(data = reporting_guide_pct, aes(label = paste0("(", round(percentage, 0), "%)")), 
+            position = position_dodge(width = 0.9), hjust = -0.7, size = 3, color = "black", fontface = "bold") +
+  geom_text(aes(label = n, x = n, y = reorder(reporting_standards_type, n)), vjust = 0.5, hjust = -0.2, size = 4, color = "black") +
+  scale_fill_identity(guide = "none") +
+  scale_x_continuous(name = "Article Count", limits = c(0, 80)) +
   labs(y = NULL) +
   theme_minimal() +
-  theme(axis.text.y = element_text(size = 10),
-        axis.text.x = element_text(size = 10),
-        axis.line.x = element_line(color = "gray", size = 0.5),
-        axis.line.y = element_blank(),
-        axis.ticks.x = element_blank(),
-        axis.ticks.y = element_blank(),
-        axis.title.x = element_text(size = 12),
-        axis.title.y = element_blank(),
-        panel.grid.major.y = element_blank(),
-        panel.grid.minor.y = element_blank(),
-        legend.position = "none") +
-  geom_text(data = reporting_guide_count, aes(label = n, x = n + 2, y = reorder(reporting_standards_type,n)),
-            vjust = 0.5, hjust = 0, size = 5, color = "black")
+  theme(
+    axis.text.y = element_text(size = 10),
+    axis.text.x = element_text(size = 10),
+    axis.line.x = element_line(color = "gray", size = 0.5),
+    axis.line.y = element_blank(),
+    axis.ticks.x = element_blank(),
+    axis.ticks.y = element_blank(),
+    axis.title.x = element_text(size = 12),
+    axis.title.y = element_blank(),
+    panel.grid.major.y = element_blank(),
+    panel.grid.minor.y = element_blank(),
+    legend.position = "none"
+  )
+
 ```
 
 - **Objective 2.	Critical appraisal: How robust are syntheses of organochlorine pesticide evidence?** We will examine the included meta-analyses for their reporting quality and potential biases, in order to assess reliability of reviews’ conclusions, reveal syntheses that should be re-done, and highlight the aspects of review methodology that need to be improved.
