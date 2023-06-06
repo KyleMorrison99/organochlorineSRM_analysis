@@ -342,6 +342,50 @@ impact_count %>%
 
 ```
 
+## Alluvial plot of ocp, subjecty and impact 
+```{r}
+
+# Transform the data 
+df <- im %>%
+  left_join(ocp, by = "study_id") %>%
+  left_join(sub, by = "study_id") %>%
+  separate_rows(subject, sep = ",\\s+") %>% 
+  separate_rows(ocp, sep = ",\\s+") %>% 
+  separate_rows(impact, sep = ",\\s+") %>%
+  mutate(ocp_convert = case_when( # Rename isomers and metabolites to parent chemical (besides DDT, DDD and DDE which are just isomers)
+    grepl("DDT", ocp, ignore.case = TRUE) ~ "DDT", 
+    grepl("DDD", ocp, ignore.case = TRUE) ~ "DDD", 
+    grepl("DDE", ocp, ignore.case = TRUE) ~ "DDE", 
+    grepl("HCH|Hexachloro|BHC|Lindane", ocp, ignore.case = TRUE) ~ "Hexachlorohexane", 
+    grepl("Chlordane", ocp, ignore.case = TRUE) ~ "Chlordane",  
+    grepl("Endosulfan", ocp, ignore.case = TRUE) ~ "Endosulfan", 
+    grepl("Nonachlor", ocp, ignore.case = TRUE) ~ "Nonachlore", 
+    grepl("Heptachlor", ocp, ignore.case = TRUE) ~ "Heptachlor",
+    grepl("TCDD", ocp, ignore.case = TRUE) ~ "TCDD", 
+    grepl("Endrin", ocp, ignore.case = TRUE) ~ "Endrin",
+    TRUE ~ ocp)) %>%
+  filter(!grepl("not reported", ocp_convert, ignore.case = TRUE)) %>%
+  group_by(ocp_convert, subject, impact) %>%
+  summarise(freq = n(), .groups = 'drop') %>%
+  group_by(ocp_convert) %>%
+  filter(sum(freq) > 2) %>% # filtered for ocp's with more than two occurrences 
+  group_by(impact) %>% 
+  filter(sum(freq) > 3) %>% # filter for impacts with more than three occurrences 
+  mutate(subject = factor(subject, levels = c("environment", "non-human animal", "human"), ordered = TRUE))
+
+
+# Plot alluvial plot between ocp, subject and impact 
+ggplot(data = df,
+       aes(axis1 = ocp_convert, axis2 = subject, axis3 = impact, y = freq)) +
+  scale_x_discrete(limits = c("Organochlorine Pesticide", "Subject", "Impact"), expand = c(.05, .10)) +
+  xlab("Variables") +
+  geom_alluvium(aes(fill = subject)) +
+  geom_stratum(width = 1/2, fill = "white", color = "black") +
+  geom_text(stat = "stratum", aes(label = after_stat(stratum)), size = 3) +
+  theme_minimal() +
+  scale_fill_brewer(palette = "Dark2", name = "Subject Category")
+```
+
 
 # Objective 2. To investigate current methodological practices within meta-analysis investigating the impacts of organochlorine pesticides. We will investigate how they currently search for existing literature, which effect sizes are used, how they adjust for heterogeneity and how they account for risk of bias. 
 
@@ -391,56 +435,7 @@ database_count %>%
 
 ```
 
-```{r}
 
-
-df <- im %>%
-  left_join(ocp, by = "study_id") %>%
-  left_join(sub, by = "study_id") 
-
-df <- df %>% 
-    separate_rows(subject, sep = ",\\s+") %>% 
-    separate_rows(ocp, sep = ",\\s+") %>% 
-    separate_rows(impact, sep = ",\\s+")
-
-# Preprocess dataset to count frequencies
-df <- df %>%
-  group_by(ocp, subject, impact) %>%
-  summarise(freq = n()) %>%
-  ungroup()
-
-# Filter out ocp with count <= 5
-df_filtered <- df %>%
-  group_by(ocp) %>%
-  filter(sum(freq) > 5)
-
-df_filtered1 <- df_filtered %>% 
-  group_by(impact) %>% 
-    filter(sum(freq) > 4)
-
-
-# Define a vector with the desired order of the subjects
-subject_order <- c("environment", "non-human animal", "human")  
-
-# Transform 'subject' into an ordered factor
-df_filtered1$subject <- factor(df_filtered1$subject, levels = subject_order, ordered = TRUE)
-
-# Create alluvial plot
-ggplot(data = df_filtered1,
-       aes(axis1 = ocp, axis2 = subject, axis3 = impact, y = freq)) +
-  scale_x_discrete(limits = c("OCP", "Subject", "Impact"), expand = c(.1, .35)) +
-  xlab("Variables") +
-  geom_alluvium(aes(fill = subject)) +
-  geom_stratum(width = 7/10, fill = "white", color = "black") +
-  geom_text(stat = "stratum", aes(label = after_stat(stratum)), size = 3) +
-  theme_minimal() +
-  scale_fill_brewer(palette = "Dark2")
-
-
-
-
-
-```
 
 ## Figure x - Total count of each effect size measure used within each meta-analysis
 ```{r plot effect size used }
