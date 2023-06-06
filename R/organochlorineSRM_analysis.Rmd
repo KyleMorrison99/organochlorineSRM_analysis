@@ -84,16 +84,14 @@ bib_sco <- convert2df(here("data","bib_sco.bib"), dbsource = "scopus", format = 
 
 ## Figure 1 - Time trends of number of meta-analysis
 ```{r}
-# Transform the data
+# Data Transformation
+# Count the number of publications per year and calculate cumulative sum
 sd1 <- sd %>%
   count(publication_year) %>%
   mutate(n_cumulative = cumsum(n))
 
-# Calculate the maximum y scale for the secondary axis
-max_scale <- max(sd$n)
-
-# Create the annual count plot
-annual_plot <- sd1 %>%
+# Annual Count Plot
+figs1a <- sd1 %>%
   ggplot(aes(x = publication_year, y = n)) +
   geom_col(fill = "#A65475", alpha = 0.7) +
   geom_text(aes(label = n), position = position_stack(vjust = 0.6), fontface = "bold", color = "white", size = 3, hjust = 0.4) +
@@ -101,22 +99,20 @@ annual_plot <- sd1 %>%
   scale_y_continuous("Annual Article Count", limits = c(0,15)) +
   labs(x = "Year") +
   theme_minimal() +
-  theme( 
-    panel.grid.major.y = element_line(color = "gray", linetype = "dashed"),
-    panel.grid.minor.y = element_blank(),
-    axis.line.x = element_line(size = 1.2),
-    axis.line.y = element_line(size = 1.2),
-    axis.title.x = element_text(size = 14, face = "bold"),
-    axis.title.y = element_text(size = 14, face = "bold"),
-    axis.text.x = element_text(angle = 45, hjust = 1, size = 10, color = "#666666"),
-    axis.text.y = element_text(size = 10, color = "#666666"),
-    plot.title = element_text(size = 20, face = "bold"),
-    plot.subtitle = element_text(size = 14),
-    plot.caption = element_text(size = 10, hjust = 0)
-  ) 
+  theme(panel.grid.major.y = element_line(color = "gray", linetype = "dashed"),
+        panel.grid.minor.y = element_blank(),
+        axis.line.x = element_line(size = 1.2),
+        axis.line.y = element_line(size = 1.2),
+        axis.title.x = element_text(size = 14, face = "bold"),
+        axis.title.y = element_text(size = 14, face = "bold"),
+        axis.text.x = element_text(angle = 45, hjust = 1, size = 10, color = "#666666"),
+        axis.text.y = element_text(size = 10, color = "#666666"),
+        plot.title = element_text(size = 20, face = "bold"),
+        plot.subtitle = element_text(size = 14),
+        plot.caption = element_text(size = 10, hjust = 0)) 
 
-# Create the cumulative count plot
-cumulative_plot <- sd1 %>%
+# Cumulative Count Plot
+figs1b <- sd1 %>%
   ggplot(aes(x = publication_year, y = n_cumulative)) +
   geom_line(color = "#54A76A", size = 1, linetype = "solid") +
   geom_point(shape = 21, size = 3, fill = "#54A76A", stroke = 0) +
@@ -125,34 +121,34 @@ cumulative_plot <- sd1 %>%
   scale_y_continuous("Cumulative Article Count", limits = c(0,120)) +
   labs(x = "Year") +
   theme_minimal() +
-  theme( 
-    panel.grid.major.y = element_line(color = "gray", linetype = "dashed"),
-    panel.grid.minor.y = element_blank(),
-    axis.line.x = element_line(size = 1.2),
-    axis.line.y = element_line(size = 1.2),
-    axis.title.x = element_text(size = 14, face = "bold"),
-    axis.title.y = element_text(size = 14, face = "bold"),
-    axis.text.x = element_text(angle = 45, hjust = 1, size = 10, color = "#666666"),
-    axis.text.y = element_text(size = 10, color = "#666666"),
-    plot.title = element_text(size = 20, face = "bold"),
-    plot.subtitle = element_text(size = 14),
-    plot.caption = element_text(size = 10, hjust = 0)
-  )
+  theme(panel.grid.major.y = element_line(color = "gray", linetype = "dashed"),
+        panel.grid.minor.y = element_blank(),
+        axis.line.x = element_line(size = 1.2),
+        axis.line.y = element_line(size = 1.2),
+        axis.title.x = element_text(size = 14, face = "bold"),
+        axis.title.y = element_text(size = 14, face = "bold"),
+        axis.text.x = element_text(angle = 45, hjust = 1, size = 10, color = "#666666"),
+        axis.text.y = element_text(size = 10, color = "#666666"),
+        plot.title = element_text(size = 20, face = "bold"),
+        plot.subtitle = element_text(size = 14),
+        plot.caption = element_text(size = 10, hjust = 0)) 
 
 # Combine the two plots
-fig1 <- annual_plot / cumulative_plot
+figs1 <- figs1a / figs1b
 
-fig1
+figs1
+
 ```
 
 
 
 ## Figure x - Total number of meta-analysis per subject 
 ```{r}
+# Join the study and subject datasets
 sd_sub <- left_join(sd, sub, by = "study_id")
 
 # Create the annual count plot
-subject_bar_plot <- sd_sub %>%
+fig1a <- sd_sub %>%
   mutate(subjects = strsplit(subject, ",\\s+")) %>%
   unnest(subjects) %>%
   count(publication_year, subjects) %>%
@@ -174,11 +170,11 @@ subject_bar_plot <- sd_sub %>%
         plot.subtitle = element_text(size = 14),
         plot.caption = element_text(size = 10, hjust = 0)) +
   scale_fill_brewer(palette = "Dark2") +
-  labs(fill = "Subject") +
+  labs(fill = "Subject Category") +
   guides(fill = guide_legend(override.aes = list(size=3)))
 
 # Create the cumulative count plot
-subject_cumulative_plot <-  sd_sub %>%
+fig1b <-  sd_sub %>%
   mutate(subjects = strsplit(subject, ",\\s+")) %>%
   unnest(subjects) %>%
   count(publication_year, subjects) %>%
@@ -205,8 +201,10 @@ subject_cumulative_plot <-  sd_sub %>%
   labs(fill = "Subject") +
   guides(fill = guide_legend(override.aes = list(size=3)))
 
-figs1 <- subject_bar_plot /  subject_cumulative_plot
-figs1
+# Combine the two plots
+fig1 <- fig1a /  fig1b
+
+fig1
 
 ```
 
@@ -224,9 +222,7 @@ ocp_count <-
   filter(!is.na(ocp)) %>% # filter out NA 
  filter(ocp != "not reported") %>% 
   arrange(desc(n)) %>% 
-  mutate(ocp = ifelse(n <= 5, "other", as.character(ocp))) %>% 
-  
-## I NEED TO LIST ALL THE OTHERS HERE WITH THEIR COUNTS
+  mutate(ocp = ifelse(n <= 3, "other", as.character(ocp))) %>%  ## I NEED TO LIST ALL THE OTHERS HERE WITH THEIR COUNTS
   group_by(ocp) %>% 
   summarise(n =sum(n))
 
@@ -242,7 +238,7 @@ ocp_count %>%
             position = position_dodge(width = 0.9), hjust = -0.9, size = 3, color = "black", fontface = "bold") +
   geom_text(aes(label = n, x = n + 0.5, y = reorder(ocp, n)), vjust = 0.5, hjust = 0, size = 4, color = "black") +
   scale_fill_identity(guide = "none") +
-  scale_x_continuous(name = "Article Count", expand = c(0, 0), limits = c(0, 75)) +
+  scale_x_continuous(name = "Article Count", expand = c(0, 0), limits = c(0, 45)) +
   labs(y = NULL) +
   theme_minimal() +
   theme(axis.text.y = element_text(size = 10),
@@ -412,7 +408,7 @@ database_count %>%
   ggplot(aes(x = n, y = reorder(database_search, n), fill = "#007030")) +
   geom_bar(stat = "identity", width = 0.3 , alpha = 0.7) +
   geom_text(data = database_pct, aes(label = paste0("(", round(percentage, 0), "%)")), 
-            position = position_dodge(width = 0.9), hjust = -0.7, size = 3, color = "black", fontface = "bold") +
+            position = position_dodge(width = 0.9),vjust = 0.5, hjust = -0.7, size = 3, color = "black", fontface = "bold") +
   geom_text(aes(label = n, x = n, y = reorder(database_search, n)), vjust = 0.5, hjust = -0.1, size = 4, color = "black") +
   scale_fill_identity(guide = "none") +
   scale_x_continuous(name = "Article Count", limits = c(0, 60)) +
@@ -435,7 +431,32 @@ database_count %>%
 
 ```
 
+ 
+```{r}
+# Data Transformation 
+database_alluvial <- sd %>% 
+    separate_rows(database_search, sep = ",\\s+") %>%
+    separate_rows(Journal_Citation_Report_Category, sep = "/\\s+") %>% 
+    filter(!grepl("no category found", Journal_Citation_Report_Category, ignore.case = TRUE)) %>% 
+    group_by(Journal_Citation_Report_Category, database_search) %>% 
+    count(database_search, Journal_Citation_Report_Category) %>% 
+    summarise(freq = n(), .groups = 'drop') %>% 
+    group_by(database_search) %>% 
+    filter(sum(freq) > 2)  # filtered for scientic databases  with more than two occurrences 
 
+# Create the Alluvial plot
+ggplot(database_alluvial, aes(y = freq ,axis1 = Journal_Citation_Report_Category, axis2 = database_search)) +
+  scale_x_discrete(limits = c("Journal Citation Report Category", "Database Search"), expand = c(.05, .05)) +
+  xlab("Variables") +
+  geom_alluvium(aes(fill = Journal_Citation_Report_Category)) +
+  geom_stratum(width = 1/8, fill = "white", color = "black") +
+  geom_text(stat = "stratum", aes(label = after_stat(stratum)), size = 3) +
+  theme_minimal() 
+
+
+
+  
+```
 
 ## Figure x - Total count of each effect size measure used within each meta-analysis
 ```{r plot effect size used }
@@ -477,9 +498,30 @@ effectsize_count %>%
     panel.grid.minor.y = element_blank(),
     legend.position = "none"
   )
+```
+
+```{r}
+# Data Transformation 
+effectsize_alluvial <- sd %>% 
+    separate_rows(effect_size, sep = ",\\s+") %>%
+    separate_rows(Journal_Citation_Report_Category, sep = "/\\s+") %>% 
+    filter(!grepl("no category found", Journal_Citation_Report_Category, ignore.case = TRUE)) %>% 
+    filter(!is.na(effect_size)) %>%
+    group_by(Journal_Citation_Report_Category, effect_size) %>% 
+    count(effect_size, Journal_Citation_Report_Category) %>% 
+    summarise(freq = n(), .groups = 'drop') %>% 
+    group_by(effect_size) #  %>% 
+  #   filter(sum(freq) > 2)  # filtered for scientific databases  with more than two occurrences 
 
 
-
+# Create the Alluvial plot
+ggplot(effectsize_alluvial, aes(y = freq ,axis1 = Journal_Citation_Report_Category, axis2 = effect_size)) +
+  scale_x_discrete(limits = c("Journal Citation Report Category", "Effect Size"), expand = c(.05, .05)) +
+  xlab("Variables") +
+  geom_alluvium(aes(fill = Journal_Citation_Report_Category)) +
+  geom_stratum(width = 1/8, fill = "white", color = "black") +
+  geom_text(stat = "stratum", aes(label = after_stat(stratum)), size = 3) +
+  theme_minimal()
 
 ```
 
@@ -527,6 +569,30 @@ software_count %>%
 
 ```
 
+```{r}
+# Data Transformation 
+software_analysis_alluvial <- sd %>% 
+    separate_rows(software_analysis, sep = ",\\s+") %>%
+    separate_rows(Journal_Citation_Report_Category, sep = "/\\s+") %>% 
+    filter(!grepl("no category found", Journal_Citation_Report_Category, ignore.case = TRUE)) %>% 
+    filter(!is.na(software_analysis)) %>%
+    group_by(Journal_Citation_Report_Category, software_analysis) %>% 
+    count(software_analysis, Journal_Citation_Report_Category) %>% 
+    summarise(freq = n(), .groups = 'drop') %>% 
+    group_by(software_analysis)
+
+
+# Create the Alluvial plot
+ggplot(software_analysis_alluvial, aes(y = freq ,axis1 = Journal_Citation_Report_Category, axis2 = software_analysis)) +
+  scale_x_discrete(limits = c("Journal Citation Report Category", "Software Analysis"), expand = c(.05, .05)) +
+  xlab("Variables") +
+  geom_alluvium(aes(fill = Journal_Citation_Report_Category)) +
+  geom_stratum(width = 1/8, fill = "white", color = "black") +
+  geom_text(stat = "stratum", aes(label = after_stat(stratum)), size = 3) +
+  theme_minimal()
+
+```
+
 ## Figure x - Total count of each heterogeneity test used within each meta-analysis
 ```{r}
 # Calculate the total count for each category
@@ -567,8 +633,29 @@ heterogeneity_count %>%
     panel.grid.minor.y = element_blank(),
     legend.position = "none"
   )
+```
+ 
+ 
+```{r}
+# Data Transformation 
+heterogeneity_alluvial <- sd %>% 
+    separate_rows(heterogeneity_assessment_method, sep = ",\\s+") %>%
+    separate_rows(Journal_Citation_Report_Category, sep = "/\\s+") %>% 
+    filter(!grepl("no category found", Journal_Citation_Report_Category, ignore.case = TRUE)) %>% 
+    filter(!is.na(heterogeneity_assessment_method)) %>%
+    group_by(Journal_Citation_Report_Category, heterogeneity_assessment_method) %>% 
+    count(heterogeneity_assessment_method, Journal_Citation_Report_Category) %>% 
+    summarise(freq = n(), .groups = 'drop') %>% 
+    group_by(heterogeneity_assessment_method)  
 
-
+# Create the Alluvial plot
+ggplot(heterogeneity_alluvial, aes(y = freq ,axis1 = Journal_Citation_Report_Category, axis2 = heterogeneity_assessment_method)) +
+  scale_x_discrete(limits = c("Journal Citation Report Category", "Heterogeneity Assessment Method"), expand = c(.05, .05)) +
+  xlab("Variables") +
+  geom_alluvium(aes(fill = Journal_Citation_Report_Category)) +
+  geom_stratum(width = 1/8, fill = "white", color = "black") +
+  geom_text(stat = "stratum", aes(label = after_stat(stratum)), size = 3) +
+  theme_minimal()
 
 ```
  
@@ -615,6 +702,29 @@ sensitivity_count %>%
 
 ```
 
+```{r}
+# Data Transformation 
+sensitivity_analysis_alluvial <- sd %>% 
+    separate_rows(sensitivity_analysis_method, sep = ",\\s+") %>%
+    separate_rows(Journal_Citation_Report_Category, sep = "/\\s+") %>% 
+    filter(!grepl("no category found", Journal_Citation_Report_Category, ignore.case = TRUE)) %>% 
+    filter(!is.na(sensitivity_analysis_method)) %>%
+    group_by(Journal_Citation_Report_Category, sensitivity_analysis_method) %>% 
+    count(sensitivity_analysis_method, Journal_Citation_Report_Category) %>% 
+    summarise(freq = n(), .groups = 'drop') %>% 
+    group_by(sensitivity_analysis_method)
+
+# Create the Alluvial plot
+ggplot(sensitivity_analysis_alluvial, aes(y = freq ,axis1 = Journal_Citation_Report_Category, axis2 = sensitivity_analysis_method)) +
+  scale_x_discrete(limits = c("Journal Citation Report Category", "Sensitivity Analysis Method"), expand = c(.05, .05)) +
+  xlab("Variables") +
+  geom_alluvium(aes(fill = Journal_Citation_Report_Category)) +
+  geom_stratum(width = 1/8, fill = "white", color = "black") +
+  geom_text(stat = "stratum", aes(label = after_stat(stratum)), size = 3) +
+  theme_minimal()
+
+```
+
 ## Figure x - Total count of each type of between study bias investiagted in each meta-analysis
 ```{r}
 # Calculate the total count for each category
@@ -622,7 +732,7 @@ bias_type_count <- sd %>%
   separate_rows(bias_assessment_type, sep = ",\\s+") %>% 
   count(bias_assessment_type) %>%
   filter(bias_assessment_type != "NA") %>%
-    group_by(bias_assessment_type) %>%
+  group_by(bias_assessment_type) %>%
   summarise(n = sum(n))
 
 # Calculate proportion and percentage for each category
@@ -655,6 +765,30 @@ bias_type_count %>%
     legend.position = "none"
   )
 
+```
+
+
+```{r}
+
+# Data Transformation 
+bias_assessment_alluvial <- sd %>% 
+    separate_rows(bias_assessment_type, sep = ",\\s+") %>%
+    separate_rows(Journal_Citation_Report_Category, sep = "/\\s+") %>% 
+    filter(!grepl("no category found", Journal_Citation_Report_Category, ignore.case = TRUE)) %>% 
+    filter(!is.na(bias_assessment_type)) %>%
+    group_by(Journal_Citation_Report_Category, bias_assessment_type) %>% 
+    count(bias_assessment_type, Journal_Citation_Report_Category) %>% 
+    summarise(freq = n(), .groups = 'drop') %>% 
+    group_by(bias_assessment_type)
+
+# Create the Alluvial plot
+ggplot(bias_assessment_alluvial, aes(y = freq ,axis1 = Journal_Citation_Report_Category, axis2 = bias_assessment_type)) +
+  scale_x_discrete(limits = c("Journal Citation Report Category", "Bias Assessment Type"), expand = c(.05, .05)) +
+  xlab("Variables") +
+  geom_alluvium(aes(fill = Journal_Citation_Report_Category)) +
+  geom_stratum(width = 1/8, fill = "white", color = "black") +
+  geom_text(stat = "stratum", aes(label = after_stat(stratum)), size = 3) +
+  theme_minimal()
 
 
 ```
@@ -698,6 +832,95 @@ bias_method_count %>%
     panel.grid.minor.y = element_blank(),
     legend.position = "none"
   )
+
+```
+
+```{r}
+# Data Transformation 
+bias_assessment_alluvial <- sd %>% 
+    separate_rows(bias_assessment_method, sep = ",\\s+") %>%
+    separate_rows(Journal_Citation_Report_Category, sep = "/\\s+") %>% 
+    filter(!grepl("no category found", Journal_Citation_Report_Category, ignore.case = TRUE)) %>% 
+    filter(!is.na(bias_assessment_method)) %>%
+    group_by(Journal_Citation_Report_Category, bias_assessment_method) %>% 
+    count(bias_assessment_method, Journal_Citation_Report_Category) %>% 
+    summarise(freq = n(), .groups = 'drop') %>% 
+    group_by(bias_assessment_method)
+
+# Create the Alluvial plot
+ggplot(bias_assessment_alluvial, aes(y = freq ,axis1 = Journal_Citation_Report_Category, axis2 = bias_assessment_method)) +
+  scale_x_discrete(limits = c("Journal Citation Report Category", "Bias Assessment Method"), expand = c(.05, .05)) +
+  xlab("Variables") +
+  geom_alluvium(aes(fill = Journal_Citation_Report_Category)) +
+  geom_stratum(width = 1/8, fill = "white", color = "black") +
+  geom_text(stat = "stratum", aes(label = after_stat(stratum)), size = 3) +
+  theme_minimal()
+
+```
+
+```{r}
+# Calculate the total count for each category
+rob_method_count <- sd %>% 
+  separate_rows(rob_assessment_method, sep = ",\\s+") %>% 
+  count(rob_assessment_method) %>%
+  filter(rob_assessment_method != "NA") %>%
+  group_by(rob_assessment_method) %>%
+  summarise(n = sum(n))
+
+# Calculate proportion and percentage for each category
+rob_method_pct <- rob_method_count %>%
+  mutate(proportion = n / sum(rob_method_count$n),
+         percentage = proportion * 100)
+
+# Create the count plot
+rob_method_count %>%
+  ggplot(aes(x = n, y = reorder(rob_assessment_method, n), fill = "#007030")) +
+  geom_bar(stat = "identity", width = 0.3 , alpha = 0.7) +
+  geom_text(data = rob_method_pct, aes(label = paste0("(", round(percentage, 0), "%)")), 
+            position = position_dodge(width = 0.9), hjust = -0.7, size = 3, color = "black", fontface = "bold") +
+  geom_text(aes(label = n, x = n, y = reorder(rob_assessment_method, n)), vjust = 0.5, hjust = -0.2, size = 4, color = "black") +
+  scale_fill_identity(guide = "none") +
+  scale_x_continuous(name = "Article Count", limits = c(0, 70)) +
+  labs(y = NULL) +
+  theme_minimal() +
+  theme(
+    axis.text.y = element_text(size = 10),
+    axis.text.x = element_text(size = 10),
+    axis.line.x = element_line(color = "gray", size = 0.5),
+    axis.line.y = element_blank(),
+    axis.ticks.x = element_blank(),
+    axis.ticks.y = element_blank(),
+    axis.title.x = element_text(size = 12),
+    axis.title.y = element_blank(),
+    panel.grid.major.y = element_blank(),
+    panel.grid.minor.y = element_blank(),
+    legend.position = "none"
+  )
+
+```
+
+```{r}
+# Data Transformation 
+robmethod_alluvial <- sd %>% 
+    separate_rows(rob_assessment_method, sep = ",\\s+") %>%
+   # filter(!is.na(rob_assessment_method)) %>%
+    separate_rows(Journal_Citation_Report_Category, sep = "/\\s+") %>%
+    filter(!grepl("no category found", Journal_Citation_Report_Category, ignore.case = TRUE)) %>% 
+    group_by(Journal_Citation_Report_Category, rob_assessment_method) %>% 
+    count(rob_assessment_method, Journal_Citation_Report_Category) %>% 
+    summarise(freq = n(), .groups = 'drop') %>% 
+    group_by(rob_assessment_method) %>% 
+    filter(sum(freq) > 2)  # filtered for scientic databases  with more than two occurrences 
+
+
+# Create the Alluvial plot
+ggplot(robmethod_alluvial, aes(y = freq ,axis1 = Journal_Citation_Report_Category, axis2 = rob_assessment_method)) +
+  scale_x_discrete(limits = c("Journal Citation Report Category", "ROB Assessment Method"), expand = c(.05, .05)) +
+  xlab("Variables") +
+  geom_alluvium(aes(fill = Journal_Citation_Report_Category)) +
+  geom_stratum(width = 1/8, fill = "white", color = "black") +
+  geom_text(stat = "stratum", aes(label = after_stat(stratum)), size = 3) +
+  theme_minimal()
 
 ```
 
@@ -788,8 +1011,31 @@ reporting_guide_count %>%
 
 ```
 
-- **Objective 2.	Critical appraisal: How robust are syntheses of organochlorine pesticide evidence?** We will examine the included meta-analyses for their reporting quality and potential biases, in order to assess reliability of reviews’ conclusions, reveal syntheses that should be re-done, and highlight the aspects of review methodology that need to be improved.
+```{r}
+# Data Transformation 
+reporting_standards_alluvial <- sd %>% 
+    separate_rows(reporting_standards_type, sep = ",\\s+") %>%
+    separate_rows(Journal_Citation_Report_Category, sep = "/\\s+") %>%
+    filter(!grepl("no category found", Journal_Citation_Report_Category, ignore.case = TRUE)) %>% 
+    group_by(Journal_Citation_Report_Category, reporting_standards_type) %>% 
+    count(reporting_standards_type, Journal_Citation_Report_Category) %>% 
+    summarise(freq = n(), .groups = 'drop') %>% 
+    group_by(reporting_standards_type) %>% 
+    filter(sum(freq) > 2)  # filtered for scientific databases  with more than two occurrences 
 
+
+# Create the Alluvial plot
+ggplot(reporting_standards_alluvial, aes(y = freq ,axis1 = Journal_Citation_Report_Category, axis2 = reporting_standards_type)) +
+  scale_x_discrete(limits = c("Journal Citation Report Category", "Reporting Standards Type"), expand = c(.05, .05)) +
+  xlab("Variables") +
+  geom_alluvium(aes(fill = Journal_Citation_Report_Category)) +
+  geom_stratum(width = 1/8, fill = "white", color = "black") +
+  geom_text(stat = "stratum", aes(label = after_stat(stratum)), size = 3) +
+  theme_minimal()
+
+```
+
+# Objective 3 - To investigate current reporting practices in existing meta-analyses examining the impacts of organochlorine pesticides.
 
 ## Summary plot for CEESAT data
 
@@ -810,10 +1056,15 @@ ceesat_studies_wide <- na.omit(ceesat_studies_wide)
 ceesat_studies_long<- pivot_longer(ceesat_studies_wide, cols = 2:17, names_to =  "question", values_to = "score")         
 
 #calculating the proportions of scores within each questions 
-count_ceesat_score <- ceesat_studies_long %>% count(score, by = question) 
+count_ceesat_score <- ceesat_studies_long %>% 
+                      count(score, by = question) 
+
 percent_ceesat_score <- count_ceesat_score %>% mutate(percent = (n/sum(n))*100)
+
 percent_ceesat_score <- percent_ceesat_score %>% rename(question = by)
+
 percent_ceesat_score$question <- as.factor(percent_ceesat_score$question)
+
 percent_ceesat_score$question <- factor(percent_ceesat_score$question, levels(percent_ceesat_score$question)[length(percent_ceesat_score$question):1]) #reverse the order of questions
 percent_ceesat_score$score <- as.factor(percent_ceesat_score$score)
 percent_ceesat_score$score <- factor(percent_ceesat_score$score, levels(percent_ceesat_score$score)[c(1,4,2,3)]) #set the order of levels for assessment scores:
@@ -825,9 +1076,10 @@ ggplot(data = percent_ceesat_score, x = question, y = percent) +
            position = "fill", color = "black") +
   coord_flip(ylim = c(0, 1)) +
   guides(fill = guide_legend(reverse = TRUE)) +
-  scale_fill_manual(values = c("#E74C3C","#FFD700","#7BCB6F", "#FFA500"), name = "Score:") +
-  theme(panel.grid.major = element_blank(),panel.grid.minor = element_blank(),panel.background = element_blank()) + 
+  scale_fill_manual(values = c("#FF0000","#DAA520","#008000", "#FFBF50"), name = "Score:") +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank()) + 
   ylab("Proportion") + xlab("CEESAT Question")
+
 
 
 ```
