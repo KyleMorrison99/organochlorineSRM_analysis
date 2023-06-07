@@ -10,7 +10,7 @@ output:
 editor_options: 
   chunk_output_type: console
 ---
-```{r setup, include = FALSE}
+```{r, include = FALSE}
 rm(list = ls())
 # knitr setting
 knitr::opts_chunk$set(
@@ -41,7 +41,7 @@ In this Rmarkdown document we provide the following workflow:
 
 ## Load Packages 
 
-```{r setup, results="hide"}
+```{r, results="hide"}
 rm(list = ls())
 pacman::p_load(tidyverse,
 hrbrthemes, 
@@ -71,7 +71,7 @@ Bibliographic data records are exported from Scopus (including cited references 
 
 
 
-```{r load pilot data}
+```{r}
 sd <- read_csv(here("data","ocp_srm_study_details.csv"), skip = 0)
 ocp <- read_csv(here("data", "ocp_srm_ocp_details.csv"), skip = 0)
 sub <- read_csv(here("data", "ocp_srm_subject_details.csv"), skip =0)
@@ -1068,15 +1068,7 @@ ggplot(data = percent_ceesat_score, aes(x = question, y = percent, fill = score)
         panel.background = element_blank()) + 
   ylab("Proportion") + 
   xlab("CEESAT Question")
-
-
-
 ```
-
-
-
-
-
 
  - **Objective 4.	Bibliometrics: How is synthesized organochlorine pesticide evidence connected?** We will investigate the countries and institutions that are primarily engaged in secondary research on organochlorine pesticides, and analyze the networks that exist between them. By doing so, we hope to gain insights into the collaborative relationships between different institutions and identify any patterns or trends in the distribution of research efforts.
 
@@ -1416,53 +1408,6 @@ circos.trackPlotRegion(track.index = 1, panel.fun = function(x, y) {
 
 ```
 
-```{r}
-Publication_info_discipline <- left_join(sd, sub, by = "study_id")
-# matching with 1st author and title
-# mapping data
-library(stringi)
-
-fields <- Publication_info_discipline %>%
-  mutate(title = tolower(unlist(lapply(data.frame(t(stri_split_fixed(paper_title, " ", n = 15)[,1:14])), 
-                                       function(x) stri_c(x, collapse  = " ")))),
-         ntitle = paste(tolower(stri_split_fixed(study_id, "\\_", n = 2)[,1]), title, sep = " "),
-         ntitle = trimws(ntitle)) %>% 
-  select(ntitle, subject)
-
-
-# bib data
-Bib_names <- bib_sco %>% rownames_to_column(., var = "mat_names") %>% 
-  mutate(TI2 = tolower(unlist(lapply(data.frame(t(str_split_fixed(TI, " ", n = 15)[,1:14])), 
-                                     function(x) str_c(x, collapse  = " ")))),
-         # stri_trans_general = getting rid of special letters
-         name2 = stri_trans_general(tolower(str_split_fixed(SR, " ", n = 2)[,1]), "latin-ascii"),
-         TI2 = paste(name2, TI2, sep= " "),
-         TI2 = trimws(TI2)) %>% 
-  select(TI2, mat_names)
-
-
-#stringdist(Bib_names$TI2, Fields$ntitle[1], method = 'osa')
-pos <- lapply(Bib_names$TI2, function(x) stringdist(fields$ntitle, x))
-pos2<- map_dbl(pos, which.min)
-# these are looking good - both have the perfect matches (at least at a glance)
-Bib_names$TI2
-Fields$ntitle[pos2]
-# now we can merge two datasets 
-Bib_names$discipline_code <- Fields$discipline_code[pos2]
-# Creating matrix for bibliometric coupling
-NetMatrix <- biblioNetwork(bib, analysis = "coupling", network = "references", sep = ";")
-# forcing into a nromal matrix
-net_matrix <- as.matrix(NetMatrix)
-diag(net_matrix) <- 0 #get rid of counts for the same papers
-# replacing names with discipline_code
-rownames(net_matrix) <- Bib_names$discipline_code
-colnames(net_matrix) <- Bib_names$discipline_code
-# reducing matrix according to discipline_code
-rect_matrix<- t(rowsum(t(net_matrix), group = colnames(net_matrix), na.rm = T))
-small_matrix <- rowsum(rect_matrix, group = rownames(rect_matrix))
-# getting rid of lower triangle (as this is duplication of info)
-small_matrix[lower.tri(small_matrix)] <- 0 
-```
 
 
 ```{r most cited articles and authors}
