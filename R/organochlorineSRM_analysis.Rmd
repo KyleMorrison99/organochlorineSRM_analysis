@@ -385,6 +385,65 @@ ggplot(data = df,
 ```
 
 
+```{r}
+
+# Join the organochlorine pesticide details with the impact details
+ocp_im <- left_join(ocp, im , by = "study_id")
+
+# Separate rows in "ocp_im"
+ocp_im1 <- separate_rows(ocp_im, ocp , sep = ", ", convert = TRUE)
+
+ocp_im1 <- separate_rows(ocp_im1, impact , sep = ", ", convert = TRUE)
+
+# Group by "ocp" and "impact" and summarize count
+ocp_im_summary <- ocp_im1 %>%
+  mutate(ocp = str_trim(ocp),
+         impact = str_trim(impact)) %>%
+  group_by(ocp, impact) %>%
+  summarise(count = n()) %>%
+  ungroup()
+
+# Filter for top 5 pesticides and top 5 impacts
+top_pesticides <- ocp_im_summary %>%
+  filter(ocp != "not reported") %>%
+  group_by(ocp) %>%
+  summarise(total_count = sum(count)) %>%
+  top_n(5, total_count) %>%
+  pull(ocp)
+
+top_impacts <- ocp_im_summary %>%
+  group_by(impact) %>%
+  summarise(total_count = sum(count)) %>%
+  top_n(10, total_count) %>%
+  pull(impact)
+
+ocp_im_summary_filtered <- ocp_im_summary %>%
+  filter(ocp %in% top_pesticides, impact %in% top_impacts)
+
+# Create a circle plot with impact on the x-axis and ocp on the y-axis
+ggplot(ocp_im_summary_filtered, aes(x = impact, y = ocp, size = count, fill = count)) +
+  geom_point(shape = 21, color = "black") +
+  scale_fill_gradient(low = "#98FB98", high = "#006400") +
+ # geom_text(aes(label = count), color = "black", size = 7) +
+  labs(x = "Impact", y = "Organochlorine Pesticide", fill = "Count") +
+  theme_minimal() +
+  theme(
+    panel.grid.major.y = element_blank(),
+    axis.line.y = element_blank(),
+    axis.ticks.y = element_blank(),
+    axis.text.x = element_text(size = 10),
+    axis.text.y = element_text(size = 10, hjust = 1),
+    axis.title.x = element_text(size = 12),
+    axis.title.y = element_text(size = 12),
+    plot.title = element_blank(),
+    legend.text = element_text(size = 10),
+    legend.title = element_text(size = 12)
+  ) +
+  scale_size_continuous(range = c(5, 20))
+
+```
+
+
 # Objective 2. To investigate current methodological practices within meta-analysis investigating the impacts of organochlorine pesticides. We will investigate how they currently search for existing literature, which effect sizes are used, how they adjust for heterogeneity and how they account for risk of bias. 
 
 ## Figure x - Total count of each database used to search the literature within each meta-analysis

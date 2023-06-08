@@ -19,7 +19,7 @@ Timestamp,initials_extractor,study_id,impact
 17/11/2022 14:59,km,s_018,non-hodgkin lymphoma
 17/11/2022 15:19,km,s_019,estrogen-related cancers
 17/11/2022 15:44,km,s_020,sperm quality
-17/11/2022 16:21,km,s_021,parkinson's disease
+17/11/2022 16:21,km,s_021,parkinsons disease
 17/11/2022 16:47,km,s_022,cholinesterase
 18/11/2022 9:29,km,s_023,obesity
 18/11/2022 10:14,km,s_024,concentration
@@ -27,21 +27,21 @@ Timestamp,initials_extractor,study_id,impact
 25/11/2022 23:28,km,s_026,breast cancer
 28/11/2022 18:17,km,s_027,prostate cancer
 28/11/2022 18:31,km,s_028,endometriosis
-28/11/2022 18:51,km,s_029,type 2 diabetes
+28/11/2022 18:51,km,s_029,diabetes
 28/11/2022 19:34,km,s_030,"swim speed, activity"
-28/11/2022 20:50,km,s_031,parkinson's disease
-28/11/2022 21:37,km,s_032,parkinson's disease
-28/11/2022 22:25,km,s_033,parkinson's disease
+28/11/2022 20:50,km,s_031,parkinsons disease
+28/11/2022 21:37,km,s_032,parkinsons disease
+28/11/2022 22:25,km,s_033,parkinsons disease
 28/11/2022 22:39,km,s_034,preterm birth
-7/12/2022 0:41,km,s_035,diabetes
-7/12/2022 1:01,km,s_036,diabetes
-7/12/2022 1:26,km,s_037,asthmatic symptoms
-7/12/2022 1:50,km,s_038,prostate cancer
-8/12/2022 2:03,km,s_039,"cryptochidism, hypospadias , testicular cancer"
-8/12/2022 2:30,km,s_040,"adiposity, diabetes"
-8/12/2022 3:00,km,s_041,reproductive system
-8/12/2022 21:06,km,s_042,autism spectrum disorder
-8/12/2022 21:37,km,s_043,prostate cancer
+07/12/2022 0:41,km,s_035,diabetes
+07/12/2022 1:01,km,s_036,diabetes
+07/12/2022 1:26,km,s_037,asthmatic symptoms
+07/12/2022 1:50,km,s_038,prostate cancer
+08/12/2022 2:03,km,s_039,"cryptochidism, hypospadias , testicular cancer"
+08/12/2022 2:30,km,s_040,"adiposity, diabetes"
+08/12/2022 3:00,km,s_041,reproductive system
+08/12/2022 21:06,km,s_042,autism spectrum disorder
+08/12/2022 21:37,km,s_043,prostate cancer
 12/12/2022 6:10,km,s_044,tissue transfer rate
 15/12/2022 0:31,km,s_045,diabetes
 15/12/2022 1:02,km,s_046,amyotrophic lateral sclerosis
@@ -56,16 +56,16 @@ Timestamp,initials_extractor,study_id,impact
 16/12/2022 23:21,km,s_055,diabetes
 17/12/2022 0:06,km,s_056,metabolic syndrome (METS)
 17/12/2022 0:27,km,s_057,multiple myeloma
-17/12/2022 0:47,km,s_058,parkinson's disease
+17/12/2022 0:47,km,s_058,parkinsons disease
 17/12/2022 0:56,km,s_059,myelodysplastic syndromes
 20/12/2022 0:00,km,s_060,wilm's tumour
 20/12/2022 0:19,km,s_061,neuroblastoma
 20/12/2022 0:52,km,s_062,leukemia
 20/12/2022 1:19,km,s_063,leukemia
 20/12/2022 1:32,km,s_064,brain tumours
-20/12/2022 1:51,km,s_065,alzheimer’s disease
+20/12/2022 1:51,km,s_065,alzheimers disease
 21/12/2022 2:33,km,s_066,leukemia
-21/12/2022 2:41,km,s_067,parkinson's disease
+21/12/2022 2:41,km,s_067,parkinsons disease
 21/12/2022 2:48,km,s_068,Leukemia
 21/12/2022 3:00,km,s_069,pancreatic cancer
 21/12/2022 3:14,km,s_070,leukemia
@@ -77,29 +77,29 @@ Timestamp,initials_extractor,study_id,impact
 23/12/2022 1:08,km,s_076,"brain tumour, leukemia, lymphoma,"
 23/12/2022 2:09,km,s_077,leukaemia
 23/12/2022 2:23,km,s_078,prostate cancer
-3/01/2023 11:50,km,s_079,parkinson's disease
-5/01/2023 18:30,km,s_080,growth
-5/01/2023 18:32,km,s_081,birth weight
-5/01/2023 18:35,km,s_082,non-hodgkin lymphoma
-5/01/2023 18:38,km,s_083,concentration
-5/01/2023 18:41,km,s_084,sensitivity
+03/01/2023 11:50,km,s_079,parkinsons disease
+05/01/2023 18:30,km,s_080,growth
+05/01/2023 18:32,km,s_081,birth weight
+05/01/2023 18:35,km,s_082,non-hodgkin lymphoma
+05/01/2023 18:38,km,s_083,concentration
+05/01/2023 18:41,km,s_084,sensitivity
 13/01/2023 14:15,km,s_085,maternal transfer
 13/01/2023 14:32,km,s_086,non-hodgkin lymphoma
-6/01/2023 10:53,km,s_087,contamination
-6/01/2023 10:57,km,s_088,growth
-6/01/2023 11:00,km,s_089,"asthma, eczema"
-6/01/2023 11:03,km,s_090,toxicity
-16/01/2023 9:43,km,s_091,type 2 diabetes
+06/01/2023 10:53,km,s_087,contamination
+06/01/2023 10:57,km,s_088,growth
+06/01/2023 11:00,km,s_089,"asthma, eczema"
+06/01/2023 11:03,km,s_090,toxicity
+16/01/2023 9:43,km,s_091,diabetes
 16/01/2023 9:57,km,s_092,pancreatic cancer
 16/01/2023 10:07,km,s_093,"hodgkin disease, non-hodgkin lymphoma"
-6/01/2023 11:35,km,s_094,contamination
-6/01/2023 11:43,km,s_095,concentration
-6/01/2023 11:47,km,s_096,concentration
-6/01/2023 13:42,km,s_097,concentration
-6/01/2023 13:44,km,s_098,birth outcomes
-6/01/2023 13:52,km,s_099,concentration
-6/01/2023 13:56,km,s_100,concentration
+06/01/2023 11:35,km,s_094,contamination
+06/01/2023 11:43,km,s_095,concentration
+06/01/2023 11:47,km,s_096,concentration
+06/01/2023 13:42,km,s_097,concentration
+06/01/2023 13:44,km,s_098,birth outcomes
+06/01/2023 13:52,km,s_099,concentration
+06/01/2023 13:56,km,s_100,concentration
 16/01/2023 10:20,km,s_101,concentration
-6/01/2023 14:07,km,s_102,respiratory health
+06/01/2023 14:07,km,s_102,respiratory health
 16/01/2023 10:37,km,s_103,"micronuclei, mitotic index"
 16/01/2023 11:05,km,s_104,concentration
