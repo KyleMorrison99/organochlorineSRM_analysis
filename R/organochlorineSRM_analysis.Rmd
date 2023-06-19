@@ -83,7 +83,7 @@ bib_sco <- convert2df(here("data","bib_sco.bib"), dbsource = "scopus", format = 
 # Objective 0. To investigate current literature characteristics such as time trend
 ## Figure 1 
 Time trends of total number of meta-analysis each year per subject
-```{r, fig.width=16, fig.height=15}
+```{r, fig.width=16, fig.height=12}
 # Join the study and subject datasets
 sd_sub <- left_join(sd, sub, by = "study_id")
 
@@ -101,6 +101,7 @@ fig1a <- sd_sub %>%
   group_by(subjects = reorder(subjects, n)) %>%
   ggplot(aes(x = as.factor(publication_year), y = n, fill = subjects)) +
   geom_bar(stat = "identity", position = "stack", alpha = 0.7) +
+  geom_text(aes(label = n), position = position_stack(vjust = 0.6), fontface = "bold", color = "white", size = 6, hjust = 0.4) +
   scale_y_continuous("Annual Article Count", limits = c(0,15)) +
   theme_minimal() +
   labs(x = "Year", y = "Article Count") +
@@ -108,16 +109,19 @@ fig1a <- sd_sub %>%
         panel.grid.minor.y = element_blank(),
         axis.line.x = element_line(size = 1.2),
         axis.line.y = element_line(size = 1.2),
-        axis.title.x = element_text(size = 14, face = "bold"),
-        axis.title.y = element_text(size = 14, face = "bold"),
-        axis.text.x = element_text(angle = 45, hjust = 1, size = 10, color = "#666666"),
-        axis.text.y = element_text(size = 10, color = "#666666"),
+        axis.title.x = element_text(size = 20, face = "bold"),
+        axis.title.y = element_text(size = 20, face = "bold"),
+        axis.text.x = element_text(angle = 45, hjust = 1, size = 15, color = "#666666"),
+        axis.text.y = element_text(size = 20, color = "#666666"),
         plot.title = element_text(size = 20, face = "bold"),
         plot.subtitle = element_text(size = 14),
-        plot.caption = element_text(size = 10, hjust = 0)) +
+        plot.caption = element_text(size = 20, hjust = 0), 
+        legend.text = element_text(size = 15),
+        legend.title = element_text(size = 15)) +
+        labs(tag = "A") +
   scale_fill_brewer(palette = "Dark2") +
-  labs(fill = "Subject Category") +
-  guides(fill = guide_legend(override.aes = list(size=3)))
+  labs(fill = "Subjects") +
+  guides(fill = guide_legend(override.aes = list(size=10)))
 
 # Create the cumulative count plot
 fig1b <-  sd_sub %>%
@@ -136,31 +140,35 @@ fig1b <-  sd_sub %>%
         panel.grid.minor.y = element_blank(),
         axis.line.x = element_line(size = 1.2),
         axis.line.y = element_line(size = 1.2),
-        axis.title.x = element_text(size = 14, face = "bold"),
-        axis.title.y = element_text(size = 14, face = "bold"),
-        axis.text.x = element_text(angle = 45, hjust = 1, size = 10, color = "#666666"),
-        axis.text.y = element_text(size = 10, color = "#666666"),
+        axis.title.x = element_text(size = 20, face = "bold"),
+        axis.title.y = element_text(size = 20, face = "bold"),
+        axis.text.x = element_text(angle = 45, hjust = 1, size = 15, color = "#666666"),
+        axis.text.y = element_text(size = 20, color = "#666666"),
         plot.title = element_text(size = 20, face = "bold"),
-        plot.subtitle = element_text(size = 14),
-        plot.caption = element_text(size = 10, hjust = 0)) +
+        plot.subtitle = element_text(size = 20),
+        plot.caption = element_text(size = 20, hjust = 0),
+        legend.text = element_text(size = 15),
+        legend.title = element_text(size = 15)) +
+        labs(tag = "B") +
   scale_fill_brewer(palette = "Dark2") +
-  labs(fill = "Subject") +
-  guides(fill = guide_legend(override.aes = list(size=3)))
+  labs(fill = "Subjects") +
+  guides(fill = guide_legend(override.aes = list(size=10)))
 
 # Combine the two plots
 fig1 <- fig1a /  fig1b
 
 fig1
 
-# ggsave(here("figures", "fig1.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
-# ggsave(here("figures", "fig1.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+
+ ggsave(here("figures", "fig1.pdf"), width = 16, height = 12, units = "cm", scale = 2, dpi = 800)
+ ggsave(here("figures", "fig1.jpg"), width = 16, height = 12, units = "cm", scale = 2, dpi = 800)
 ```
 
-## Figure s1 
+## Figure s3 
 Time trends of total number of meta-analysis each year
-```{r, fig.width=16, fig.height=10}
+```{r, fig.width=16, fig.height=12}
 # Create the annual Count Plot
-figs1a <- sd1 %>%
+figs3a <- sd1 %>%
   ggplot(aes(x = publication_year, y = n)) +
   geom_col(fill = "#1b9e77", alpha = 0.7) +
   geom_text(aes(label = n), position = position_stack(vjust = 0.6), fontface = "bold", color = "white", size = 3, hjust = 0.4) +
@@ -180,8 +188,8 @@ figs1a <- sd1 %>%
         plot.subtitle = element_text(size = 14),
         plot.caption = element_text(size = 10, hjust = 0)) 
 
-# Create the cuumulative Count Plot
-figs1b <- sd1 %>%
+# Create the cumulative Count Plot
+figs3b <- sd1 %>%
   ggplot(aes(x = publication_year, y = n_cumulative)) +
   geom_line(color = "#7570b3", size = 1, linetype = "solid") +
   geom_point(shape = 21, size = 3, fill = "#7570b3", stroke = 0) +
@@ -203,10 +211,11 @@ figs1b <- sd1 %>%
         plot.caption = element_text(size = 10, hjust = 0)) 
 
 # Combine the two plots
-figs1 <- figs1a / figs1b
+figs3 <- figs3a / figs3b
 
-figs1
-
+figs3
+# ggsave(here("figures", "figs3.pdf"), width = 16, height = 12, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "figs3.jpg"), width = 16, height = 12, units = "cm", scale = 2, dpi = 800)
 
 ```
 
@@ -390,8 +399,7 @@ ggplot(data = df,
 ```{r}
 
 # Join the organochlorine pesticide details with the impact details
-ocp_im <- left_join(ocp, im , by = "study_id")
-
+ocp_im <- left_join(ocp, im , by = "study_id") 
 # Separate rows in "ocp_im"
 ocp_im1 <- separate_rows(ocp_im, ocp , sep = ", ", convert = TRUE)
 
@@ -410,13 +418,13 @@ top_pesticides <- ocp_im_summary %>%
   filter(ocp != "not reported") %>%
   group_by(ocp) %>%
   summarise(total_count = sum(count)) %>%
-  top_n(5, total_count) %>%
+  top_n(20, total_count) %>%
   pull(ocp)
 
 top_impacts <- ocp_im_summary %>%
   group_by(impact) %>%
   summarise(total_count = sum(count)) %>%
-  top_n(10, total_count) %>%
+ top_n(8, total_count) %>%
   pull(impact)
 
 ocp_im_summary_filtered <- ocp_im_summary %>%
@@ -442,7 +450,8 @@ ggplot(ocp_im_summary_filtered, aes(x = impact, y = ocp, size = count, fill = co
     legend.title = element_text(size = 12)
   ) +
   scale_size_continuous(range = c(5, 20))
-
+ ggsave(here("figures", "fig3.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+ ggsave(here("figures", "fig3.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 ```
 
 
@@ -593,13 +602,15 @@ ggplot(effectsize_alluvial, aes(y = freq ,axis1 = Journal_Citation_Report_Catego
 ## Figure x - Total count of each software used to analyse the data within each meta-analysis
 ```{r}
 # Calculate the total count for each category
-software_count <- sd %>% 
-  separate_rows(software_analysis, sep = ",\\s+") %>% 
+software_count <- sd %>%
+  separate_rows(software_analysis, sep = ",\\s+") %>%
+  mutate(software_analysis = ifelse(grepl("comprehensive meta-analysis", software_analysis), "CMAS", software_analysis)) %>%
   count(software_analysis) %>%
   filter(software_analysis != "NA") %>%
-  mutate(software_analysis = ifelse(n<= 2, "other", as.character(software_analysis))) %>% 
-    group_by(software_analysis) %>%
+  mutate(software_analysis = ifelse(n <= 2, "other", as.character(software_analysis))) %>%
+  group_by(software_analysis) %>%
   summarise(n = sum(n))
+
 
 # Calculate proportion and percentage for each category
 software_pct <- software_count %>%
