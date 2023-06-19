@@ -81,71 +81,17 @@ bib_sco <- convert2df(here("data","bib_sco.bib"), dbsource = "scopus", format = 
 ```
 
 # Objective 0. To investigate current literature characteristics such as time trend
+## Figure 1 
+Time trends of total number of meta-analysis each year per subject
+```{r, fig.width=16, fig.height=15}
+# Join the study and subject datasets
+sd_sub <- left_join(sd, sub, by = "study_id")
 
-## Figure 1 - Time trends of number of meta-analysis
-```{r}
 # Data Transformation
 # Count the number of publications per year and calculate cumulative sum
 sd1 <- sd %>%
   count(publication_year) %>%
   mutate(n_cumulative = cumsum(n))
-
-# Annual Count Plot
-figs1a <- sd1 %>%
-  ggplot(aes(x = publication_year, y = n)) +
-  geom_col(fill = "#1b9e77", alpha = 0.7) +
-  geom_text(aes(label = n), position = position_stack(vjust = 0.6), fontface = "bold", color = "white", size = 3, hjust = 0.4) +
-  scale_x_continuous(breaks = seq(min(sd1$publication_year), max(sd1$publication_year), by = 1)) +
-  scale_y_continuous("Annual Article Count", limits = c(0,15)) +
-  labs(x = "Year") +
-  theme_minimal() +
-  theme(panel.grid.major.y = element_line(color = "gray", linetype = "dashed"),
-        panel.grid.minor.y = element_blank(),
-        axis.line.x = element_line(size = 1.2),
-        axis.line.y = element_line(size = 1.2),
-        axis.title.x = element_text(size = 14, face = "bold"),
-        axis.title.y = element_text(size = 14, face = "bold"),
-        axis.text.x = element_text(angle = 45, hjust = 1, size = 10, color = "#666666"),
-        axis.text.y = element_text(size = 10, color = "#666666"),
-        plot.title = element_text(size = 20, face = "bold"),
-        plot.subtitle = element_text(size = 14),
-        plot.caption = element_text(size = 10, hjust = 0)) 
-
-# Cumulative Count Plot
-figs1b <- sd1 %>%
-  ggplot(aes(x = publication_year, y = n_cumulative)) +
-  geom_line(color = "#7570b3", size = 1, linetype = "solid") +
-  geom_point(shape = 21, size = 3, fill = "#7570b3", stroke = 0) +
-  geom_text(aes(label = n_cumulative), hjust = -0.2, vjust = 1, size = 3, color = "black") +
-  scale_x_continuous(breaks = seq(min(sd1$publication_year), max(sd1$publication_year), by = 1)) +
-  scale_y_continuous("Cumulative Article Count", limits = c(0,120)) +
-  labs(x = "Year") +
-  theme_minimal() +
-  theme(panel.grid.major.y = element_line(color = "gray", linetype = "dashed"),
-        panel.grid.minor.y = element_blank(),
-        axis.line.x = element_line(size = 1.2),
-        axis.line.y = element_line(size = 1.2),
-        axis.title.x = element_text(size = 14, face = "bold"),
-        axis.title.y = element_text(size = 14, face = "bold"),
-        axis.text.x = element_text(angle = 45, hjust = 1, size = 10, color = "#666666"),
-        axis.text.y = element_text(size = 10, color = "#666666"),
-        plot.title = element_text(size = 20, face = "bold"),
-        plot.subtitle = element_text(size = 14),
-        plot.caption = element_text(size = 10, hjust = 0)) 
-
-# Combine the two plots
-figs1 <- figs1a / figs1b
-
-figs1
-
-```
-
-
-
-## Figure x - Total number of meta-analysis per subject 
-```{r}
-# Join the study and subject datasets
-sd_sub <- left_join(sd, sub, by = "study_id")
 
 # Create the annual count plot
 fig1a <- sd_sub %>%
@@ -205,6 +151,62 @@ fig1b <-  sd_sub %>%
 fig1 <- fig1a /  fig1b
 
 fig1
+
+# ggsave(here("figures", "fig1.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "fig1.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+```
+
+## Figure s1 
+Time trends of total number of meta-analysis each year
+```{r, fig.width=16, fig.height=10}
+# Create the annual Count Plot
+figs1a <- sd1 %>%
+  ggplot(aes(x = publication_year, y = n)) +
+  geom_col(fill = "#1b9e77", alpha = 0.7) +
+  geom_text(aes(label = n), position = position_stack(vjust = 0.6), fontface = "bold", color = "white", size = 3, hjust = 0.4) +
+  scale_x_continuous(breaks = seq(min(sd1$publication_year), max(sd1$publication_year), by = 1)) +
+  scale_y_continuous("Annual Article Count", limits = c(0,15)) +
+  labs(x = "Year") +
+  theme_minimal() +
+  theme(panel.grid.major.y = element_line(color = "gray", linetype = "dashed"),
+        panel.grid.minor.y = element_blank(),
+        axis.line.x = element_line(size = 1.2),
+        axis.line.y = element_line(size = 1.2),
+        axis.title.x = element_text(size = 14, face = "bold"),
+        axis.title.y = element_text(size = 14, face = "bold"),
+        axis.text.x = element_text(angle = 45, hjust = 1, size = 10, color = "#666666"),
+        axis.text.y = element_text(size = 10, color = "#666666"),
+        plot.title = element_text(size = 20, face = "bold"),
+        plot.subtitle = element_text(size = 14),
+        plot.caption = element_text(size = 10, hjust = 0)) 
+
+# Create the cuumulative Count Plot
+figs1b <- sd1 %>%
+  ggplot(aes(x = publication_year, y = n_cumulative)) +
+  geom_line(color = "#7570b3", size = 1, linetype = "solid") +
+  geom_point(shape = 21, size = 3, fill = "#7570b3", stroke = 0) +
+  geom_text(aes(label = n_cumulative), hjust = -0.2, vjust = 1, size = 3, color = "black") +
+  scale_x_continuous(breaks = seq(min(sd1$publication_year), max(sd1$publication_year), by = 1)) +
+  scale_y_continuous("Cumulative Article Count", limits = c(0,120)) +
+  labs(x = "Year") +
+  theme_minimal() +
+  theme(panel.grid.major.y = element_line(color = "gray", linetype = "dashed"),
+        panel.grid.minor.y = element_blank(),
+        axis.line.x = element_line(size = 1.2),
+        axis.line.y = element_line(size = 1.2),
+        axis.title.x = element_text(size = 14, face = "bold"),
+        axis.title.y = element_text(size = 14, face = "bold"),
+        axis.text.x = element_text(angle = 45, hjust = 1, size = 10, color = "#666666"),
+        axis.text.y = element_text(size = 10, color = "#666666"),
+        plot.title = element_text(size = 20, face = "bold"),
+        plot.subtitle = element_text(size = 14),
+        plot.caption = element_text(size = 10, hjust = 0)) 
+
+# Combine the two plots
+figs1 <- figs1a / figs1b
+
+figs1
+
 
 ```
 
