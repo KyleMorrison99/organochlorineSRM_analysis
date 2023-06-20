@@ -525,26 +525,30 @@ figs7
  
 ```{r}
 # Data Transformation 
+
 database_alluvial <- sd %>% 
     separate_rows(database_search, sep = ",\\s+") %>%
-    separate_rows(Journal_Citation_Report_Category, sep = "/\\s+") %>% 
-    filter(!grepl("no category found", Journal_Citation_Report_Category, ignore.case = TRUE)) %>% 
-    group_by(Journal_Citation_Report_Category, database_search) %>% 
-    count(database_search, Journal_Citation_Report_Category) %>% 
+    group_by(Journal_Category_Allocated_Broad, database_search) %>% 
+    count(database_search, Journal_Category_Allocated_Broad) %>% 
     summarise(freq = n(), .groups = 'drop') %>% 
     group_by(database_search) %>% 
-    filter(sum(freq) > 2)  # filtered for scientic databases  with more than two occurrences 
+    filter(sum(freq) > 2) %>% 
+    filter(database_search != "NA")
 
 # Create the Alluvial plot
-ggplot(database_alluvial, aes(y = freq ,axis1 = Journal_Citation_Report_Category, axis2 = database_search)) +
+ggplot(database_alluvial, aes(y = freq ,axis1 = Journal_Category_Allocated_Broad, axis2 = database_search)) +
   scale_x_discrete(limits = c("Journal Citation Report Category", "Database Search"), expand = c(.05, .05)) +
   xlab("Variables") +
-  geom_alluvium(aes(fill = Journal_Citation_Report_Category)) +
-  geom_stratum(width = 1/8, fill = "white", color = "black") +
+  ylab("Frequency") +
+  geom_alluvium(aes(fill = Journal_Category_Allocated_Broad)) +
+  geom_stratum(width = 1/4.5, fill = "white", color = "black") +
   geom_text(stat = "stratum", aes(label = after_stat(stratum)), size = 3) +
-  theme_minimal() 
-
-
+  theme_minimal() +
+  labs(x= "Variables", y = "Frequency", fill = "Journal Category Allocated") +
+  theme(axis.title.x = element_text(size = 14, face = "bold"), 
+        axis.title.y = element_text(size = 14, face = "bold"), 
+        axis.text.x = element_text(size = 12), 
+        axis.text.y = element_text(size = 12))
 
   
 ```
