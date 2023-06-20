@@ -1,106 +1,106 @@
 Timestamp,initials_extractor,study_id,subject,subject_specific,subject_specific_exposed
-28/09/2022 10:09,km,s_001,environment,water,NA
-28/09/2022 10:26,km,s_002,human,female,NA
-28/09/2022 11:22,km,s_003,human,NA,NA
-28/09/2022 11:38,km,s_004,non-human animal,amphibian,NA
-28/09/2022 12:17,km,s_005,non-human animal,marine organisms,NA
-28/09/2022 12:23,km,s_006,environment,water,NA
-28/09/2022 13:43,km,s_007,human,male,NA
-28/09/2022 13:54,km,s_008,human,NA,NA
-28/09/2022 14:04,km,s_009,non-human animal,soil invertebrates,NA
-28/09/2022 14:12,km,s_010,human,NA,NA
-28/09/2022 14:28,km,s_011,human,NA,NA
-28/09/2022 14:38,km,s_012,human,female,NA
-28/09/2022 14:56,km,s_013,human,NA,occupational exposure
-28/09/2022 15:03,km,s_014,non-human animal,fish,NA
-28/09/2022 15:08,km,s_015,human,NA,NA
-17/11/2022 12:03,km,s_016,human,female,NA
-17/11/2022 14:21,km,s_017,human,neonates,prenatal exposure
-17/11/2022 14:59,km,s_018,human,NA,occupational exposure
-17/11/2022 15:19,km,s_019,human,female,NA
-17/11/2022 15:45,km,s_020,human,male,NA
-17/11/2022 16:22,km,s_021,human,NA,NA
-17/11/2022 16:47,km,s_022,non-human animal,fish,NA
-18/11/2022 9:29,km,s_023,human,children,prenatal expsosure
-18/11/2022 10:49,km,s_024,human,male,NA
-25/11/2022 21:59,km,s_025,human,NA,NA
-25/11/2022 23:26,km,s_026,human,NA,NA
-28/11/2022 18:17,km,s_027,human,male,occupational exposure
-28/11/2022 18:30,km,s_028,human,female,NA
-28/11/2022 18:50,km,s_029,human,NA,NA
-28/11/2022 19:33,km,s_030,non-human animal,aquatic vertebrates,NA
-28/11/2022 20:50,km,s_031,human,NA,NA
-28/11/2022 21:36,km,s_032,human,NA,NA
-28/11/2022 22:24,km,s_033,human,NA,NA
-28/11/2022 22:39,km,s_034,human,children,Maternal exposure
-07/12/2022 0:41,km,s_035,human,NA,NA
-07/12/2022 1:00,km,s_036,human,NA,NA
-07/12/2022 1:25,km,s_037,human,NA,NA
-07/12/2022 1:50,km,s_038,human,male,NA
-08/12/2022 2:04,km,s_039,human,male,"prenatal exposure, postnatal exposure"
-08/12/2022 2:30,km,s_040,human,NA,NA
-08/12/2022 3:02,km,s_041,non-human animal,rodent,perinatal exposure
-08/12/2022 21:06,km,s_042,human,children,Maternal exposure
-08/12/2022 21:36,km,s_043,human,male,NA
-12/12/2022 6:10,km,s_044,non-human animal,NA,NA
-15/12/2022 0:31,km,s_045,human,nurses,NA
-15/12/2022 1:01,km,s_046,human,NA,NA
-15/12/2022 1:21,km,s_047,human,children,maternal exposure
-16/12/2022 0:23,km,s_048,"human, environment, non-human animal","air, water, sediment",NA
-16/12/2022 0:49,km,s_049,human,NA,occupational exposure
-16/12/2022 1:14,km,s_050,human,children,maternal exposure
-16/12/2022 1:38,km,s_051,human,NA,occupational exposure
-16/12/2022 3:13,km,s_052,human,NA,NA
-16/12/2022 3:36,km,s_053,human,female,NA
-16/12/2022 22:38,km,s_054,human,NA,NA
-16/12/2022 23:21,km,s_055,human,NA,NA
-17/12/2022 0:07,km,s_056,human,NA,NA
-17/12/2022 0:27,km,s_057,environment,NA,occupational exposure
-17/12/2022 0:48,km,s_058,human,NA,occupational exposure
-17/12/2022 0:56,km,s_059,human,NA,NA
-20/12/2022 0:00,km,s_060,human,NA,NA
-20/12/2022 0:20,km,s_061,human,children,"paternal
+28/09/2022 10:09,km,s_001,Environment,water,NA
+28/09/2022 10:26,km,s_002,Human,female,NA
+28/09/2022 11:22,km,s_003,Human,NA,NA
+28/09/2022 11:38,km,s_004,Non-human animal,amphibian,NA
+28/09/2022 12:17,km,s_005,Non-human animal,marine organisms,NA
+28/09/2022 12:23,km,s_006,Environment,water,NA
+28/09/2022 13:43,km,s_007,Human,male,NA
+28/09/2022 13:54,km,s_008,Human,NA,NA
+28/09/2022 14:04,km,s_009,Non-human animal,soil invertebrates,NA
+28/09/2022 14:12,km,s_010,Human,NA,NA
+28/09/2022 14:28,km,s_011,Human,NA,NA
+28/09/2022 14:38,km,s_012,Human,female,NA
+28/09/2022 14:56,km,s_013,Human,NA,occupational exposure
+28/09/2022 15:03,km,s_014,Non-human animal,fish,NA
+28/09/2022 15:08,km,s_015,Human,NA,NA
+17/11/2022 12:03,km,s_016,Human,female,NA
+17/11/2022 14:21,km,s_017,Human,neonates,prenatal exposure
+17/11/2022 14:59,km,s_018,Human,NA,occupational exposure
+17/11/2022 15:19,km,s_019,Human,female,NA
+17/11/2022 15:45,km,s_020,Human,male,NA
+17/11/2022 16:22,km,s_021,Human,NA,NA
+17/11/2022 16:47,km,s_022,Non-human animal,fish,NA
+18/11/2022 9:29,km,s_023,Human,children,prenatal expsosure
+18/11/2022 10:49,km,s_024,Human,male,NA
+25/11/2022 21:59,km,s_025,Human,NA,NA
+25/11/2022 23:26,km,s_026,Human,NA,NA
+28/11/2022 18:17,km,s_027,Human,male,occupational exposure
+28/11/2022 18:30,km,s_028,Human,female,NA
+28/11/2022 18:50,km,s_029,Human,NA,NA
+28/11/2022 19:33,km,s_030,Non-human animal,aquatic vertebrates,NA
+28/11/2022 20:50,km,s_031,Human,NA,NA
+28/11/2022 21:36,km,s_032,Human,NA,NA
+28/11/2022 22:24,km,s_033,Human,NA,NA
+28/11/2022 22:39,km,s_034,Human,children,Maternal exposure
+07/12/2022 0:41,km,s_035,Human,NA,NA
+07/12/2022 1:00,km,s_036,Human,NA,NA
+07/12/2022 1:25,km,s_037,Human,NA,NA
+07/12/2022 1:50,km,s_038,Human,male,NA
+08/12/2022 2:04,km,s_039,Human,male,"prenatal exposure, postnatal exposure"
+08/12/2022 2:30,km,s_040,Human,NA,NA
+08/12/2022 3:02,km,s_041,Non-human animal,rodent,perinatal exposure
+08/12/2022 21:06,km,s_042,Human,children,Maternal exposure
+08/12/2022 21:36,km,s_043,Human,male,NA
+12/12/2022 6:10,km,s_044,Non-human animal,NA,NA
+15/12/2022 0:31,km,s_045,Human,nurses,NA
+15/12/2022 1:01,km,s_046,Human,NA,NA
+15/12/2022 1:21,km,s_047,Human,children,maternal exposure
+16/12/2022 0:23,km,s_048,"Human, Environment, Non-human animal","air, water, sediment",NA
+16/12/2022 0:49,km,s_049,Human,NA,occupational exposure
+16/12/2022 1:14,km,s_050,Human,children,maternal exposure
+16/12/2022 1:38,km,s_051,Human,NA,occupational exposure
+16/12/2022 3:13,km,s_052,Human,NA,NA
+16/12/2022 3:36,km,s_053,Human,female,NA
+16/12/2022 22:38,km,s_054,Human,NA,NA
+16/12/2022 23:21,km,s_055,Human,NA,NA
+17/12/2022 0:07,km,s_056,Human,NA,NA
+17/12/2022 0:27,km,s_057,Environment,NA,occupational exposure
+17/12/2022 0:48,km,s_058,Human,NA,occupational exposure
+17/12/2022 0:56,km,s_059,Human,NA,NA
+20/12/2022 0:00,km,s_060,Human,NA,NA
+20/12/2022 0:20,km,s_061,Human,children,"paternal
  exposure"
-20/12/2022 0:52,km,s_062,human,children,Residential exposure
-20/12/2022 1:19,km,s_063,human,children,NA
-20/12/2022 1:33,km,s_064,human,"children, young adult",parental exposure
-20/12/2022 1:51,km,s_065,human,NA,NA
-21/12/2022 2:34,km,s_066,human,"children, adolescents",Household exposure
-21/12/2022 2:41,km,s_067,human,NA,NA
-21/12/2022 2:49,km,s_068,human,children,parental exposure
-21/12/2022 3:00,km,s_069,human,NA,NA
-21/12/2022 3:15,km,s_070,human,children,parental exposure
-22/12/2022 22:41,km,s_071,human,children,NA
-22/12/2022 23:07,km,s_072,human,children,Maternal exposure
-23/12/2022 0:36,km,s_073,human,"children, young adult",Resendential exposure
-23/12/2022 0:55,km,s_074,human,NA,NA
-23/12/2022 1:08,km,s_075,human,children,Resendential exposure
-23/12/2022 2:09,km,s_076,human,NA,occupational exposure
-23/12/2022 2:23,km,s_077,human,male,occupational exposure
-03/01/2023 11:51,km,s_078,human,NA,NA
-05/01/2023 18:31,km,s_079,human,infants,"prenatal exposure, postnatal exposure"
-05/01/2023 18:33,km,s_080,human,children,"prenatal exposure, postnatal exposure"
-05/01/2023 18:35,km,s_081,human,NA,NA
-16/01/2023 13:47,km,s_082,human,NA,NA
-05/01/2023 18:38,km,s_083,environment,soil,NA
-05/01/2023 18:41,km,s_084,non-human animal,NA,NA
-13/01/2023 14:15,km,s_085,non-human animal,sea turtle,maternal exposure
-13/01/2023 14:31,km,s_086,human,NA,NA
-06/01/2023 10:53,km,s_087,environment,sludge,NA
-06/01/2023 10:58,km,s_088,human,fetal,NA
-06/01/2023 11:00,km,s_089,human,children,prenatal exposure
-06/01/2023 11:03,km,s_090,non-human animal,freshwater ectotherms,NA
-16/01/2023 9:43,km,s_091,human,NA,NA
-16/01/2023 9:57,km,s_092,human,NA,occupational exposure
-16/01/2023 10:08,km,s_093,human,NA,occupational exposure
-06/01/2023 11:35,km,s_094,environment,soil,NA
-06/01/2023 11:43,km,s_095,non-human animal,arctic biota,NA
-06/01/2023 11:47,km,s_096,non-human animal,greenland biota,NA
-06/01/2023 13:42,km,s_097,"human, environment, non-human animal",NA,NA
-06/01/2023 13:44,km,s_098,human,children,prenatal exposure
-06/01/2023 13:52,km,s_099,environment,soil,NA
-06/01/2023 13:56,km,s_100,environment,water,NA
-16/01/2023 10:20,km,s_101,non-human animal,sea turtles,NA
-06/01/2023 14:07,km,s_102,human,children,prenatal exposure
-16/01/2023 10:39,km,s_103,environment,onion,NA
-16/01/2023 11:05,km,s_104,non-human animal,Elasmobranchii,NA
+20/12/2022 0:52,km,s_062,Human,children,Residential exposure
+20/12/2022 1:19,km,s_063,Human,children,NA
+20/12/2022 1:33,km,s_064,Human,"children, young adult",parental exposure
+20/12/2022 1:51,km,s_065,Human,NA,NA
+21/12/2022 2:34,km,s_066,Human,"children, adolescents",Household exposure
+21/12/2022 2:41,km,s_067,Human,NA,NA
+21/12/2022 2:49,km,s_068,Human,children,parental exposure
+21/12/2022 3:00,km,s_069,Human,NA,NA
+21/12/2022 3:15,km,s_070,Human,children,parental exposure
+22/12/2022 22:41,km,s_071,Human,children,NA
+22/12/2022 23:07,km,s_072,Human,children,Maternal exposure
+23/12/2022 0:36,km,s_073,Human,"children, young adult",Resendential exposure
+23/12/2022 0:55,km,s_074,Human,NA,NA
+23/12/2022 1:08,km,s_075,Human,children,Resendential exposure
+23/12/2022 2:09,km,s_076,Human,NA,occupational exposure
+23/12/2022 2:23,km,s_077,Human,male,occupational exposure
+03/01/2023 11:51,km,s_078,Human,NA,NA
+05/01/2023 18:31,km,s_079,Human,infants,"prenatal exposure, postnatal exposure"
+05/01/2023 18:33,km,s_080,Human,children,"prenatal exposure, postnatal exposure"
+05/01/2023 18:35,km,s_081,Human,NA,NA
+16/01/2023 13:47,km,s_082,Human,NA,NA
+05/01/2023 18:38,km,s_083,Environment,soil,NA
+05/01/2023 18:41,km,s_084,Non-human animal,NA,NA
+13/01/2023 14:15,km,s_085,Non-human animal,sea turtle,maternal exposure
+13/01/2023 14:31,km,s_086,Human,NA,NA
+06/01/2023 10:53,km,s_087,Environment,sludge,NA
+06/01/2023 10:58,km,s_088,Human,fetal,NA
+06/01/2023 11:00,km,s_089,Human,children,prenatal exposure
+06/01/2023 11:03,km,s_090,Non-human animal,freshwater ectotherms,NA
+16/01/2023 9:43,km,s_091,Human,NA,NA
+16/01/2023 9:57,km,s_092,Human,NA,occupational exposure
+16/01/2023 10:08,km,s_093,Human,NA,occupational exposure
+06/01/2023 11:35,km,s_094,Environment,soil,NA
+06/01/2023 11:43,km,s_095,Non-human animal,arctic biota,NA
+06/01/2023 11:47,km,s_096,Non-human animal,greenland biota,NA
+06/01/2023 13:42,km,s_097,"Human, Environment, Non-human animal",NA,NA
+06/01/2023 13:44,km,s_098,Human,children,prenatal exposure
+06/01/2023 13:52,km,s_099,Environment,soil,NA
+06/01/2023 13:56,km,s_100,Environment,water,NA
+16/01/2023 10:20,km,s_101,Non-human animal,sea turtles,NA
+06/01/2023 14:07,km,s_102,Human,children,prenatal exposure
+16/01/2023 10:39,km,s_103,Environment,onion,NA
+16/01/2023 11:05,km,s_104,Non-human animal,Elasmobranchii,NA
