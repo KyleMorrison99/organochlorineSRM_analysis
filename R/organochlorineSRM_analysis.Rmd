@@ -83,7 +83,9 @@ bib_sco <- convert2df(here("data","bib_sco.bib"), dbsource = "scopus", format = 
 
 # Objective 0. To investigate current literature characteristics such as time trend
 ## Figure 1 
-Time trends of total number of meta-analysis each year per subject
+a) A bar plot showing the time trends of meta-analysis investigating the impacts of organochlorine pesticides. The colours represent the subjects in which the impacts were investigated. 
+b) An area plot showing the cummulative time trend of meta-analysis investigating the impacts of organochlorine pesticides. The colours represent the subjects in which the impacts were investigated. 
+
 ```{r, fig.width=16, fig.height=12}
 # Join the study and subject datasets
 sd_sub <- left_join(sd, sub, by = "study_id")
@@ -168,7 +170,8 @@ fig1
 ```
 
 ## Figure s3 
-Time trends of total number of meta-analysis each year
+a) A bar plot showing the time trends of meta-analysis investigating the impacts of organochlorine pesticides. 
+b) An area plot showing the cummulative time trend of meta-analysis investigating the impacts of organochlorine pesticides. 
 ```{r, fig.width=16, fig.height=12}
 # Create the annual Count Plot
 figs3a <- sd1 %>%
@@ -228,9 +231,9 @@ figs3
 # Objective 1. To characterise the organochlorine pesticides literature such as the pesticides used, the impacts elicited in response and the subjects that were investigated. 
 
 ## Figure s4 - Total count of each organochlorine used in meta-analysis
-
+A bar plot showing the  percentage and total count of total of pesticides investigate in meta-analysis investigating the impacts of organochlorine pesticides.
+note: some meta-analysis may contribute to multiple sections if involve multiple organochlorine pesticides 
 ```{r}
-
 # Function to change OCP names
 replace_ocp <- function(df) {
   df %>% 
@@ -265,9 +268,6 @@ ocp_count <-
   group_by(ocp) %>% 
   summarise(n =sum(n))
 
-
-
-
 ocp_pct <- ocp_count %>%
   mutate(proportion = n/sum(ocp_count$n),
          percentage = proportion*100)
@@ -293,13 +293,15 @@ figs4 <- ocp_count %>%
         axis.title.y = element_blank(),
         panel.grid.major.y = element_blank(),
         panel.grid.minor.y = element_blank(),
-        legend.position = "none")
+        legend.position = "none"
+        )
 figs4
 # ggsave(here("figures", "figs4.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 # ggsave(here("figures", "figs4.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 ```
 
-## Figure s5 - Total proportion of meta-analysis per subject 
+## Figure s5  
+A bar plot showing the  percentage and total count of total of subjects investigate in meta-analysis investigating the impacts of organochlorine pesticides 
 note: some meta-analysis may contribute to multiple sections if involve multiple subjects 
 ```{r}
 # Calculate total count for each category
@@ -342,6 +344,9 @@ figs5
 ```
 
 
+## Figure s6  
+A bar plot showing the  percentage and total count of total of subjects investigate in meta-analysis investigating the impacts of organochlorine pesticides 
+note: some meta-analysis may contribute to multiple sections if involve multiple subjects 
 ```{r}
 # Calculate total count for each category
 impact_count <- 
@@ -389,8 +394,40 @@ figs6
 
 ```
 
-## Alluvial plot of ocp, subjecty and impact 
+## Figure s7
+An alluvial plot showing the relationships between the pesticide of exposure, the subject being exposed and the impact of exposure 
 ```{r}
+
+# Function to change OCP to be more general
+
+replace_ocp2 <- function(df) {
+  df %>% 
+  mutate(ocp = case_when(
+    grepl("Chlordane", ocp, ignore.case = TRUE) ~ "Chlordane",  
+    grepl("Endosulfan", ocp, ignore.case = TRUE) ~ "Endosulfan", 
+    grepl("Nonachlor", ocp, ignore.case = TRUE) ~ "Nonachlore", 
+    grepl("Heptachlor", ocp, ignore.case = TRUE) ~ "Heptachlor",
+    grepl("TCDD", ocp, ignore.case = TRUE) ~ "TCDD", 
+    grepl("Endrin", ocp, ignore.case = TRUE) ~ "Endrin",
+    grepl("Hexachlorobenzene", ocp, ignore.case = TRUE) ~ "HCH",
+    grepl("Lindane", ocp, ignore.case = TRUE) ~ "HCH", 
+    grepl("Hexachlorocyclohexane \\(HCH\\)", ocp, ignore.case = TRUE) ~ "HCH",
+    grepl("alpha-Hexachlorocyclohexane \\(alpha-HCH\\)", ocp, ignore.case = TRUE) ~ "HCH",
+    grepl("beta-Hexachlorocyclohexane \\(beta-HCH\\)", ocp, ignore.case = TRUE) ~ "HCH",
+    grepl("gamma-Hexachlorocyclohexane \\(gamma-HCH\\)", ocp, ignore.case = TRUE) ~ "HCH",
+    grepl("Dichlorodiphenyltrichloroethane \\(DDT\\)", ocp, ignore.case = TRUE) ~ "DDT",
+    grepl("p,p-Dichlorodiphenyltrichloroethane \\(p,p-DDT\\)", ocp, ignore.case = TRUE) ~ "DDT",
+    grepl("o,p-Dichlorodiphenyltrichloroethane \\(o,p-DDT\\)", ocp, ignore.case = TRUE) ~ "DDT",
+    grepl("Dichlorodiphenyldichloroethane \\(DDD\\)", ocp, ignore.case = TRUE) ~ "DDD",
+    grepl("p,p-Dichlorodiphenyldichloroethane \\(p,p-DDD\\)", ocp, ignore.case = TRUE) ~ "DDD",
+    grepl("o,p-Dichlorodiphenyldichloroethane \\(o,p-DDD\\)", ocp, ignore.case = TRUE) ~ "DDD",
+    grepl("Dichlorodiphenyldichloroethylene \\(DDE\\)", ocp, ignore.case = TRUE) ~ "DDE",
+    grepl("p,p-Dichlorodiphenyldichloroethylene \\(p,p-DDE\\)", ocp, ignore.case = TRUE) ~ "DDE",
+    grepl("o,p-Dichlorodiphenyldichloroethylene \\(o,p-DDE\\)", ocp, ignore.case = TRUE) ~ "DDE",
+    TRUE ~ ocp
+  ))
+}
+ 
 
 # Transform the data 
 df <- im %>%
@@ -399,31 +436,20 @@ df <- im %>%
   separate_rows(subject, sep = ",\\s+") %>% 
   separate_rows(ocp, sep = ",\\s+") %>% 
   separate_rows(impact, sep = ",\\s+") %>%
-  mutate(ocp_convert = case_when( # Rename isomers and metabolites to parent chemical (besides DDT, DDD and DDE which are just isomers)
-    grepl("DDT", ocp, ignore.case = TRUE) ~ "DDT", 
-    grepl("DDD", ocp, ignore.case = TRUE) ~ "DDD", 
-    grepl("DDE", ocp, ignore.case = TRUE) ~ "DDE", 
-    grepl("HCH|Hexachloro|BHC|Lindane", ocp, ignore.case = TRUE) ~ "Hexachlorohexane", 
-    grepl("Chlordane", ocp, ignore.case = TRUE) ~ "Chlordane",  
-    grepl("Endosulfan", ocp, ignore.case = TRUE) ~ "Endosulfan", 
-    grepl("Nonachlor", ocp, ignore.case = TRUE) ~ "Nonachlore", 
-    grepl("Heptachlor", ocp, ignore.case = TRUE) ~ "Heptachlor",
-    grepl("TCDD", ocp, ignore.case = TRUE) ~ "TCDD", 
-    grepl("Endrin", ocp, ignore.case = TRUE) ~ "Endrin",
-    TRUE ~ ocp)) %>%
-  filter(!grepl("not reported", ocp_convert, ignore.case = TRUE)) %>%
-  group_by(ocp_convert, subject, impact) %>%
+  replace_ocp2() %>%
+  filter(!grepl("not reported", ocp, ignore.case = TRUE)) %>%
+  group_by(ocp, subject, impact) %>%
   summarise(freq = n(), .groups = 'drop') %>%
-  group_by(ocp_convert) %>%
-  filter(sum(freq) > 2) %>% # filtered for ocp's with more than two occurrences 
+  group_by(ocp) %>%
+  filter(sum(freq) > 2) %>%  
   group_by(impact) %>% 
-  filter(sum(freq) > 3) %>% # filter for impacts with more than three occurrences 
+  filter(sum(freq) > 3) %>% 
   mutate(subject = factor(subject, levels = c("Environment", "Non-human animal", "Human"), ordered = TRUE))
 
 
 # Plot alluvial plot between ocp, subject and impact 
 ggplot(data = df,
-       aes(axis1 = ocp_convert, axis2 = subject, axis3 = impact, y = freq)) +
+       aes(axis1 = ocp, axis2 = subject, axis3 = impact, y = freq)) +
   scale_x_discrete(limits = c("Organochlorine Pesticide", "Subject", "Impact"), expand = c(.05, .10)) +
   xlab("Variables") +
   geom_alluvium(aes(fill = subject)) +
@@ -446,7 +472,6 @@ ocp_im1 <- separate_rows(ocp_im, ocp , sep = ", ", convert = TRUE)
 ocp_im1 <- separate_rows(ocp_im1, impact , sep = ", ", convert = TRUE)
 
 
-
 # Group by "ocp" and "impact" and summarize count
 ocp_im_summary <- ocp_im1 %>%
   mutate(ocp = str_trim(ocp),
@@ -461,7 +486,7 @@ top_pesticides <- ocp_im_summary %>%
   filter(ocp != "not reported") %>%
   group_by(ocp) %>%
   summarise(total_count = sum(count)) %>%
-  top_n(25, total_count) %>%
+  top_n(8, total_count) %>%
   pull(ocp) 
 
 top_impacts <- ocp_im_summary %>%
@@ -495,7 +520,7 @@ ggplot(ocp_im_summary_filtered,
         plot.title = element_text(size = 16, face = "bold"),  
         legend.text = element_text(size = 12),  
         legend.title = element_text(size = 14)) +
-  scale_size_continuous(range = c(6, 25)) +
+  scale_size_continuous(range = c(10, 40)) +
   guides(size = FALSE)
 
 
@@ -1457,18 +1482,20 @@ my.cols2 <- c(
   UAE = "#a65628"
 )
 
+# Setting up custom parameters
+circos.par(cell.padding = c(0, 0, 0, 0), track.margin = c(0, 0))
 
 # Create a chord diagram of the network matrix
 fig5f <- chordDiagram(NetMatrix_country, annotationTrack = "grid", preAllocateTracks = 1, grid.col = my.cols2)
 
 # Add a track to label each sector with its name
-circos.trackPlotRegion(track.index = 1, panel.fun = function(x, y) {
+circos.trackPlotRegion(track.index = 1, bg.border = NA, panel.fun = function(x, y) {
   xlim = get.cell.meta.data("xlim")
   ylim = get.cell.meta.data("ylim")
   sector.name = get.cell.meta.data("sector.index")
-  circos.text(mean(xlim), ylim[1] + .1, sector.name, facing = "clockwise", niceFacing = TRUE, adj = c(0, 0.5))
-  circos.axis(h = "top", labels.cex = 0.5, major.tick.length = 0.5, sector.index = sector.name, track.index = 2)
-}, bg.border = NA)
+  circos.text(mean(xlim), ylim[1] + 0.2 , sector.name, facing = "clockwise", niceFacing = TRUE, adj = c(0, 0))
+  circos.axis(h = "top", labels.cex = 0.5, major.tick.length = 0.2, sector.index = sector.name, track.index = 2)
+})
 
 ```
 
@@ -1485,7 +1512,7 @@ circos.trackPlotRegion(track.index = 1, panel.fun = function(x, y) {
   xlim = get.cell.meta.data("xlim")
   ylim = get.cell.meta.data("ylim")
   sector.name = get.cell.meta.data("sector.index")
-  circos.text(mean(xlim), ylim[1] + .1, sector.name, facing = "clockwise", niceFacing = TRUE, adj = c(0, 0.5))
+  circos.text(mean(xlim), ylim[1] + 0.2, sector.name, facing = "clockwise", niceFacing = TRUE, adj = c(0, 0.5))
   circos.axis(h = "top", labels.cex = 0.5, major.tick.length = 0.2, sector.index = sector.name, track.index = 2)
 }, bg.border = NA)
 ```
@@ -1637,7 +1664,93 @@ circos.trackPlotRegion(track.index = 1, panel.fun = function(x, y) {
 
 ```
 
+## discipline collab
 
+```{r}
+Fields <- sd %>%
+  mutate(
+    title = str_to_lower(paper_title),
+    ntitle = paste(str_to_lower(str_split_fixed(study_id, "\\_", n = 2)[,1]), paper_title, sep = " "),
+    ntitle = str_squish(ntitle)
+  ) %>% 
+  select(ntitle, Journal_Category_Allocated_Broad)
+
+Bib_names <- bib_sco %>% rownames_to_column(., var = "mat_names") %>% 
+  mutate(TI2 = tolower(unlist(lapply(data.frame(t(str_split_fixed(TI, " ", n = 15)[,1:14])), 
+                                     function(x) str_c(x, collapse  = " ")))),
+         # stri_trans_general = getting rid of special letters
+         name2 = stri_trans_general(tolower(str_split_fixed(SR, " ", n = 2)[,1]), "latin-ascii"),
+         TI2 = paste(name2, TI2, sep= " "),
+         TI2 = trimws(TI2)) %>% 
+  select(TI2, mat_names)
+
+#stringdist(Bib_names$TI2, Fields$ntitle[1], method = 'osa')
+pos <- lapply(Bib_names$TI2, function(x) stringdist(Fields$ntitle, x))
+pos2<- map_dbl(pos, which.min)
+
+# these are looking good - both have the perfect matches (at least at a glance)
+Bib_names$TI2
+Fields$ntitle[pos2]
+
+# now we can merge two datasets 
+Bib_names$Journal_Category_Allocated_Broad <- Fields$Journal_Category_Allocated_Broad[pos2]
+
+# Creating matrix for bibliometric coupling
+NetMatrix <- biblioNetwork(bib_sco, analysis = "coupling", network = "references", sep = ";")
+
+# forcing into a nromal matrix
+net_matrix <- as.matrix(NetMatrix)
+diag(net_matrix) <- 0 #get rid of counts for the same papers
+
+# replacing names with Journal_Category_Allocated_Broad
+rownames(net_matrix) <- Bib_names$Journal_Category_Allocated_Broad
+colnames(net_matrix) <- Bib_names$Journal_Category_Allocated_Broad
+
+
+
+
+
+# reducing matrix according to discipline_code
+rect_matrix<- t(rowsum(t(net_matrix), group = colnames(net_matrix), na.rm = T))
+small_matrix <- rowsum(rect_matrix, group = rownames(rect_matrix))
+
+# getting rid of lower triangle (as this is duplication of info)
+small_matrix[lower.tri(small_matrix)] <- 0 
+
+
+par(mar = c(0, 0, 0, 0), mfrow = c(1, 1))
+
+
+# Create a chord diagram of the network matrix
+fig5h <- chordDiagram(small_matrix, annotationTrack = "grid", preAllocateTracks = 1)
+# Add a track to label each sector with its name
+circos.trackPlotRegion(track.index = 1, panel.fun = function(x, y) {
+  xlim = get.cell.meta.data("xlim")
+  ylim = get.cell.meta.data("ylim")
+  sector.name = get.cell.meta.data("sector.index")
+  circos.text(mean(xlim), ylim[1] + 0.2, sector.name, facing = "clockwise", niceFacing = TRUE, adj = c(0, 0.5))
+  circos.axis(h = "top", labels.cex = 0.5, major.tick.length = 0.2, sector.index = sector.name, track.index = 2)
+}, bg.border = NA)
+
+
+```
+
+
+```{r}
+diag(small_matrix) <- 0
+
+# Create a chord diagram of the network matrix
+fig5g <- chordDiagram(small_matrix, annotationTrack = "grid", preAllocateTracks = 1)
+
+# Add a track to label each sector with its name
+circos.trackPlotRegion(track.index = 1, panel.fun = function(x, y) {
+  xlim = get.cell.meta.data("xlim")
+  ylim = get.cell.meta.data("ylim")
+  sector.name = get.cell.meta.data("sector.index")
+  circos.text(mean(xlim), ylim[1] + .1, sector.name, facing = "clockwise", niceFacing = TRUE, adj = c(0, 0.5))
+  circos.axis(h = "top", labels.cex = 0.5, major.tick.length = 0.2, sector.index = sector.name, track.index = 2)
+}, bg.border = NA)
+```
 
 ```{r most cited articles and authors}
 
