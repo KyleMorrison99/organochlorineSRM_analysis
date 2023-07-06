@@ -513,19 +513,18 @@ ggplot(ocp_im_summary_filtered,
   theme(panel.grid.major.y = element_blank(),
         axis.line.y = element_blank(),
         axis.ticks.y = element_blank(),
-        axis.text.x = element_text(size = 12),  
-        axis.text.y = element_text(size = 12, hjust = 1),  
-        axis.title.x = element_text(size = 14),  
-        axis.title.y = element_text(size = 14),  
-        plot.title = element_text(size = 16, face = "bold"),  
-        legend.text = element_text(size = 12),  
-        legend.title = element_text(size = 14)) +
+        axis.text.x = element_text(size = 15),  
+        axis.text.y = element_text(size = 20, hjust = 1),  
+        axis.title.x = element_text(size = 25),  
+        axis.title.y = element_text(size = 25),  
+        legend.text = element_text(size = 15),  
+        legend.title = element_text(size = 20)) +
   scale_size_continuous(range = c(10, 40)) +
   guides(size = FALSE)
 
 
-# ggsave(here("figures", "fig3.pdf"), width = 21, height = 10, units = "cm", scale = 2, dpi = 800)
-# ggsave(here("figures", "fig3.jpg"), width = 21, height = 10, units = "cm", scale = 2, dpi = 800)
+ ggsave(here("figures", "fig3.pdf"), width = 25, height = 15, units = "cm", scale = 2, dpi = 800)
+ ggsave(here("figures", "fig3.jpg"), width = 25, height = 15, units = "cm", scale = 2, dpi = 800)
 ```
 
 
