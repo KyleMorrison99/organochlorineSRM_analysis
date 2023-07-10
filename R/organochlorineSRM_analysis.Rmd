@@ -264,7 +264,7 @@ ocp_count <-
   filter(!is.na(ocp)) %>% # filter out NA 
   filter(ocp != "not reported") %>% 
   arrange(desc(n)) %>% 
-  mutate(ocp = ifelse(n <= 3, "other", as.character(ocp))) %>%  ## I NEED TO LIST ALL THE OTHERS HERE WITH THEIR COUNTS
+#  mutate(ocp = ifelse(n <= 3, "other", as.character(ocp))) %>%  ## I NEED TO LIST ALL THE OTHERS HERE WITH THEIR COUNTS
   group_by(ocp) %>% 
   summarise(n =sum(n))
 
@@ -538,7 +538,7 @@ database_count <- sd %>%
   count(database_search) %>% 
   filter(database_search != "not reported") %>% 
   arrange(desc(n)) %>% 
-  mutate(database_search = ifelse(n<= 2, "other", as.character(database_search))) %>% 
+  mutate(database_search = ifelse(n<= 2, "Other Databases", as.character(database_search))) %>% 
     group_by(database_search) %>%
   summarise(n = sum(n))
 
@@ -556,6 +556,7 @@ figs7 <- database_count %>%
   geom_text(data = database_pct, aes(label = paste0("(", round(percentage, 1), "%)"), x = n), 
             hjust = -0.1, size = 3, color = "black", fontface = "bold") +
   scale_fill_identity(guide = "none") +
+  scale_y_discrete(name = "Database Search") +
   scale_x_continuous(name = "Article Count", expand = c(0, 0), limits = c(0, max(database_count$n)*1.1)) +
   labs(y = NULL) +
   theme_minimal() +
@@ -567,7 +568,7 @@ figs7 <- database_count %>%
     axis.ticks.x = element_blank(),
     axis.ticks.y = element_blank(),
     axis.title.x = element_text(size = 12),
-    axis.title.y = element_blank(),
+    axis.title.y = element_text(size = 12),
     panel.grid.major.y = element_blank(),
     panel.grid.minor.y = element_blank(),
     legend.position = "none")
@@ -579,6 +580,36 @@ figs7
 # ggsave(here("figures", "figs7.jpg"), width = 21, height = 10, units = "cm", scale = 2, dpi = 800)
 
 ```
+
+
+-
+```{r}
+packing <- circleProgressiveLayout(database_count$n, sizetype='area')
+
+data <- cbind(database_count, packing)
+# The next step is to go from one center + a radius to the coordinates of a circle that
+# is drawn by a multitude of straight lines.
+dat.gg <- circleLayoutVertices(packing, npoints=50)
+
+
+# Make the plot
+ggplot() + 
+  
+  # Make the bubbles
+  geom_polygon(data = dat.gg, aes(x, y, group = , fill=as.factor(id)), colour = "black", alpha = 0.6) +
+  
+  # Add text in the center of each bubble + control its size
+  geom_text(data = data, aes(x, y, size=n, label = database_search)) +
+  scale_size_continuous(range = c(1,4)) +
+  
+  # General theme:
+  theme_void() + 
+  theme(legend.position="none") +
+  coord_equal()
+
+```
+
+
 
  
 ```{r}
@@ -618,7 +649,7 @@ effectsize_count <- sd %>%
   separate_rows(effect_size, sep = ",\\s+") %>% 
   count(effect_size) %>%
   filter(effect_size != "NA") %>%
-  mutate(effect_size = ifelse(n<= 2, "other", as.character(effect_size))) %>% 
+#  mutate(effect_size = ifelse(n<= 2, "Other effect sizes", as.character(effect_size))) %>% 
     group_by(effect_size) %>%
   summarise(n = sum(n))
 
@@ -691,6 +722,7 @@ ggplot(effectsize_alluvial, aes(y = freq ,axis1 = Journal_Category_Allocated_Bro
 software_count <- sd %>%
   separate_rows(software_analysis, sep = ",\\s+") %>%
   mutate(software_analysis = ifelse(grepl("comprehensive meta-analysis", software_analysis), "CMAS", software_analysis)) %>%
+  mutate(software_analysis = ifelse(grepl("not reported", software_analysis), "no software reported", software_analysis))  %>% 
   count(software_analysis) %>%
   filter(software_analysis != "NA") %>%
   group_by(software_analysis) %>%
@@ -740,6 +772,8 @@ figs9
 software_analysis_alluvial <- sd %>% 
     separate_rows(software_analysis, sep = ",\\s+") %>%
     separate_rows(Journal_Category_Allocated_Broad, sep = "/\\s+") %>% 
+  mutate(software_analysis = ifelse(grepl("comprehensive meta-analysis", software_analysis), "CMAS", software_analysis)) %>%
+  mutate(software_analysis = ifelse(grepl("not reported", software_analysis), "no software reported", software_analysis))  %>% 
     filter(!is.na(software_analysis)) %>%
     group_by(Journal_Category_Allocated_Broad, software_analysis) %>% 
     count(software_analysis, Journal_Category_Allocated_Broad) %>% 
@@ -763,8 +797,8 @@ ggplot(software_analysis_alluvial, aes(y = freq ,axis1 = Journal_Category_Alloca
 heterogeneity_count <- sd %>% 
   separate_rows(heterogeneity_assessment_method, sep = ",\\s+") %>% 
   count(heterogeneity_assessment_method) %>%
+    mutate(heterogeneity_assessment_method = ifelse(grepl("not reported", heterogeneity_assessment_method), "no heterogeneity\nmeasure reported", heterogeneity_assessment_method))  %>% 
   filter(heterogeneity_assessment_method != "NA") %>%
-#  mutate(heterogeneity_assessment_method = ifelse(n<= 1, "other", as.character(heterogeneity_assessment_method))) %>% 
     group_by(heterogeneity_assessment_method) %>%
   summarise(n = sum(n))
 
@@ -811,6 +845,7 @@ figs10
 heterogeneity_alluvial <- sd %>% 
     separate_rows(heterogeneity_assessment_method, sep = ",\\s+") %>%
     separate_rows(Journal_Category_Allocated_Broad, sep = "/\\s+") %>% 
+  mutate(heterogeneity_assessment_method = ifelse(grepl("not reported", heterogeneity_assessment_method), "no heterogeneity\nmeasure reported", heterogeneity_assessment_method))  %>% 
     filter(!is.na(heterogeneity_assessment_method)) %>%
     group_by(Journal_Category_Allocated_Broad, heterogeneity_assessment_method) %>% 
     count(heterogeneity_assessment_method, Journal_Category_Allocated_Broad) %>% 
@@ -834,9 +869,7 @@ ggplot(heterogeneity_alluvial, aes(y = freq ,axis1 = Journal_Category_Allocated_
 sensitivity_count <- sd %>% 
   separate_rows(sensitivity_analysis_method, sep = ",\\s+") %>% 
   count(sensitivity_analysis_method) %>%
-  filter(sensitivity_analysis_method != "NA") %>%
- # mutate(sensitivity_analysis_method = ifelse(n<= 1, "other", as.character(sensitivity_analysis_method))) %>% 
-    group_by(sensitivity_analysis_method) %>%
+  filter(sensitivity_analysis_method != "NA") %>%    group_by(sensitivity_analysis_method) %>%
   summarise(n = sum(n))
 
 # Calculate proportion and percentage for each category
@@ -1222,6 +1255,100 @@ ggplot(reporting_standards_alluvial, aes(y = freq ,axis1 = Journal_Category_Allo
 
 ```
 
+
+
+
+```{r}
+# Combine the data frames and unite the methodology types
+df <- bind_rows(
+  database_count %>% mutate(methodology_type = 'Database_Search'),
+  effectsize_count %>% mutate(methodology_type = 'Effect_Size'),
+  software_count %>%  mutate(methodology_type = "Software"),
+  heterogeneity_count %>% mutate(methodology_type = "Heterogeneity"),
+  sensitivity_count %>% mutate(methodology_type = "Sensitivity_Analysis"),
+  bias_type_count %>% mutate(methodology_type = "Bias_Type"),
+  bias_method_count %>%  mutate(methodology_type = "Bias_Assessment"),
+  rob_method_count %>% mutate(methodology_type = "Risk_of_Bias"), 
+  visualization_count %>% mutate(methodology_type = "Visualization"),
+  reporting_guide_count %>%  mutate(methodology_type = "Reporting_Guide")
+) %>% 
+ unite(methodology_type_specific, 
+       database_search, 
+       effect_size,  
+       software_analysis,
+       heterogeneity_assessment_method, 
+       sensitivity_analysis_method, 
+       bias_assessment_type,
+       bias_assessment_method,
+       rob_assessment_method, 
+       visualization_method, 
+       reporting_standards_type, 
+       remove = TRUE, na.rm = TRUE)
+
+
+
+
+edges <- df %>%
+  rename(from = methodology_type, 
+         to = methodology_type_specific) %>%
+  select(c(from,to)) %>% 
+  as.data.frame()
+
+
+
+vertices <- df  %>% 
+  rename(name = methodology_type_specific, 
+         size = n) %>% 
+  select(c(name,size)) %>% 
+  as.data.frame() 
+
+
+#dat <- left_join(edges, vertices, by = 'methodology_type_specific')
+
+# check the length of the original vertices: length(vertices$name), and add the broader bubble manually 
+vertices[77:86,1] <- c("Database Search", 
+                       "Effect Size", 
+                       'Software', 
+                       "Heterogeneity", 
+                       "Sensitivity Analysis",
+                       "Bias Assessment", 
+                       "Bias Type",
+                       "Risk of Bias", 
+                       "Visualization",
+                       "Reporting Guide")
+
+vertices[77:86,2] <- c(1,1,1,1,1,1,1,1,1,1)
+
+
+
+
+# Check if all vertex names in the edges dataframe are in the vertices dataframe
+ all(unique(vertices$name  %in% edges$to ))
+
+
+mygraph <- graph_from_data_frame(edges, 
+                               #  directed = TRUE, 
+                                 vertices = NULL
+                                 )
+
+
+
+ggraph(mygraph, layout = 'circlepack',
+       #weight = c(, replicate(10,1)) 
+       #weight = c(vertices$size,rep(1,10))
+       weight = vertices$size
+       ) + 
+    geom_node_text( aes(label=name)) +
+    geom_node_circle() +
+    theme_void()
+
+
+
+edges %>% group_by(from) %>% count()
+
+edges %>% group_by(to) %>% count()
+
+```
 
 ```{r}
 figx <- ((figs7 | figs8) / (figs9 | figs10) / (figs11 | figs12) / (figs13 | figs14) / (figs15 | figs16)) +
