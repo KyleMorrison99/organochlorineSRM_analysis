@@ -3,7 +3,7 @@ Timestamp,initials_extractor,study_id,ocp
 28/09/2022 10:25,km,s_002,"Dichlorodiphenyltrichloroethane (DDT), Dichlorodiphenyldichloroethylene (DDE)"
 28/09/2022 11:22,km,s_003,"p,p-Dichlorodiphenyldichloroethylene (p,p-DDE)"
 28/09/2022 11:37,km,s_004,Endosulfan
-28/09/2022 12:16,km,s_005,"Dichlorodiphenyltrichloroethane (DDT), p,p-Dichlorodiphenyltrichloroethane (p,p-DDT), o,p-Dichlorodiphenyltrichloroethane (o,p-DDT), p,p-Dichlorodiphenyldichloroethylene (p,p-DDE), o,p-Dichlorodiphenyldichloroethylene (o,p-DDE), p,p-Dichlorodiphenyldichloroethane (p,p-DDD), o,p-Dichlorodiphenyldichloroethane (o,p-DDD), Aldrin, Dieldrin, Endrin, Endosulfan I, Endosulfan II, Endosulfan Sulfate, Lindane, Heptachlor, Heptachlor epoxide, alpha-Benzene hexachloride (alpha-BHC), beta-Benzene hexachloride (beta-BHC), d-Benzene hexachloride (d-BHC), alpha-Chlordane, y-Chlordane, cis-Chlordane, trans-Chlordane, Oxychlordane, Methoxychlor, Mirex, Endrin Aldehyde, Hexachlorobenzene, trans-Nonachlor, cis-Nonachlor, chlorophenol, Pentachlorophenol"
+28/09/2022 12:16,km,s_005,"Dichlorodiphenyltrichloroethane (DDT), p,p-Dichlorodiphenyltrichloroethane (p,p-DDT), o,p-Dichlorodiphenyltrichloroethane (o,p-DDT), p,p-Dichlorodiphenyldichloroethylene (p,p-DDE), o,p-Dichlorodiphenyldichloroethylene (o,p-DDE), p,p-Dichlorodiphenyldichloroethane (p,p-DDD), o,p-Dichlorodiphenyldichloroethane (o,p-DDD), Aldrin, Dieldrin, Endrin, Endosulfan I, Endosulfan II, Endosulfan Sulfate, Lindane, Heptachlor, Heptachlor epoxide, alpha-Benzene hexachloride (alpha-BHC), beta-Benzene hexachloride (beta-BHC), delta-Benzene hexachloride (delta-BHC), alpha-Chlordane, y-Chlordane, cis-Chlordane, trans-Chlordane, Oxychlordane, Methoxychlor, Mirex, Endrin Aldehyde, Hexachlorobenzene, trans-Nonachlor, cis-Nonachlor, chlorophenol, Pentachlorophenol"
 28/09/2022 12:22,km,s_006,Dichlorodiphenyltrichloroethane (DDT)
 28/09/2022 13:43,km,s_007,"alpha-Hexachlorocyclohexane (alpha-HCH), beta-Hexachlorocyclohexane (beta-HCH), gamma-Hexachlorocyclohexane (gamma-HCH), p,p-Dichlorodiphenyltrichloroethane (p,p-DDT), o,p-Dichlorodiphenyltrichloroethane (o,p-DDT), o,p-Dichlorodiphenyldichloroethylene (o,p-DDE), Dieldrin, Heptachlor epoxide, cis-Chlordane, trans-Chlordane, Oxychlordane, Mirex, Hexachlorobenzene, cis-Heptachlorine"
 28/09/2022 13:52,km,s_008,"p,p-Dichlorodiphenyltrichloroethane (p,p-DDT), p,p-Dichlorodiphenyldichloroethylene (p,p-DDE)"
@@ -26,7 +26,7 @@ Timestamp,initials_extractor,study_id,ocp
 18/11/2022 10:47,km,s_025,"Hexachlorocyclohexane (HCH), Dichlorodiphenyltrichloroethane (DDT), Dichlorodiphenyldichloroethylene (DDE), Chlordane, Hexachlorobenzene"
 25/11/2022 23:27,km,s_026,Dichlorodiphenyltrichloroethane (DDT)
 28/11/2022 18:16,km,s_027,"Dichlorodiphenyltrichloroethane (DDT), Aldrin, Dieldrin, Endrin, Heptachlor, Chlordane"
-28/11/2022 18:30,km,s_028,general organochlorine 
+28/11/2022 18:30,km,s_028,general organochlorine
 28/11/2022 18:50,km,s_029,Hexachlorobenzene
 28/11/2022 19:30,km,s_030,general organochlorine
 28/11/2022 20:48,km,s_031,"Dichlorodiphenyltrichloroethane (DDT), general organochlorine"
@@ -35,14 +35,14 @@ Timestamp,initials_extractor,study_id,ocp
 28/11/2022 22:38,km,s_034,Dichlorodiphenyldichloroethylene (DDE)
 07/12/2022 0:40,km,s_035,"Dichlorodiphenyltrichloroethane (DDT), p,p-Dichlorodiphenyltrichloroethane (p,p-DDT), Dichlorodiphenyldichloroethylene (DDE), p,p-Dichlorodiphenyldichloroethylene (p,p-DDE), Dieldrin, Heptachlor, Chlordane, Oxychlordane, Hexachlorobenzene, trans-Nonachlor, general organochlorine"
 07/12/2022 1:00,km,s_036,"Dichlorodiphenyltrichloroethane (DDT), Dichlorodiphenyldichloroethylene (DDE)"
-07/12/2022 1:25,km,s_037,"Dichlorodiphenyltrichloroethane (DDT), Aldrin, Dieldrin, Lindane, Heptachlor, Chlordane, general organochlorine , Toxaphene"
+07/12/2022 1:25,km,s_037,"Dichlorodiphenyltrichloroethane (DDT), Aldrin, Dieldrin, Lindane, Heptachlor, Chlordane, general organochlorine, Toxaphene"
 07/12/2022 1:49,km,s_038,"p,p-Dichlorodiphenyldichloroethylene (p,p-DDE), Oxychlordane, trans-Nonachlor"
 08/12/2022 2:00,km,s_039,"Dichlorodiphenyltrichloroethane (DDT), p,p-Dichlorodiphenyltrichloroethane (p,p-DDT), o,p-Dichlorodiphenyltrichloroethane (o,p-DDT), Dichlorodiphenyldichloroethylene (DDE), p,p-Dichlorodiphenyldichloroethylene (p,p-DDE), Dieldrin, Chlordane, Oxychlordane, Mirex, Hexachlorobenzene, nonachlore"
 08/12/2022 2:29,km,s_040,"Heptachlor, Chlordane, Oxychlordane, trans-Nonachlor"
 08/12/2022 3:00,km,s_041,"Dichlorodiphenyltrichloroethane (DDT), Methoxychlor"
 08/12/2022 21:05,km,s_042,"p,p-Dichlorodiphenyldichloroethylene (p,p-DDE)"
 08/12/2022 21:34,km,s_043,"Dichlorodiphenyltrichloroethane (DDT), Dichlorodiphenyldichloroethylene (DDE), Lindane, Heptachlor, Oxychlordane, Hexachlorobenzene, trans-Nonachlor"
-12/12/2022 6:09,km,s_044,"alpha-Hexachlorocyclohexane (alpha-HCH), beta-Hexachlorocyclohexane (beta-HCH), gamma-Hexachlorocyclohexane (gamma-HCH), p,p-Dichlorodiphenyltrichloroethane (p,p-DDT), o,p-Dichlorodiphenyltrichloroethane (o,p-DDT), p,p-Dichlorodiphenyldichloroethylene (p,p-DDE), o,p-Dichlorodiphenyldichloroethylene (o,p-DDE), p,p-Dichlorodiphenyldichloroethane (p,p-DDD), o,p-Dichlorodiphenyldichloroethane (o,p-DDD), delta - Hexachlorocyclohexane (delta - HCH)"
+12/12/2022 6:09,km,s_044,"alpha-Hexachlorocyclohexane (alpha-HCH), beta-Hexachlorocyclohexane (beta-HCH), gamma-Hexachlorocyclohexane (gamma-HCH), p,p-Dichlorodiphenyltrichloroethane (p,p-DDT), o,p-Dichlorodiphenyltrichloroethane (o,p-DDT), p,p-Dichlorodiphenyldichloroethylene (p,p-DDE), o,p-Dichlorodiphenyldichloroethylene (o,p-DDE), p,p-Dichlorodiphenyldichloroethane (p,p-DDD), o,p-Dichlorodiphenyldichloroethane (o,p-DDD), delta-Hexachlorocyclohexane (delta-HCH)"
 15/12/2022 0:30,km,s_045,"p,p-Dichlorodiphenyltrichloroethane (p,p-DDT), p,p-Dichlorodiphenyldichloroethylene (p,p-DDE), Hexachlorobenzene"
 15/12/2022 1:00,km,s_046,"Dichlorodiphenyltrichloroethane (DDT), Aldrin, Dieldrin, Lindane, Heptachlor, Chlordane, Toxaphene"
 15/12/2022 1:21,km,s_047,Pentachlorophenol
@@ -54,29 +54,29 @@ Timestamp,initials_extractor,study_id,ocp
 16/12/2022 3:36,km,s_053,"beta-Hexachlorocyclohexane (beta-HCH), gamma-Hexachlorocyclohexane (gamma-HCH), p,p-Dichlorodiphenyltrichloroethane (p,p-DDT), o,p-Dichlorodiphenyltrichloroethane (o,p-DDT), p,p-Dichlorodiphenyldichloroethylene (p,p-DDE), Aldrin, Dieldrin, Heptachlor epoxide, beta-Benzene hexachloride (beta-BHC), cis-Chlordane, Oxychlordane, Mirex, Hexachlorobenzene, trans-Nonachlor"
 16/12/2022 22:38,km,s_054,"p,p-Dichlorodiphenyltrichloroethane (p,p-DDT), p,p-Dichlorodiphenyldichloroethylene (p,p-DDE)"
 16/12/2022 23:19,km,s_055,"Hexachlorocyclohexane (HCH), Dichlorodiphenyltrichloroethane (DDT), Dichlorodiphenyldichloroethylene (DDE), Hexachlorobenzene"
-17/12/2022 0:06,km,s_056,"Hexachlorocyclohexane (HCH), Dichlorodiphenyltrichloroethane (DDT), Dichlorodiphenyldichloroethylene (DDE), Aldrin, Heptachlor epoxide, Oxychlordane, Mirex, Hexachlorobenzene, trans-Nonachlor, mixed organochlorine"
+17/12/2022 0:06,km,s_056,"Hexachlorocyclohexane (HCH), Dichlorodiphenyltrichloroethane (DDT), Dichlorodiphenyldichloroethylene (DDE), Aldrin, Heptachlor epoxide, Oxychlordane, Mirex, Hexachlorobenzene, trans-Nonachlor, general organochlorine"
 17/12/2022 0:27,km,s_057,Dichlorodiphenyltrichloroethane (DDT)
-17/12/2022 0:47,km,s_058,not reported
-17/12/2022 0:55,km,s_059,not reported
-19/12/2022 23:59,km,s_060,not reported
-20/12/2022 0:19,km,s_061,not reported
-20/12/2022 0:52,km,s_062,not reported
-20/12/2022 1:18,km,s_063,not reported
-20/12/2022 1:32,km,s_064,not reported
-20/12/2022 1:50,km,s_065,not reported
-21/12/2022 2:33,km,s_066,not reported
-21/12/2022 2:40,km,s_067,not reported
-21/12/2022 2:48,km,s_068,not reported
-21/12/2022 3:00,km,s_069,not reported
-21/12/2022 3:13,km,s_070,not reported
-22/12/2022 22:37,km,s_071,not reported
-22/12/2022 23:02,km,s_072,not reported
-23/12/2022 0:35,km,s_073,not reported
-23/12/2022 0:53,km,s_074,not reported
-23/12/2022 1:06,km,s_075,not reported
+17/12/2022 0:47,km,s_058,no chemical classification
+17/12/2022 0:55,km,s_059,no chemical classification
+19/12/2022 23:59,km,s_060,no chemical classification
+20/12/2022 0:19,km,s_061,no chemical classification
+20/12/2022 0:52,km,s_062,no chemical classification
+20/12/2022 1:18,km,s_063,no chemical classification
+20/12/2022 1:32,km,s_064,no chemical classification
+20/12/2022 1:50,km,s_065,no chemical classification
+21/12/2022 2:33,km,s_066,no chemical classification
+21/12/2022 2:40,km,s_067,no chemical classification
+21/12/2022 2:48,km,s_068,no chemical classification
+21/12/2022 3:00,km,s_069,no chemical classification
+21/12/2022 3:13,km,s_070,no chemical classification
+22/12/2022 22:37,km,s_071,no chemical classification
+22/12/2022 23:02,km,s_072,no chemical classification
+23/12/2022 0:35,km,s_073,no chemical classification
+23/12/2022 0:53,km,s_074,no chemical classification
+23/12/2022 1:06,km,s_075,no chemical classification
 23/12/2022 2:08,km,s_076,"Dichlorodiphenyltrichloroethane (DDT), Aldrin, Dieldrin"
 23/12/2022 2:23,km,s_077,general organochlorine
-03/01/2023 11:49,km,s_078,not reported
+03/01/2023 11:49,km,s_078,no chemical classification
 05/01/2023 18:30,km,s_079,"p,p-Dichlorodiphenyldichloroethylene (p,p-DDE)"
 05/01/2023 18:32,km,s_080,Dichlorodiphenyldichloroethylene (DDE)
 05/01/2023 18:34,km,s_081,"Dichlorodiphenyltrichloroethane (DDT), Lindane"
@@ -84,12 +84,12 @@ Timestamp,initials_extractor,study_id,ocp
 05/01/2023 18:40,km,s_083,Pentachlorophenol
 13/01/2023 14:25,km,s_084,"Hexachlorocyclohexane (HCH), alpha-Hexachlorocyclohexane (alpha-HCH), beta-Hexachlorocyclohexane (beta-HCH), p,p-Dichlorodiphenyltrichloroethane (p,p-DDT), o,p-Dichlorodiphenyltrichloroethane (o,p-DDT), p,p-Dichlorodiphenyldichloroethylene (p,p-DDE), o,p-Dichlorodiphenyldichloroethylene (o,p-DDE), p,p-Dichlorodiphenyldichloroethane (p,p-DDD), o,p-Dichlorodiphenyldichloroethane (o,p-DDD), Lindane"
 13/01/2023 14:30,km,s_085,"Hexachlorocyclohexane (HCH), Dichlorodiphenyltrichloroethane (DDT), Aldrin, Dieldrin, Endrin, Lindane, Heptachlor, Chlordane, Methoxychlor, Toxaphene"
-06/01/2023 10:51,km,s_086,"alpha-Hexachlorocyclohexane (alpha-HCH), beta-Hexachlorocyclohexane (beta-HCH), gamma-Hexachlorocyclohexane (gamma-HCH), p,p-Dichlorodiphenyltrichloroethane (p,p-DDT), o,p-Dichlorodiphenyltrichloroethane (o,p-DDT), p,p-Dichlorodiphenyldichloroethylene (p,p-DDE), o,p-Dichlorodiphenyldichloroethylene (o,p-DDE), Aldrin, Dieldrin, Endosulfan, Endosulfan II, Heptachlor epoxide, cis-Chlordane, trans-Chlordane, endrin ketone"
+06/01/2023 10:51,km,s_086,"alpha-Hexachlorocyclohexane (alpha-HCH), beta-Hexachlorocyclohexane (beta-HCH), gamma-Hexachlorocyclohexane (gamma-HCH), p,p-Dichlorodiphenyltrichloroethane (p,p-DDT), o,p-Dichlorodiphenyltrichloroethane (o,p-DDT), p,p-Dichlorodiphenyldichloroethylene (p,p-DDE), o,p-Dichlorodiphenyldichloroethylene (o,p-DDE), Aldrin, Dieldrin, Endosulfan, Endosulfan II, Heptachlor epoxide, cis-Chlordane, trans-Chlordane, Endrin ketone"
 06/01/2023 10:57,km,s_087,"Dichlorodiphenyldichloroethylene (DDE), Hexachlorobenzene"
 06/01/2023 11:00,km,s_088,"p,p-Dichlorodiphenyldichloroethylene (p,p-DDE)"
 06/01/2023 11:02,km,s_089,Dichlorodiphenyltrichloroethane (DDT)
 16/01/2023 9:42,km,s_090,TCDD
-16/01/2023 9:56,km,s_091,not reported
+16/01/2023 9:56,km,s_091,no chemical classification
 16/01/2023 10:05,km,s_092,Pentachlorophenol
 06/01/2023 11:34,km,s_093,"Hexachlorocyclohexane (HCH), Dichlorodiphenyltrichloroethane (DDT)"
 06/01/2023 11:39,km,s_094,"alpha-Hexachlorocyclohexane (alpha-HCH), beta-Hexachlorocyclohexane (beta-HCH), gamma-Hexachlorocyclohexane (gamma-HCH), Dichlorodiphenyltrichloroethane (DDT), p,p-Dichlorodiphenyltrichloroethane (p,p-DDT), Dieldrin, Heptachlor epoxide, Mirex, Hexachlorobenzene, trans-Nonachlor, Toxaphene"
