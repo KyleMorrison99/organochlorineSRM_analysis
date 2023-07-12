@@ -57,7 +57,8 @@ igraph,
 stringi,
 stringdist,
 circlize,
-ggalluvial)
+ggalluvial,
+ggraph)
 knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
 
 ```
@@ -539,7 +540,7 @@ database_count <- sd %>%
   count(database_search) %>% 
   filter(database_search != "not reported") %>% 
   arrange(desc(n)) %>% 
-  mutate(database_search = ifelse(n<= 3, "Other Databases", as.character(database_search))) %>% 
+  mutate(database_search = ifelse(n<= 3, "Other databases", as.character(database_search))) %>% 
     group_by(database_search) %>%
   summarise(n = sum(n))
 
@@ -623,7 +624,7 @@ effectsize_count <- sd %>%
   count(effect_size) %>%
   filter(effect_size != "NA") %>%
   mutate(effect_size = ifelse(n<= 2, "Other effect sizes", as.character(effect_size))) %>% 
-    group_by(effect_size) %>%
+  group_by(effect_size) %>%
   summarise(n = sum(n))
 
 # Calculate proportion and percentage for each category
@@ -1285,39 +1286,46 @@ database_count <- database_count %>%
   summarise(n = sum(n))
 
 # Modifying the effectsize_count 
+
+effectsize_count <- sd %>% 
+  separate_rows(effect_size, sep = ",\\s+") %>% 
+  count(effect_size) %>%
+  filter(effect_size != "NA") %>%
+  group_by(effect_size) %>%
+  summarise(n = sum(n))
+
 effectsize_count <- effectsize_count %>% 
     mutate(effect_size = if_else(effect_size %in% c("Beta regression coefficient", "Correlation coefficient"), "Correlation", effect_size)) %>% 
   mutate(effect_size = if_else(effect_size %in% c("OR (odds ratio)", "RR (response ratio)", "SMD (standardized mean difference)", "lnPR (log partitioning ratio)", "lnOR (log odds ratio)", "Ratio of means", "InRR (log response ratio)"), "Mean difference", effect_size)) %>% 
   mutate(effect_size = if_else(effect_size %in% c("lnCVR (log coefficient variation ratio)"), "Variation difference", effect_size)) %>% 
   mutate(effect_size = if_else(effect_size %in% c("RR (risk ratio)"), "2x2", effect_size)) %>% 
-  mutate(effect_size = if_else(effect_size %in% c("Raw weight", "Transfer rate", "Geometric mean", "Maternal transfer ratio", "SMR (standardized mortality rate)", "Transfer rate"), "Raw comparison", effect_size)) %>% 
-  mutate(effect_size = if_else(effect_size %in% c("z-score"), "other", effect_size)) %>% 
+   mutate(effect_size = if_else(effect_size %in% c("Raw weight", "Transfer rate", "Geometric mean", "Maternal transfer ratio", "SMR (standardized mortality rate)", "Transfer rate", "z-score"), "Other ES", effect_size)) %>% 
   group_by(effect_size) %>%
   summarise(n = sum(n))
 
 
 # Modifying software_count
 software_count <- software_count %>%
-  mutate(software_analysis = if_else(software_analysis %in% c("Stata", "R"), "Code-based Software", software_analysis)) %>%
+  mutate(software_analysis = if_else(software_analysis %in% c("Stata", "R"), "Code-based software", software_analysis)) %>%
     mutate(software_analysis = if_else(software_analysis %in% c("CMAS", "Excel", "RevMan", "SAS", "XLSTAT"), "GUI", software_analysis)) %>% 
   group_by(software_analysis) %>%
   summarise(n = sum(n))
 
 # Modifying heterogeneity_count 
 heterogeneity_count <- heterogeneity_count %>% 
-    mutate(heterogeneity_assessment_method = if_else(heterogeneity_assessment_method %in% c("Tau square"), "I squared", heterogeneity_assessment_method)) %>% 
-      mutate(heterogeneity_assessment_method = if_else(heterogeneity_assessment_method %in% c("Chi square"), "Q statistic", heterogeneity_assessment_method)) %>% 
+    mutate(heterogeneity_assessment_method = if_else(heterogeneity_assessment_method %in% c("Tau square"), "I square", heterogeneity_assessment_method)) %>% 
+    mutate(heterogeneity_assessment_method = if_else(heterogeneity_assessment_method %in% c("Chi square"), "Q statistic", heterogeneity_assessment_method)) %>% 
    mutate(heterogeneity_assessment_method = if_else(heterogeneity_assessment_method %in% c("Galbraith plot", "Baujats plot"), "Plot", heterogeneity_assessment_method)) %>% 
   group_by(heterogeneity_assessment_method) %>%
   summarise(n = sum(n))
 
 bias_method_count <- bias_method_count %>% 
-  mutate(bias_assessment_method = ifelse(n<= 3, "Other bias assessment", as.character(bias_assessment_method))) %>% 
+  mutate(bias_assessment_method = ifelse(n<= 3, "Other BA", as.character(bias_assessment_method))) %>% 
    group_by(bias_assessment_method) %>%
   summarise(n = sum(n))
 
 sensitivity_count <-  sensitivity_count %>%  
-   mutate(sensitivity_analysis_method = ifelse(n<= 3, "Other sensitivity analysis", as.character(sensitivity_analysis_method))) %>% 
+   mutate(sensitivity_analysis_method = ifelse(n<= 3, "Other SA", as.character(sensitivity_analysis_method))) %>% 
    group_by(sensitivity_analysis_method) %>%
   summarise(n = sum(n))
 
@@ -1327,14 +1335,20 @@ rob_method_count <-  rob_method_count %>%
    group_by(rob_assessment_method) %>%
   summarise(n = sum(n))
 
+visualization_count <- visualization_count %>% 
+  mutate(visualization_method = ifelse(n<= 3, "Other Viz", as.character(visualization_method))) %>% 
+  group_by(visualization_method) %>%
+  summarise(n = sum(n))
+
 reporting_guide_count <- reporting_guide_count %>% 
   mutate(reporting_standards_type = ifelse(n<= 2, "Other guideline", as.character(reporting_standards_type))) %>% 
   group_by(reporting_standards_type) %>%
   summarise(n = sum(n))
 
-visualization_count <- visualization_count %>% 
-  mutate(visualization_method = ifelse(n<= 3, "Other visualization", as.character(visualization_method))) %>% 
-  group_by(visualization_method) %>%
+
+bias_visualization_count <- bias_visualization_count %>% 
+      mutate(bias_assessment_visualization = if_else(bias_assessment_visualization %in% c("doi plot", "trim and fill", "Funnel plot"), "Bias visualization", bias_assessment_visualization)) %>% 
+  group_by(bias_assessment_visualization) %>%
   summarise(n = sum(n))
 
 ```
@@ -1343,17 +1357,16 @@ visualization_count <- visualization_count %>%
 ```{r}
 # Combine the data frames and unite the methodology types
 df <- bind_rows(
-  database_count %>% mutate(methodology_type = 'Database_Search'),
-  effectsize_count %>% mutate(methodology_type = 'Effect_Size'),
+  database_count %>% mutate(methodology_type = 'Database Search'),
+  effectsize_count %>% mutate(methodology_type = 'Effect Size'),
   software_count %>%  mutate(methodology_type = "Software"),
   heterogeneity_count %>% mutate(methodology_type = "Heterogeneity"),
   sensitivity_count %>% mutate(methodology_type = "Sensitivity_Analysis"),
-  bias_type_count %>% mutate(methodology_type = "Bias_Type"),
-  bias_method_count %>%  mutate(methodology_type = "Bias_Assessment"),
-  rob_method_count %>% mutate(methodology_type = "Risk_of_Bias"), 
+  bias_method_count %>%  mutate(methodology_type = "Bias Assessment"),
+  rob_method_count %>% mutate(methodology_type = "Risk  of Bias"), 
   visualization_count %>% mutate(methodology_type = "Visualization"),
-  reporting_guide_count %>%  mutate(methodology_type = "Reporting_Guide"),
-  bias_visualization_count %>%  mutate(methodology_type = "Bias Visualization")
+  reporting_guide_count %>%  mutate(methodology_type = "Reporting Guide"),
+  bias_visualization_count %>%  mutate(methodology_type = "Bias Assessment")
 ) %>% 
  unite(methodology_type_specific, 
        database_search, 
@@ -1361,7 +1374,6 @@ df <- bind_rows(
        software_analysis,
        heterogeneity_assessment_method, 
        sensitivity_analysis_method, 
-       bias_assessment_type,
        bias_assessment_method,
        rob_assessment_method, 
        visualization_method, 
@@ -1394,15 +1406,13 @@ mygraph <- graph_from_data_frame(edges,
                                  )
 
 
-
-
-
 fig6 <- ggraph(mygraph, layout = 'circlepack', weight = size) + 
-    geom_node_circle(aes(fill = depth)) +
-    geom_node_label(aes(label = name, filter = leaf, size = 2)) +
+    geom_node_circle(aes(fill = as.factor(depth)), color = NA, alpha = 0.5) +
+    geom_node_text(aes(label = name, filter = leaf, size = 2), vjust = -0.3, fontface = "bold") +
+    geom_node_text(aes(label = paste0("(", size, ")"), filter = leaf, size = 2), vjust = 1, fontface = "bold") +
     theme_void() +
     theme(legend.position = "none") +
-    scale_fill_gradient(low = "#1b9e77", high = "#894376")
+    scale_fill_manual(values = c("#1b9e77", "#E7298A"))
 
 
 fig6
