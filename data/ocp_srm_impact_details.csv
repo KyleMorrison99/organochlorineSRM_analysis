@@ -50,11 +50,11 @@ Timestamp,initials_extractor,study_id,impact
 16/12/2022 0:49,km,s_049,prostate cancer
 16/12/2022 1:14,km,s_050,birth outcomes
 16/12/2022 1:38,km,s_051,lung Cancer
-16/12/2022 3:13,km,s_052,markers of inflammation and immune responses
+16/12/2022 3:13,km,s_052,"markers of inflammation, immune responses"
 16/12/2022 3:37,km,s_053,endometriosis
 16/12/2022 22:38,km,s_054,obesity
 16/12/2022 23:21,km,s_055,diabetes
-17/12/2022 0:06,km,s_056,metabolic syndrome (METS)
+17/12/2022 0:06,km,s_056,metabolic syndrome
 17/12/2022 0:27,km,s_057,multiple myeloma
 17/12/2022 0:47,km,s_058,parkinsons disease
 17/12/2022 0:56,km,s_059,myelodysplastic syndromes
