@@ -367,7 +367,7 @@ impact_pct <- impact_count %>%
   mutate(proportion = n/sum(impact_count$n),
          percentage = proportion*100)
 
-# Create the count for impacts 
+# Create the count plot for impacts 
 figs7 <- impact_count %>%
   ggplot(aes(x = n, y = reorder(impact, n), fill = "#1b9e77")) +
   geom_bar(stat = "identity", width = 0.8 , alpha = 0.7) +
@@ -395,6 +395,66 @@ figs7
 
  # ggsave(here("figures", "figs7.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
  # ggsave(here("figures", "figs7.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+
+```
+
+```{r}
+# Create a collumn for broad impacts
+im <- im %>%
+        separate_rows(impact, sep = ",\\s+") %>% 
+  mutate(impact_broad = case_when(
+    impact %in% c("parkinsons disease", "alzheimers disease", "autism spectrum disorder", "brain tumour", "amyotrophic lateral sclerosis" ) ~ "Neurological",
+    impact %in% c("concentration", "contamination") ~ "Concentration",
+    impact %in% c("diabetes", "thyroid function", "hypertension", "endometriosis") ~ "Endocrine disrupting",
+    grepl("cancer", impact, ignore.case = TRUE) | impact %in% c("leukemia", "lymphoma", "multiple myeloma", "neuroblastoma") ~ "Carcinogen",
+    impact %in% c("respiratory health", "cardiovascular disease", "asthma", "prolonged bradycardia") ~ "Cardiovascular",
+    impact %in% c("birth outcomes", "birth weight", "preterm birth") ~ "Birth",
+    impact %in% c("obesity", "adiposity") ~ "Obesity",
+    impact %in% c("sperm quality", "neuroblastoma", "hypospadias", "cryptochidism", "reproductive system") ~ "Reproduction",
+    TRUE ~ "Other Impact"
+  ))
+
+
+# Calculate total count for each category
+impact_count_broad <- 
+  im %>% 
+    separate_rows(impact_broad, sep = ",\\s+") %>% 
+    count(impact_broad) %>% 
+  filter(impact_broad != "NA") %>%
+    group_by(impact_broad) %>%
+  summarise(n = sum(n))
+
+# Calculate proportion and percentage for each category
+impact_pct_broad <- impact_count_broad %>%
+  mutate(proportion = n/sum(impact_count_broad$n),
+         percentage = proportion*100)
+
+
+# Create the count plot for impacts 
+figs8 <- impact_count_broad %>%
+  ggplot(aes(x = n, y = reorder(impact_broad, n), fill = "#1b9e77")) +
+  geom_bar(stat = "identity", width = 0.8 , alpha = 0.7) +
+  geom_text(aes(label = n, x = n / 2, y = reorder(impact_broad, n)), hjust = 0.5, size = 7, color = "black") +
+  geom_text(data = impact_pct_broad, aes(label = paste0("(", round(percentage, 1), "%)"), x = n), 
+            hjust = -0.1, size = 6, color = "black", fontface = "bold") +
+  scale_fill_identity(guide = "none") +
+  scale_x_continuous(name = "Article Count", expand = c(0, 0), limits = c(0, max(impact_count_broad$n)*1.1)) +
+  labs(y = NULL) +
+  theme_minimal() +
+  theme(axis.text.y = element_text(size = 15),
+        axis.text.x = element_text(size = 15),
+        axis.line.x = element_line(color = "gray", size = 0.5),
+        axis.line.y = element_blank(),
+        axis.ticks.x = element_blank(),
+        axis.ticks.y = element_blank(),
+        axis.title.x = element_text(size = 20),
+        axis.title.y = element_text(size = 20),
+        panel.grid.major.y = element_blank(),
+        panel.grid.minor.y = element_blank(),
+        legend.position = "none"
+        )
+
+figs8
 
 ```
 
@@ -438,21 +498,22 @@ alluvial <- im %>%
   left_join(sub, by = "study_id") %>%
   separate_rows(subject, sep = ",\\s+") %>% 
   separate_rows(ocp, sep = ",\\s+") %>% 
-  separate_rows(impact, sep = ",\\s+") %>%
+  separate_rows(impact_broad, sep = ",\\s+") %>%
   replace_ocp2() %>%
   filter(!grepl("not reported", ocp, ignore.case = TRUE)) %>%
-  group_by(ocp, subject, impact) %>%
+  group_by(ocp, subject, impact_broad) %>%
   summarise(freq = n(), .groups = 'drop') %>%
   group_by(ocp) %>%
   filter(sum(freq) > 5) %>%  
-  group_by(impact) %>% 
+  group_by(impact_broad) %>% 
   filter(sum(freq) > 5) %>% 
   mutate(subject = factor(subject, levels = c("Environment", "Non-human animal", "Human"), ordered = TRUE))
 
 
+# Crate the alluvial plot
 figs8 <- alluvial %>% 
   ggplot(
-       aes(axis1 = ocp, axis2 = subject, axis3 = impact, y = freq)) +
+       aes(axis1 = ocp, axis2 = subject, axis3 = impact_broad, y = freq)) +
   scale_x_discrete(limits = c("Organochlorine Pesticide", "Subject", "Impact"), expand = c(.05, .10)) +
   xlab("Variables") +
   ylab("Frequency") +  
@@ -466,8 +527,8 @@ figs8 <- alluvial %>%
 figs8
 
 
-  ggsave(here("figures", "figs8.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
-  ggsave(here("figures", "figs8.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+  # ggsave(here("figures", "figs8.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+ #  ggsave(here("figures", "figs8.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 
 
 ```
@@ -484,14 +545,12 @@ ocp_im <- left_join(ocp, im ,sub, by = "study_id")
 # Separate rows in "ocp_im"
 ocp_im1 <- separate_rows(ocp_im, ocp , sep = ", ", convert = TRUE)
 
-ocp_im1 <- separate_rows(ocp_im1, impact , sep = ", ", convert = TRUE)
-
 
 # Group by "ocp" and "impact" and summarize count
 ocp_im_summary <- ocp_im1 %>%
   mutate(ocp = str_trim(ocp),
-         impact = str_trim(impact)) %>%
-  group_by(ocp, impact) %>%
+         impact_broad = str_trim(impact_broad)) %>%
+  group_by(ocp, impact_broad) %>%
   summarise(count = n(), .groups = "drop") %>% 
   replace_ocp()
 
@@ -504,18 +563,13 @@ top_pesticides <- ocp_im_summary %>%
   top_n(8, total_count) %>%
   pull(ocp) 
 
-top_impacts <- ocp_im_summary %>%
-  group_by(impact) %>%
-  summarise(total_count = sum(count)) %>%
- top_n(8, total_count) %>%
-  pull(impact)
 
 ocp_im_summary_filtered <- ocp_im_summary %>%
-  filter(ocp %in% top_pesticides, impact %in% top_impacts)
+  filter(ocp %in% top_pesticides)
 
 # Create a circle plot with impact on the x-axis and ocp on the y-axis
 ggplot(ocp_im_summary_filtered, 
-       aes(x = fct_rev(fct_reorder(impact, count, .fun = 'sum')),
+       aes(x = fct_rev(fct_reorder(impact_broad, count, .fun = 'sum')),
            y = fct_reorder(ocp, count, .fun = 'sum'),
            size = count,
            fill = count)) +
@@ -532,14 +586,13 @@ ggplot(ocp_im_summary_filtered,
         axis.text.y = element_text(size = 20, hjust = 1),  
         axis.title.x = element_text(size = 25),  
         axis.title.y = element_text(size = 25),  
-        legend.text = element_text(size = 15),  
-        legend.title = element_text(size = 20)) +
-  scale_size_continuous(range = c(10, 40)) +
-  guides(size = "none")
+        legend.position = "none") +
+  scale_size_continuous(range = c(10, 40)) 
 
 
- # ggsave(here("figures", "fig3.pdf"), width = 25, height = 15, units = "cm", scale = 2, dpi = 800)
- # ggsave(here("figures", "fig3.jpg"), width = 25, height = 15, units = "cm", scale = 2, dpi = 800)
+
+  ggsave(here("figures", "fig3.pdf"), width = 25, height = 15, units = "cm", scale = 2, dpi = 800)
+  ggsave(here("figures", "fig3.jpg"), width = 25, height = 15, units = "cm", scale = 2, dpi = 800)
 ```
 
 

@@ -1,0 +1,75 @@
+---
+title: "Deduplication_code"
+output: pdf_document
+---
+
+Load packages
+```{r}
+rm(list= ls())
+library(tidyverse) 
+library(synthesisr) 
+library(tidystringdist) 
+library(bibliometrix)
+```
+
+
+Load in CSV file includes scopus, wos, pubmed, science direct and cochrane
+```{r}
+dat <- read.csv("ocp_srm_all_databases.csv")
+dim(dat) # 4535
+```
+
+Remove all punctuation and extra white spaces
+
+```{r}
+dat$title2 <- str_replace_all(dat$title,"[:punct:]","") %>% 
+  str_replace_all(.,"[ ]+", " ") %>% 
+  tolower()
+
+```
+
+
+Remove exact titles 
+```{r}
+dat2 <- distinct(dat, title2, .keep_all = TRUE) # select records with unique titles (removes exact duplicates)
+dim(dat2) # 3530 remain 
+```
+
+
+Removing partial matches in titles 
+
+```{r}
+duplicates_string <- find_duplicates(dat2$title2, method = "string_osa", to_lower = TRUE, rm_punctuation = TRUE, threshold = 7)
+```
+
+Manually review titles to confirm they are duplicates 
+```{r}
+manual_checks <- review_duplicates(dat2$title, duplicates_string)
+view(manual_checks)
+```
+
+Manually override some duplicates as unique 
+
+```{r}
+new_duplicates <- override_duplicates(duplicates_string, 1)
+view(new_duplicates)
+dat3 <- extract_unique_references(dat2, new_duplicates)
+dim(dat3) #3439
+names(dat3)
+```
+
+Drop columns "title2" and "n_duplicates"
+
+```{r}
+dat4 <- select(dat3, -c(title2,n_duplicates))
+dim(dat4) # 3439
+```
+
+
+Save de-duplicated file
+
+```{r}
+write_csv(dat4, "ocp_srm_abstracts_for_screening_deduplicated.csv")
+write_refs(dat4, format = "bib", file = "abstracts_for_screening_deduplicated.bib")
+```
+
