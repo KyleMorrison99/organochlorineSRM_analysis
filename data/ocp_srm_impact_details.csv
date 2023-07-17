@@ -11,19 +11,19 @@ Timestamp,initials_extractor,study_id,impact
 28/09/2022 14:12,km,s_010,cardiovascular disease
 28/09/2022 14:29,km,s_011,"diabetes, hypertension"
 28/09/2022 14:40,km,s_012,breast cancer
-28/09/2022 14:57,km,s_013,follicular lymphoma
+28/09/2022 14:57,km,s_013,lymphoma
 28/09/2022 15:03,km,s_014,"antioxidant defense, biotransformation"
 28/09/2022 15:08,km,s_015,diabetes
 17/11/2022 12:02,km,s_016,breast cancer
 17/11/2022 14:21,km,s_017,thyroid function
-17/11/2022 14:59,km,s_018,non-hodgkin lymphoma
+17/11/2022 14:59,km,s_018,lymphoma
 17/11/2022 15:19,km,s_019,estrogen-related cancers
 17/11/2022 15:44,km,s_020,sperm quality
 17/11/2022 16:21,km,s_021,parkinsons disease
 17/11/2022 16:47,km,s_022,cholinesterase
 18/11/2022 9:29,km,s_023,obesity
 18/11/2022 10:14,km,s_024,concentration
-18/11/2022 10:48,km,s_025,non-hodgkin lymphoma
+18/11/2022 10:48,km,s_025,lymphoma
 25/11/2022 23:28,km,s_026,breast cancer
 28/11/2022 18:17,km,s_027,prostate cancer
 28/11/2022 18:31,km,s_028,endometriosis
@@ -35,9 +35,9 @@ Timestamp,initials_extractor,study_id,impact
 28/11/2022 22:39,km,s_034,preterm birth
 07/12/2022 0:41,km,s_035,diabetes
 07/12/2022 1:01,km,s_036,diabetes
-07/12/2022 1:26,km,s_037,asthmatic symptoms
+07/12/2022 1:26,km,s_037,asthma
 07/12/2022 1:50,km,s_038,prostate cancer
-08/12/2022 2:03,km,s_039,"cryptochidism, hypospadias , testicular cancer"
+08/12/2022 2:03,km,s_039,"cryptochidism, hypospadias, testicular cancer"
 08/12/2022 2:30,km,s_040,"adiposity, diabetes"
 08/12/2022 3:00,km,s_041,reproductive system
 08/12/2022 21:06,km,s_042,autism spectrum disorder
@@ -49,8 +49,8 @@ Timestamp,initials_extractor,study_id,impact
 16/12/2022 0:24,km,s_048,concentration
 16/12/2022 0:49,km,s_049,prostate cancer
 16/12/2022 1:14,km,s_050,birth outcomes
-16/12/2022 1:38,km,s_051,lung Cancer
-16/12/2022 3:13,km,s_052,"markers of inflammation, immune responses"
+16/12/2022 1:38,km,s_051,lung cancer
+16/12/2022 3:13,km,s_052,"markers of inflammation, immune response"
 16/12/2022 3:37,km,s_053,endometriosis
 16/12/2022 22:38,km,s_054,obesity
 16/12/2022 23:21,km,s_055,diabetes
@@ -62,11 +62,11 @@ Timestamp,initials_extractor,study_id,impact
 20/12/2022 0:19,km,s_061,neuroblastoma
 20/12/2022 0:52,km,s_062,leukemia
 20/12/2022 1:19,km,s_063,leukemia
-20/12/2022 1:32,km,s_064,brain tumours
+20/12/2022 1:32,km,s_064,brain tumour
 20/12/2022 1:51,km,s_065,alzheimers disease
 21/12/2022 2:33,km,s_066,leukemia
 21/12/2022 2:41,km,s_067,parkinsons disease
-21/12/2022 2:48,km,s_068,Leukemia
+21/12/2022 2:48,km,s_068,leukemia
 21/12/2022 3:00,km,s_069,pancreatic cancer
 21/12/2022 3:14,km,s_070,leukemia
 21/12/2022 3:15,km,s_071,leukemia
@@ -74,24 +74,24 @@ Timestamp,initials_extractor,study_id,impact
 22/12/2022 23:06,km,s_073,"neural tube defects, congenital heart defects, orofacial clefts, cleft lip, cleft palate, hypospadias"
 23/12/2022 0:35,km,s_074,brain tumour
 23/12/2022 0:55,km,s_075,amyotrophic lateral sclerosis
-23/12/2022 1:08,km,s_076,"brain tumour, leukemia, lymphoma,"
-23/12/2022 2:09,km,s_077,leukaemia
+23/12/2022 1:08,km,s_076,"brain tumour, leukemia, lymphoma"
+23/12/2022 2:09,km,s_077,leukemia
 23/12/2022 2:23,km,s_078,prostate cancer
 03/01/2023 11:50,km,s_079,parkinsons disease
 05/01/2023 18:30,km,s_080,growth
 05/01/2023 18:32,km,s_081,birth weight
-05/01/2023 18:35,km,s_082,non-hodgkin lymphoma
+05/01/2023 18:35,km,s_082,lymphoma
 05/01/2023 18:38,km,s_083,concentration
 05/01/2023 18:41,km,s_084,sensitivity
 13/01/2023 14:15,km,s_085,maternal transfer
-13/01/2023 14:32,km,s_086,non-hodgkin lymphoma
+13/01/2023 14:32,km,s_086,lymphoma
 06/01/2023 10:53,km,s_087,contamination
 06/01/2023 10:57,km,s_088,growth
 06/01/2023 11:00,km,s_089,"asthma, eczema"
 06/01/2023 11:03,km,s_090,toxicity
 16/01/2023 9:43,km,s_091,diabetes
 16/01/2023 9:57,km,s_092,pancreatic cancer
-16/01/2023 10:07,km,s_093,"hodgkin disease, non-hodgkin lymphoma"
+16/01/2023 10:07,km,s_093,lymphoma
 06/01/2023 11:35,km,s_094,contamination
 06/01/2023 11:43,km,s_095,concentration
 06/01/2023 11:47,km,s_096,concentration
