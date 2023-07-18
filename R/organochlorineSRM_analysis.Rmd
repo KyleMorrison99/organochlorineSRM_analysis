@@ -651,6 +651,7 @@ ggplot(aes(y = freq ,axis1 = Journal_Category_Allocated_Broad, axis2 = bias_asse
   geom_alluvium(aes(fill = Journal_Category_Allocated_Broad)) +
   geom_stratum(width = 1/4, fill = "white", color = "black") +
   geom_text(stat = "stratum", aes(label = after_stat(stratum)), size = 6) +
+  labs(x= "Variables", y = "Frequency", fill = "Journal Category Allocated") +
   theme_suppl()
 
 figs16
@@ -661,7 +662,7 @@ figs16
 
 ## Figure s17 
 A bar plot showing the percentage and total count of bias methodology used in meta-analysis investigating the impacts of organochlorine pesticides. Note: some meta-analysis may contribute to multiple sections if the study involves multiple bias methodologies are used 
-```{r}
+```{r, fig.width=16, fig.height=10}
 # Calculate the total count for each category
 bias_method_count <- sd %>% 
   separate_rows(bias_assessment_method, sep = ",\\s+") %>% 
@@ -694,9 +695,9 @@ figs17
 ```
 
 
-Figure s18
+## Figure s18
 An alluvial plot showing the relationship between the Journal Citation Report Category and bias assessment method
-```{r}
+```{r, fig.width=16, fig.height=10}
 # Data Transformation 
 bias_assessment_alluvial <- sd %>% 
     separate_rows(bias_assessment_method, sep = ",\\s+") %>%
@@ -715,17 +716,19 @@ figs18 <- bias_assessment_alluvial %>%
   geom_alluvium(aes(fill = Journal_Category_Allocated_Broad)) +
   geom_stratum(width = 1/4, fill = "white", color = "black") +
   geom_text(stat = "stratum", aes(label = after_stat(stratum)), size = 6) +
+  labs(x= "Variables", y = "Frequency", fill = "Journal Category Allocated") +
   theme_suppl()
 
 figs18
 
-# ggsave(here("figures", "figs18.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
-# ggsave(here("figures", "figs18.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+ ggsave(here("figures", "figs18.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+ ggsave(here("figures", "figs18.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 
 ```
 
-
-```{r}
+## Figure s19
+A bar plot showing the percentage and total count of bias visualizations used in meta-analysis investigating the impacts of organochlorine pesticides. Note: some meta-analysis may contribute to multiple sections if the study involves multiple bias visualizations are used 
+```{r, fig.width=16, fig.height=10}
 # Calculate the total count for each category
 bias_visualization_count <- sd %>% 
   separate_rows(bias_assessment_visualization, sep = ",\\s+") %>% 
@@ -740,37 +743,57 @@ bias_visualization_pct <- bias_visualization_count %>%
          percentage = proportion * 100)
 
 # Create the count plot
-figs13 <- bias_visualization_count %>%
+figs19 <- bias_visualization_count %>%
   ggplot(aes(x = n, y = reorder(bias_assessment_visualization, n), fill = "#1b9e77")) +
   geom_bar(stat = "identity", width = 0.8 , alpha = 0.7) +
-  geom_text(aes(label = n, x = n / 2, y = reorder(bias_assessment_visualization, n)), hjust = 0.5, size = 4, color = "black") +
+  geom_text(aes(label = n, x = n / 2, y = reorder(bias_assessment_visualization, n)), hjust = 0.5, size = 6, color = "black") +
   geom_text(data = bias_visualization_pct, aes(label = paste0("(", round(percentage, 1), "%)"), x = n), 
-            hjust = -0.1, size = 3, color = "black", fontface = "bold") +
+            hjust = -0.1, size = 6, color = "black", fontface = "bold") +
   scale_fill_identity(guide = "none") +
   scale_x_continuous(name = "Article Count", expand = c(0, 0), limits = c(0, max(bias_visualization_count$n)*1.1)) +
   labs(y = NULL) +
-  theme_minimal() +
-  theme(
-    axis.text.y = element_text(size = 10),
-    axis.text.x = element_text(size = 10),
-    axis.line.x = element_line(color = "gray", size = 0.5),
-    axis.line.y = element_blank(),
-    axis.ticks.x = element_blank(),
-    axis.ticks.y = element_blank(),
-    axis.title.x = element_text(size = 12),
-    axis.title.y = element_blank(),
-    panel.grid.major.y = element_blank(),
-    panel.grid.minor.y = element_blank(),
-    legend.position = "none")
+ theme_suppl()
 
+figs19
 
-figs13
-
-# ggsave(here("figures", "figs13.pdf"), width = 21, height = 10, units = "cm", scale = 2, dpi = 800)
-# ggsave(here("figures", "figs13.jpg"), width = 21, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "figs19.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "figs19.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 ```
 
-```{r}
+## Figure s20
+An alluvial plot showing the relationship between the Journal Citation Report Category and bias visualization method
+```{r, fig.width=16, fig.height=10}
+# Data Transformation 
+bias_vizualisation_alluvial <- sd %>% 
+    separate_rows(bias_assessment_visualization, sep = ",\\s+") %>%
+    separate_rows(Journal_Category_Allocated_Broad, sep = "/\\s+") %>% 
+    filter(!is.na(bias_assessment_visualization)) %>%
+    group_by(Journal_Category_Allocated_Broad, bias_assessment_visualization) %>% 
+    count(bias_assessment_visualization, Journal_Category_Allocated_Broad) %>% 
+    summarise(freq = n(), .groups = 'drop') %>% 
+    group_by(bias_assessment_visualization)
+
+# Create the Alluvial plot
+figs20 <- bias_vizualisation_alluvial %>% 
+  ggplot(aes(y = freq ,axis1 = Journal_Category_Allocated_Broad, axis2 = bias_assessment_visualization)) +
+  scale_x_discrete(limits = c("Journal Citation Report Category", "Bias Assessment Method"), expand = c(.05, .05)) +
+  xlab("Variables") +
+  geom_alluvium(aes(fill = Journal_Category_Allocated_Broad)) +
+  geom_stratum(width = 1/4, fill = "white", color = "black") +
+  geom_text(stat = "stratum", aes(label = after_stat(stratum)), size = 6) +
+  labs(x= "Variables", y = "Frequency", fill = "Journal Category Allocated") +
+  theme_suppl()
+
+figs20
+
+# ggsave(here("figures", "figs20.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "figs20.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+
+```
+
+## Figure s21 
+A bar plot showing the percentage and total count of risk of bias tests used in meta-analysis investigating the impacts of organochlorine pesticides. Note: some meta-analysis may contribute to multiple sections if the study involves multiple risk of bias tests are used 
+```{r, fig.width=16, fig.height=10}
 # Calculate the total count for each category
 rob_method_count <- sd %>% 
   separate_rows(rob_assessment_method, sep = ",\\s+") %>% 
@@ -785,36 +808,26 @@ rob_method_pct <- rob_method_count %>%
          percentage = proportion * 100)
 
 # Create the count plot
-figs14 <- rob_method_count %>%
+figs21 <- rob_method_count %>%
   ggplot(aes(x = n, y = reorder(rob_assessment_method, n), fill = "#1b9e77")) +
   geom_bar(stat = "identity", width = 0.8 , alpha = 0.7) +
-  geom_text(aes(label = n, x = n / 2, y = reorder(rob_assessment_method, n)), hjust = 0.5, size = 4, color = "black") +
+  geom_text(aes(label = n, x = n / 2, y = reorder(rob_assessment_method, n)), hjust = 0.5, size = 6, color = "black") +
   geom_text(data = rob_method_pct, aes(label = paste0("(", round(percentage, 0), "%)"), x = n), 
-            hjust = -0.1, size = 3, color = "black", fontface = "bold") +
+            hjust = -0.1, size = 6, color = "black", fontface = "bold") +
   scale_fill_identity(guide = "none") +
   scale_x_continuous(name = "Article Count", expand = c(0, 0), limits = c(0, max(rob_method_count$n)*1.1)) +
   labs(y = NULL) +
-  theme_minimal() +
-  theme(
-    axis.text.y = element_text(size = 10),
-    axis.text.x = element_text(size = 10),
-    axis.line.x = element_line(color = "gray", size = 0.5),
-    axis.line.y = element_blank(),
-    axis.ticks.x = element_blank(),
-    axis.ticks.y = element_blank(),
-    axis.title.x = element_text(size = 12),
-    axis.title.y = element_blank(),
-    panel.grid.major.y = element_blank(),
-    panel.grid.minor.y = element_blank(),
-    legend.position = "none")
+  theme_suppl()
 
-figs14
+figs21
 
-
-# ggsave(here("figures", "figs14.pdf"), width = 21, height = 10, units = "cm", scale = 2, dpi = 800)
-# ggsave(here("figures", "figs14.jpg"), width = 21, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "figs21.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "figs21.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 ```
 
+
+## Figure s22
+An alluvial plot showing the relationship between the Journal Citation Report Category and risk of bias methodology 
 ```{r}
 # Data Transformation 
 robmethod_alluvial <- sd %>% 
@@ -828,17 +841,25 @@ robmethod_alluvial <- sd %>%
 
 
 # Create the Alluvial plot
-ggplot(robmethod_alluvial, aes(y = freq ,axis1 = Journal_Category_Allocated_Broad, axis2 = rob_assessment_method)) +
+figs22 <- robmethod_alluvial %>% 
+ggplot(aes(y = freq ,axis1 = Journal_Category_Allocated_Broad, axis2 = rob_assessment_method)) +
   scale_x_discrete(limits = c("Journal Citation Report Category", "ROB Assessment Method"), expand = c(.05, .05)) +
   xlab("Variables") +
   geom_alluvium(aes(fill = Journal_Category_Allocated_Broad)) +
-  geom_stratum(width = 1/8, fill = "white", color = "black") +
-  geom_text(stat = "stratum", aes(label = after_stat(stratum)), size = 3) +
-  theme_minimal()
+  geom_stratum(width = 1/4, fill = "white", color = "black") +
+  geom_text(stat = "stratum", aes(label = after_stat(stratum)), size = 6) +
+  labs(x= "Variables", y = "Frequency", fill = "Journal Category Allocated") +
+  theme_suppl()
+
+figs22
+
+ # ggsave(here("figures", "figs22.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+ # ggsave(here("figures", "figs22.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 
 ```
 
-## Figure x - Total count for each methodology used to visualise the results of the meta-analsis
+## Figure s23
+A bar plot showing the percentage and total count of visualization methods used in meta-analysis investigating the impacts of organochlorine pesticides. Note: some meta-analysis may contribute to multiple sections if the study involves multiple vizualization methods are used 
 ```{r}
 # Calculate the total count for each category
 visualization_count <- sd %>% 
@@ -854,34 +875,22 @@ visualization_pct <- visualization_count %>%
          percentage = proportion * 100)
 
 # Create the count plot
-figs15 <- visualization_count %>%
+figs23 <- visualization_count %>%
   ggplot(aes(x = n, y = reorder(visualization_method, n), fill = "#1b9e77")) +
   geom_bar(stat = "identity", width = 0.8 , alpha = 0.7) +
-  geom_text(aes(label = n, x = n / 2, y = reorder(visualization_method, n)), hjust = 0.5, size = 4, color = "black") +
+  geom_text(aes(label = n, x = n / 2, y = reorder(visualization_method, n)), hjust = 0.5, size = 6, color = "black") +
   geom_text(data = visualization_pct, aes(label = paste0("(", round(percentage, 0), "%)"), x = n), 
-            hjust = -0.1, size = 3, color = "black", fontface = "bold") +
+            hjust = -0.1, size = 6, color = "black", fontface = "bold") +
   scale_fill_identity(guide = "none") +
   scale_x_continuous(name = "Article Count", expand = c(0, 0), limits = c(0, max(visualization_count$n)*1.1)) +
   labs(y = NULL) +
-  theme_minimal() +
-  theme(
-    axis.text.y = element_text(size = 10),
-    axis.text.x = element_text(size = 10),
-    axis.line.x = element_line(color = "gray", size = 0.5),
-    axis.line.y = element_blank(),
-    axis.ticks.x = element_blank(),
-    axis.ticks.y = element_blank(),
-    axis.title.x = element_text(size = 12),
-    axis.title.y = element_blank(),
-    panel.grid.major.y = element_blank(),
-    panel.grid.minor.y = element_blank(),
-    legend.position = "none")
+  theme_suppl()
 
-figs15
+figs23
 
 
-# ggsave(here("figures", "figs15.pdf"), width = 21, height = 10, units = "cm", scale = 2, dpi = 800)
-# ggsave(here("figures", "figs15.jpg"), width = 21, height = 10, units = "cm", scale = 2, dpi = 800)
+ # ggsave(here("figures", "figs23.pdf"), width = 21, height = 10, units = "cm", scale = 2, dpi = 800)
+ # ggsave(here("figures", "figs23.jpg"), width = 21, height = 10, units = "cm", scale = 2, dpi = 800)
 ```
 
 ## Figure x - Total count for each reporting guideline followed in each meta-analysis
