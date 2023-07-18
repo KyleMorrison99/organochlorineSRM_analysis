@@ -555,7 +555,7 @@ ocp_im_summary <- ocp_im1 %>%
   replace_ocp()
 
 
-# Filter for top 5 pesticides and top 5 impacts
+# Filter for top 5 pesticides 
 top_pesticides <- ocp_im_summary %>%
   filter(ocp != "not reported") %>%
   group_by(ocp) %>%
