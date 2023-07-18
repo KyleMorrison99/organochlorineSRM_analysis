@@ -3,7 +3,7 @@ title: "Sixty years since Silent Spring: towards a balanced view of the organoch
 author: "Kyle Morrison, Coralie Williams, Lorenzo Ricolfi, Yefeng Yang,  Malgorazata Lagisz, Shinichi Nakagawa" 
 date: "2023-03-09"
 output: 
-  rmdformats::robobook:
+  rmdformats::downcute:
     code_folding: show
     code_download: true
     toc_depth: 4
@@ -29,15 +29,9 @@ In this Rmarkdown document we provide the following workflow:
 
 - Objective 0 - To examine the volume and temporal trends of existing meta-analyses on the effects of organochlorine pesticides
 - Objective 1: To evaluate the methodological patterns and quality of existing meta-analyses studying the effects of organochlorine pesticides.
+- Objective 2 . To explore the various characteristics of the organochlorine pesticides literature such as the pesticides used, the impacts elicited in response and the subjects that were investigated. 
 
 
-
-
-- Objective 1 . To explore the various characteristics of the organochlorine pesticides literature such as the pesticides used, the impacts elicited in response and the subjects that were investigated. 
-
-- Objective 2. To investigate current methodological practices within meta-analysis investigating the impacts of organochlorine pesticides. We will investigate how they currently search for existing literature, which effect sizes are used, how they adjust for heterogeneity and how they account for risk of bias. 
- 
- - Objective 3 - To investigate current reporting practices in existing meta-analyses examining the impacts of organochlorine pesticides.
  
  - Objective 4 - To investigate the research outputs across different countries and continents and investigate the degree of cross-country collaboration.
  
@@ -165,8 +159,8 @@ fig1b <- sd_sub %>%
 fig1 <- fig1a / fig1b
 fig1
 
- # ggsave(here("figures", "fig1.pdf"), width = 16, height = 12, units = "cm", scale = 2, dpi = 800)
- # ggsave(here("figures", "fig1.jpg"), width = 16, height = 12, units = "cm", scale = 2, dpi = 800)
+  ggsave(here("figures", "fig1.pdf"), width = 16, height = 12, units = "cm", scale = 2, dpi = 800)
+  ggsave(here("figures", "fig1.jpg"), width = 16, height = 12, units = "cm", scale = 2, dpi = 800)
 ```
 
 ## Figure s4 
@@ -223,8 +217,8 @@ figs4b <- sd1 %>%
 figs4 <- figs4a / figs4b
 figs4
 
- # ggsave(here("figures", "figs4.pdf"), width = 16, height = 12, units = "cm", scale = 2, dpi = 800)
- # ggsave(here("figures", "figs4.jpg"), width = 16, height = 12, units = "cm", scale = 2, dpi = 800)
+  ggsave(here("figures", "figs4.pdf"), width = 16, height = 12, units = "cm", scale = 2, dpi = 800)
+  ggsave(here("figures", "figs4.jpg"), width = 16, height = 12, units = "cm", scale = 2, dpi = 800)
 
 ```
 
@@ -282,8 +276,8 @@ figs5 <- database_count %>%
 
 figs5
 
- # ggsave(here("figures", "figs5.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
- # ggsave(here("figures", "figs5.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+  ggsave(here("figures", "figs5.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+  ggsave(here("figures", "figs5.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 
 ```
 
@@ -318,8 +312,8 @@ ggplot(aes(y = freq ,axis1 = Journal_Category_Allocated_Broad, axis2 = database_
 
 figs6
 
- #ggsave(here("figures", "figs6.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
- #ggsave(here("figures", "figs6.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+ ggsave(here("figures", "figs6.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+ ggsave(here("figures", "figs6.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 
   
 ```
@@ -355,8 +349,8 @@ figs7 <-  effectsize_count %>%
 
 figs7
 
-  # ggsave(here("figures", "figs7.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
-  # ggsave(here("figures", "figs7.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+  ggsave(here("figures", "figs7.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+  ggsave(here("figures", "figs7.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 ```
 
 ## Figure s8
@@ -387,8 +381,9 @@ ggplot(aes(y = freq ,axis1 = Journal_Category_Allocated_Broad, axis2 = effect_si
   theme_suppl()
   
 figs8
- # ggsave(here("figures", "figs8.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
-# ggsave(here("figures", "figs8.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+
+ ggsave(here("figures", "figs8.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+ ggsave(here("figures", "figs8.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 ```
 
 ## Figure s9
@@ -424,8 +419,8 @@ figs9 <- software_count %>%
 
 figs9
 
- # ggsave(here("figures", "figs9.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
- # ggsave(here("figures", "figs9.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+ ggsave(here("figures", "figs9.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+ ggsave(here("figures", "figs9.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 
 ```
 
@@ -457,8 +452,8 @@ ggplot(aes(y = freq ,axis1 = Journal_Category_Allocated_Broad, axis2 = software_
 
 figs10
 
- # ggsave(here("figures", "figs10.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
- # ggsave(here("figures", "figs10.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+ ggsave(here("figures", "figs10.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+ ggsave(here("figures", "figs10.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 
 ```
 
@@ -493,8 +488,8 @@ figs11 <- heterogeneity_count %>%
 
 figs11
 
- # ggsave(here("figures", "figs11.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
- # ggsave(here("figures", "figs11.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+ ggsave(here("figures", "figs11.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+ ggsave(here("figures", "figs11.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 
 ```
  
@@ -525,8 +520,8 @@ ggplot(aes(y = freq ,axis1 = Journal_Category_Allocated_Broad, axis2 = heterogen
 
 figs12
 
-#  ggsave(here("figures", "figs12.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
-#  ggsave(here("figures", "figs12.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+  ggsave(here("figures", "figs12.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+  ggsave(here("figures", "figs12.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 ```
  
 ## Figure s13
@@ -559,8 +554,8 @@ figs13 <- sensitivity_count %>%
 
 figs13
 
- # ggsave(here("figures", "figs13.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
- # ggsave(here("figures", "figs13.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+  ggsave(here("figures", "figs13.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+  ggsave(here("figures", "figs13.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 
 ```
 
@@ -625,8 +620,8 @@ figs15 <- bias_type_count %>%
 
 figs15
 
-# ggsave(here("figures", "figs15.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
-# ggsave(here("figures", "figs15.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+ ggsave(here("figures", "figs15.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+ ggsave(here("figures", "figs15.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 
 ```
 
@@ -690,8 +685,8 @@ figs17 <- bias_method_count %>%
 
 figs17
 
-# ggsave(here("figures", "figs17.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
-# ggsave(here("figures", "figs17.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+ ggsave(here("figures", "figs17.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+ ggsave(here("figures", "figs17.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 ```
 
 
@@ -756,8 +751,8 @@ figs19 <- bias_visualization_count %>%
 
 figs19
 
-# ggsave(here("figures", "figs19.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
-# ggsave(here("figures", "figs19.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+ ggsave(here("figures", "figs19.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+ ggsave(here("figures", "figs19.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 ```
 
 ## Figure s20
@@ -786,8 +781,8 @@ figs20 <- bias_vizualisation_alluvial %>%
 
 figs20
 
-# ggsave(here("figures", "figs20.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
-# ggsave(here("figures", "figs20.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+ ggsave(here("figures", "figs20.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+ ggsave(here("figures", "figs20.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 
 ```
 
@@ -821,8 +816,8 @@ figs21 <- rob_method_count %>%
 
 figs21
 
-# ggsave(here("figures", "figs21.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
-# ggsave(here("figures", "figs21.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+ ggsave(here("figures", "figs21.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+ ggsave(here("figures", "figs21.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 ```
 
 ## Figure s22
@@ -852,8 +847,8 @@ ggplot(aes(y = freq ,axis1 = Journal_Category_Allocated_Broad, axis2 = rob_asses
 
 figs22
 
- # ggsave(here("figures", "figs22.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
- # ggsave(here("figures", "figs22.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+ ggsave(here("figures", "figs22.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+ ggsave(here("figures", "figs22.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 
 ```
 
@@ -887,8 +882,8 @@ figs23 <- visualization_count %>%
 
 figs23
 
-# ggsave(here("figures", "figs23.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
-# ggsave(here("figures", "figs23.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+ ggsave(here("figures", "figs23.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+ ggsave(here("figures", "figs23.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 ```
 
 ## Figure s24
@@ -918,8 +913,8 @@ ggplot(aes(y = freq ,axis1 = Journal_Category_Allocated_Broad, axis2 = visualiza
 
 figs24
 
- # ggsave(here("figures", "figs24.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
- # ggsave(here("figures", "figs24.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+  ggsave(here("figures", "figs24.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+  ggsave(here("figures", "figs24.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 
 ```
 
@@ -953,8 +948,8 @@ figs25 <- reporting_guide_count %>%
 
 figs25
 
-# ggsave(here("figures", "figs25.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
-# ggsave(here("figures", "figs25.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+ ggsave(here("figures", "figs25.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+ ggsave(here("figures", "figs25.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 ```
 
 ## Figure s26
@@ -1168,7 +1163,7 @@ percent_ceesat_score <- sd %>%
 
 
 
-ggplot(data = percent_ceesat_score, aes(x = question, y = percent, fill = score)) +
+fig3 <- ggplot(data = percent_ceesat_score, aes(x = question, y = percent, fill = score)) +
   geom_col(width = 0.7, position = "fill", color = "black") +
   geom_text(aes(label = n), position = position_fill(vjust = 0.5), size = 7, fontface = "bold") +
   coord_flip() +
@@ -1188,12 +1183,15 @@ ggplot(data = percent_ceesat_score, aes(x = question, y = percent, fill = score)
 
 
 
-ggsave(here("figures", "fig4.pdf"), width = 25, height = 15, units = "cm", scale = 2, dpi = 800)
-ggsave(here("figures", "fig4.jpg"), width = 25, height = 15, units = "cm", scale = 2, dpi = 800)
+ggsave(here("figures", "fig3.pdf"), width = 25, height = 15, units = "cm", scale = 2, dpi = 800)
+ggsave(here("figures", "fig3.jpg"), width = 25, height = 15, units = "cm", scale = 2, dpi = 800)
 
 ```
 
-## Figure s5 
+# Objective 2 
+To explore the various characteristics of the organochlorine pesticides literature such as the pesticides used, the impacts elicited in response and the subjects that were investigated.
+
+## Figure s27
 A bar plot showing the percentage and total count of total of pesticides investigate in meta-analysis investigating the impacts of organochlorine pesticides. Note: some meta-analysis may contribute to multiple sections if the study involves multiple organochlorine pesticides. Filtered for pesticide counts greater than 6. 
 ```{r,fig.width=16, fig.height=10}
 # Function to replace long OCP names with abbreviations
@@ -1239,7 +1237,7 @@ ocp_pct <- ocp_count %>%
          percentage = proportion*100)
 
 # Create the count plot for OCPs
-figs5 <- ocp_count %>%
+figs27 <- ocp_count %>%
   ggplot(aes(x = n, y = reorder(ocp, n), fill = "#1b9e77")) +
   geom_bar(stat = "identity", width = 0.8, alpha = 0.7) +
   geom_text(aes(label = n, x = n / 2, y = reorder(ocp, n)), hjust = 0.5, size = 6, color = "black") +
@@ -1261,14 +1259,14 @@ figs5 <- ocp_count %>%
         panel.grid.minor.y = element_blank(),
         legend.position = "none"
         )
-figs5
- # ggsave(here("figures", "figs5.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
- # ggsave(here("figures", "figs5.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+figs27
+  ggsave(here("figures", "figs27.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+  ggsave(here("figures", "figs27.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 ```
 
-## Figure s6 
+## Figure s28
 A bar plot showing the percentage and total count of total of subjects investigate in meta-analysis investigating the impacts of organochlorine pesticides. Note: some meta-analysis may contribute to multiple sections if the study involves multiple subjects
-```{r}
+```{r,fig.width=16, fig.height=10}
 # Calculate total count for each category
 subject_count <- 
   sub %>% 
@@ -1281,7 +1279,7 @@ subject_pct <- subject_count %>%
          percentage = proportion*100)
 
 # Create the count plot for subjects
-figs6 <- subject_count %>%
+figs28 <- subject_count %>%
   ggplot(aes(x = n, y = reorder(subject, n), fill = "#1b9e77")) +
   geom_bar(stat = "identity", width = 0.8 , alpha = 0.7) +
   geom_text(aes(label = n, x = n / 2, y = reorder(subject, n)), hjust = 0.5, size = 7, color = "black") +
@@ -1304,14 +1302,14 @@ figs6 <- subject_count %>%
         legend.position = "none"
         )
 
-figs6
- #ggsave(here("figures", "figs6.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
- # ggsave(here("figures", "figs6.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+figs28
+ ggsave(here("figures", "figs28.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+ ggsave(here("figures", "figs28.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 ```
 
-## Figure s7 
+## Figure s29 
 A bar plot showing the percentage and total count of total of subjects investigate in meta-analysis investigating the impacts of organochlorine pesticides. Note: some meta-analysis may contribute to multiple sections if the study involves multiple subjects. Filtered for impact counts greater than 1. 
-```{r}
+```{r,fig.width=16, fig.height=10}
 # Calculate total count for each category
 impact_count <- 
   im %>% 
@@ -1328,7 +1326,7 @@ impact_pct <- impact_count %>%
          percentage = proportion*100)
 
 # Create the count plot for impacts 
-figs7 <- impact_count %>%
+figs29 <- impact_count %>%
   ggplot(aes(x = n, y = reorder(impact, n), fill = "#1b9e77")) +
   geom_bar(stat = "identity", width = 0.8 , alpha = 0.7) +
   geom_text(aes(label = n, x = n / 2, y = reorder(impact, n)), hjust = 0.5, size = 7, color = "black") +
@@ -1351,17 +1349,17 @@ figs7 <- impact_count %>%
         legend.position = "none"
         )
 
-figs7
+figs29
 
- # ggsave(here("figures", "figs7.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
- # ggsave(here("figures", "figs7.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+  ggsave(here("figures", "figs29.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+  ggsave(here("figures", "figs29.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 
 ```
 
-## Figure s8
+## Figure s30
 A bar plot showing the percentage and total count of total of impact categories investigated in meta-analysis investigating the impacts of organochlorine pesticides. 
 Note: some meta-analysis may contribute to multiple sections if the study involves multiple impacts
-```{r}
+```{r,fig.width=16, fig.height=10}
 # Create a collumn for broad impacts
 im <- im %>%
         separate_rows(impact, sep = ",\\s+") %>% 
@@ -1394,7 +1392,7 @@ impact_pct_broad <- impact_count_broad %>%
 
 
 # Create the count plot for impacts 
-figs8 <- impact_count_broad %>%
+figs30 <- impact_count_broad %>%
   ggplot(aes(x = n, y = reorder(impact_broad, n), fill = "#1b9e77")) +
   geom_bar(stat = "identity", width = 0.8 , alpha = 0.7) +
   geom_text(aes(label = n, x = n / 2, y = reorder(impact_broad, n)), hjust = 0.5, size = 7, color = "black") +
@@ -1417,16 +1415,16 @@ figs8 <- impact_count_broad %>%
         legend.position = "none"
         )
 
-figs8
+figs30
 
-  # ggsave(here("figures", "figs8.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
-  # ggsave(here("figures", "figs8.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+   ggsave(here("figures", "figs30.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+   ggsave(here("figures", "figs30.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 
 ```
 
-## Figure s9
+## Figure s31
 An alluvial plot showing the relationships between the pesticide of exposure, the subject being exposed and the impact of exposure 
-```{r}
+```{r,fig.width=18, fig.height=12}
 
 # Function to change OCP to be more general
 replace_ocp2 <- function(df) {
@@ -1476,7 +1474,7 @@ alluvial <- im %>%
   mutate(subject = factor(subject, levels = c("Environment", "Non-human animal", "Human"), ordered = TRUE))
 
 
-figs9 <- alluvial %>% 
+figs31 <- alluvial %>% 
   ggplot(
        aes(axis1 = ocp, axis2 = subject, axis3 = impact_broad, y = freq)) +
   scale_x_discrete(limits = c("Organochlorine Pesticide", "Subject", "Impact"), expand = c(.05, .10)) +
@@ -1494,10 +1492,10 @@ figs9 <- alluvial %>%
   ) + 
   scale_fill_brewer(palette = "Dark2", name = "Subject Category")
 
-figs9
+figs31
 
-   # ggsave(here("figures", "figs9.pdf"), width =18, height = 12, units = "cm", scale = 2, dpi = 800)
-   # ggsave(here("figures", "figs9.jpg"), width = 18, height = 12, units = "cm", scale = 2, dpi = 800)
+    ggsave(here("figures", "figs31.pdf"), width =18, height = 12, units = "cm", scale = 2, dpi = 800)
+    ggsave(here("figures", "figs31.jpg"), width = 18, height = 12, units = "cm", scale = 2, dpi = 800)
 
 
 ```
@@ -1505,7 +1503,7 @@ figs9
 
 ## Figure
  
-```{r}
+```{r,fig.width=25, fig.height=15}
 
 # Join the organochlorine pesticide details with the impact details
 ocp_im <- left_join(ocp, im ,sub, by = "study_id") 
