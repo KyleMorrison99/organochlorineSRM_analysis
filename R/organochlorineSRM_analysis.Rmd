@@ -825,10 +825,9 @@ figs21
 # ggsave(here("figures", "figs21.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 ```
 
-
 ## Figure s22
 An alluvial plot showing the relationship between the Journal Citation Report Category and risk of bias methodology 
-```{r}
+```{r, fig.width=16, fig.height=10}
 # Data Transformation 
 robmethod_alluvial <- sd %>% 
      separate_rows(rob_assessment_method, sep = ",\\s+") %>%
@@ -859,8 +858,8 @@ figs22
 ```
 
 ## Figure s23
-A bar plot showing the percentage and total count of visualization methods used in meta-analysis investigating the impacts of organochlorine pesticides. Note: some meta-analysis may contribute to multiple sections if the study involves multiple vizualization methods are used 
-```{r}
+A bar plot showing the percentage and total count of visualization methods used in meta-analysis investigating the impacts of organochlorine pesticides. Note: some meta-analysis may contribute to multiple sections if the study involves multiple visualization methods are used
+```{r, fig.width=16, fig.height=10}
 # Calculate the total count for each category
 visualization_count <- sd %>% 
   separate_rows(visualization_method, sep = ",\\s+") %>% 
@@ -888,14 +887,45 @@ figs23 <- visualization_count %>%
 
 figs23
 
-
- # ggsave(here("figures", "figs23.pdf"), width = 21, height = 10, units = "cm", scale = 2, dpi = 800)
- # ggsave(here("figures", "figs23.jpg"), width = 21, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "figs23.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "figs23.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 ```
 
-## Figure x - Total count for each reporting guideline followed in each meta-analysis
-```{r}
+## Figure s24
+An alluvial plot showing the relationship between the Journal Citation Report Category and visualization method 
+```{r, fig.width=16, fig.height=10}
+# Data Transformation 
+vizualization_alluvial <- sd %>% 
+    separate_rows(visualization_method, sep = ",\\s+") %>%
+    filter(!is.na(visualization_method)) %>%
+    separate_rows(Journal_Category_Allocated_Broad, sep = "/\\s+") %>%
+    group_by(Journal_Category_Allocated_Broad, visualization_method) %>% 
+    count(visualization_method, Journal_Category_Allocated_Broad) %>% 
+    summarise(freq = n(), .groups = 'drop') %>% 
+    group_by(visualization_method) 
 
+
+# Create the Alluvial plot
+figs24 <- vizualization_alluvial %>% 
+ggplot(aes(y = freq ,axis1 = Journal_Category_Allocated_Broad, axis2 = visualization_method)) +
+  scale_x_discrete(limits = c("Journal Citation Report Category", "ROB Assessment Method"), expand = c(.05, .05)) +
+  xlab("Variables") +
+  geom_alluvium(aes(fill = Journal_Category_Allocated_Broad)) +
+  geom_stratum(width = 1/4, fill = "white", color = "black") +
+  geom_text(stat = "stratum", aes(label = after_stat(stratum)), size = 6) +
+  labs(x= "Variables", y = "Frequency", fill = "Journal Category Allocated") +
+  theme_suppl()
+
+figs24
+
+ # ggsave(here("figures", "figs24.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+ # ggsave(here("figures", "figs24.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+
+```
+
+## Figure s25
+A bar plot showing the percentage and total count of reporting guidelines used in meta-analysis investigating the impacts of organochlorine pesticides. Note: some meta-analysis may contribute to multiple sections if the study involves multiple reporting guidelines are used
+```{r, fig.width=16, fig.height=10}
 # Calculate the total count for each category
 reporting_guide_count <- sd %>% 
   separate_rows(reporting_standards_type, sep = ",\\s+") %>% 
@@ -910,36 +940,26 @@ reporting_guide_pct <- reporting_guide_count %>%
          percentage = proportion * 100)
 
 # Create the count plot
-figs16 <- reporting_guide_count %>%
+figs25 <- reporting_guide_count %>%
   ggplot(aes(x = n, y = reorder(reporting_standards_type, n), fill = "#1b9e77")) +
   geom_bar(stat = "identity", width = 0.8 , alpha = 0.7) +
-  geom_text(aes(label = n, x = n / 2, y = reorder(reporting_standards_type, n)), hjust = 0.5, size = 4, color = "black") +
+  geom_text(aes(label = n, x = n / 2, y = reorder(reporting_standards_type, n)), hjust = 0.5, size = 6, color = "black") +
   geom_text(data = reporting_guide_pct, aes(label = paste0("(", round(percentage, 0), "%)"), x = n), 
-            hjust = -0.1, size = 3, color = "black", fontface = "bold") +
+            hjust = -0.1, size = 6, color = "black", fontface = "bold") +
   scale_fill_identity(guide = "none") +
   scale_x_continuous(name = "Article Count", expand = c(0, 0), limits = c(0, max(reporting_guide_count$n)*1.1)) +
   labs(y = NULL) +
-  theme_minimal() +
-  theme(
-    axis.text.y = element_text(size = 10),
-    axis.text.x = element_text(size = 10),
-    axis.line.x = element_line(color = "gray", size = 0.5),
-    axis.line.y = element_blank(),
-    axis.ticks.x = element_blank(),
-    axis.ticks.y = element_blank(),
-    axis.title.x = element_text(size = 12),
-    axis.title.y = element_blank(),
-    panel.grid.major.y = element_blank(),
-    panel.grid.minor.y = element_blank(),
-    legend.position = "none")
+  theme_suppl()
 
-figs16
+figs25
 
-# ggsave(here("figures", "figs16.pdf"), width = 21, height = 10, units = "cm", scale = 2, dpi = 800)
-# ggsave(here("figures", "figs16.jpg"), width = 21, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "figs25.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "figs25.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 ```
 
-```{r}
+## Figure s26
+An alluvial plot showing the relationship between the Journal Citation Report Category and reporting guideline used 
+```{r, fig.width=16, fig.height=10}
 # Data Transformation 
 reporting_standards_alluvial <- sd %>% 
     separate_rows(reporting_standards_type, sep = ",\\s+") %>%
@@ -952,29 +972,34 @@ reporting_standards_alluvial <- sd %>%
     group_by(reporting_standards_type)
 
 
-
 # Create the Alluvial plot
-ggplot(reporting_standards_alluvial, aes(y = freq ,axis1 = Journal_Category_Allocated_Broad, axis2 = reporting_standards_type)) +
+figs26 <- reporting_standards_alluvial %>% 
+ggplot( aes(y = freq ,axis1 = Journal_Category_Allocated_Broad, axis2 = reporting_standards_type)) +
   scale_x_discrete(limits = c("Journal Citation Report Category", "Reporting Standards Type"), expand = c(.05, .05)) +
   xlab("Variables") +
   geom_alluvium(aes(fill = Journal_Category_Allocated_Broad)) +
-  geom_stratum(width = 1/8, fill = "white", color = "black") +
-  geom_text(stat = "stratum", aes(label = after_stat(stratum)), size = 3) +
-  theme_minimal()
+  geom_stratum(width = 1/4, fill = "white", color = "black") +
+  labs(x= "Variables", y = "Frequency", fill = "Journal Category Allocated") +
+  geom_text(stat = "stratum", aes(label = after_stat(stratum)), size = 6) +
+  theme_suppl()
 
+figs26
+
+ ggsave(here("figures", "figs26.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+ ggsave(here("figures", "figs26.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 ```
 
 
-```{r}
-
-# Modifying Database_count 
+## Figure 2
+A circular treemap showing the counts of each methodological item in exisitng meta-analysis investigating the impacts of organochlorine pesticides
+```{r, fig.width=21, fig.height=15}
+# Grouping "Medline" and "Pubmed" under "PubMed" and summing the counts
 database_count <- database_count %>%
   mutate(database_search = if_else(database_search %in% c("Medline", "Pubmed"), "PubMed", database_search)) %>%
   group_by(database_search) %>%
   summarise(n = sum(n))
 
-# Modifying the effectsize_count 
-
+# Splitting, grouping, and summing different categories of effect sizes
 effectsize_count <- sd %>% 
   separate_rows(effect_size, sep = ",\\s+") %>% 
   count(effect_size) %>%
@@ -983,66 +1008,65 @@ effectsize_count <- sd %>%
   summarise(n = sum(n))
 
 effectsize_count <- effectsize_count %>% 
-    mutate(effect_size = if_else(effect_size %in% c("Beta regression coefficient", "Correlation coefficient"), "Correlation", effect_size)) %>% 
+  mutate(effect_size = if_else(effect_size %in% c("Beta regression coefficient", "Correlation coefficient"), "Correlation", effect_size)) %>% 
   mutate(effect_size = if_else(effect_size %in% c("OR (odds ratio)", "RR (response ratio)", "SMD (standardized mean difference)", "lnPR (log partitioning ratio)", "lnOR (log odds ratio)", "Ratio of means", "InRR (log response ratio)"), "Mean difference", effect_size)) %>% 
   mutate(effect_size = if_else(effect_size %in% c("lnCVR (log coefficient variation ratio)"), "Variation difference", effect_size)) %>% 
   mutate(effect_size = if_else(effect_size %in% c("RR (risk ratio)"), "2x2", effect_size)) %>% 
-   mutate(effect_size = if_else(effect_size %in% c("Raw weight", "Transfer rate", "Geometric mean", "Maternal transfer ratio", "SMR (standardized mortality rate)", "Transfer rate", "z-score"), "Other ES", effect_size)) %>% 
+  mutate(effect_size = if_else(effect_size %in% c("Raw weight", "Transfer rate", "Geometric mean", "Maternal transfer ratio", "SMR (standardized mortality rate)", "Transfer rate", "z-score"), "Other ES", effect_size)) %>% 
   group_by(effect_size) %>%
   summarise(n = sum(n))
 
-
-# Modifying software_count
+# Categorizing software as either "Code-based software" or "GUI" and summing the counts
 software_count <- software_count %>%
   mutate(software_analysis = if_else(software_analysis %in% c("Stata", "R"), "Code-based software", software_analysis)) %>%
-    mutate(software_analysis = if_else(software_analysis %in% c("CMAS", "Excel", "RevMan", "SAS", "XLSTAT"), "GUI", software_analysis)) %>% 
+  mutate(software_analysis = if_else(software_analysis %in% c("CMAS", "Excel", "RevMan", "SAS", "XLSTAT"), "GUI", software_analysis)) %>% 
   group_by(software_analysis) %>%
   summarise(n = sum(n))
 
-# Modifying heterogeneity_count 
+# Grouping heterogeneity assessment methods and summing the counts
 heterogeneity_count <- heterogeneity_count %>% 
-    mutate(heterogeneity_assessment_method = if_else(heterogeneity_assessment_method %in% c("Tau square"), "I square", heterogeneity_assessment_method)) %>% 
-    mutate(heterogeneity_assessment_method = if_else(heterogeneity_assessment_method %in% c("Chi square"), "Q statistic", heterogeneity_assessment_method)) %>% 
-   mutate(heterogeneity_assessment_method = if_else(heterogeneity_assessment_method %in% c("Galbraith plot", "Baujats plot"), "Plot", heterogeneity_assessment_method)) %>% 
+  mutate(heterogeneity_assessment_method = if_else(heterogeneity_assessment_method %in% c("Tau square"), "I square", heterogeneity_assessment_method)) %>% 
+  mutate(heterogeneity_assessment_method = if_else(heterogeneity_assessment_method %in% c("Chi square"), "Q statistic", heterogeneity_assessment_method)) %>% 
+  mutate(heterogeneity_assessment_method = if_else(heterogeneity_assessment_method %in% c("Galbraith plot", "Baujats plot"), "Plot", heterogeneity_assessment_method)) %>% 
   group_by(heterogeneity_assessment_method) %>%
   summarise(n = sum(n))
 
+# Grouping bias assessment methods with count <= 3 under "Other BA" and summing the counts
 bias_method_count <- bias_method_count %>% 
   mutate(bias_assessment_method = ifelse(n<= 3, "Other BA", as.character(bias_assessment_method))) %>% 
-   group_by(bias_assessment_method) %>%
+  group_by(bias_assessment_method) %>%
   summarise(n = sum(n))
 
+# Grouping sensitivity analysis methods with count <= 3 under "Other SA" and summing the counts
 sensitivity_count <-  sensitivity_count %>%  
-   mutate(sensitivity_analysis_method = ifelse(n<= 3, "Other SA", as.character(sensitivity_analysis_method))) %>% 
-   group_by(sensitivity_analysis_method) %>%
+  mutate(sensitivity_analysis_method = ifelse(n<= 3, "Other SA", as.character(sensitivity_analysis_method))) %>% 
+  group_by(sensitivity_analysis_method) %>%
   summarise(n = sum(n))
 
-# Modifying risk_of_bias
+# Grouping risk of bias assessment methods with count <= 3 under "Other ROB" and summing the counts
 rob_method_count <-  rob_method_count %>%  
-   mutate(rob_assessment_method = ifelse(n<= 3, "Other ROB", as.character(rob_assessment_method))) %>% 
-   group_by(rob_assessment_method) %>%
+  mutate(rob_assessment_method = ifelse(n<= 3, "Other ROB", as.character(rob_assessment_method))) %>% 
+  group_by(rob_assessment_method) %>%
   summarise(n = sum(n))
 
+# Grouping visualization methods with count <= 3 under "Other Viz" and summing the counts
 visualization_count <- visualization_count %>% 
   mutate(visualization_method = ifelse(n<= 3, "Other Viz", as.character(visualization_method))) %>% 
   group_by(visualization_method) %>%
   summarise(n = sum(n))
 
+# Grouping reporting standards types with count <= 2 under "Other guideline" and summing the counts
 reporting_guide_count <- reporting_guide_count %>% 
   mutate(reporting_standards_type = ifelse(n<= 2, "Other guideline", as.character(reporting_standards_type))) %>% 
   group_by(reporting_standards_type) %>%
   summarise(n = sum(n))
 
-
+# Grouping bias assessment visualization types and summing the counts
 bias_visualization_count <- bias_visualization_count %>% 
-      mutate(bias_assessment_visualization = if_else(bias_assessment_visualization %in% c("doi plot", "trim and fill", "Funnel plot"), "Bias visualization", bias_assessment_visualization)) %>% 
+  mutate(bias_assessment_visualization = if_else(bias_assessment_visualization %in% c("doi plot", "trim and fill", "Funnel plot"), "Bias visualization", bias_assessment_visualization)) %>% 
   group_by(bias_assessment_visualization) %>%
   summarise(n = sum(n))
 
-```
-
-
-```{r}
 # Combine the data frames and unite the methodology types
 df <- bind_rows(
   database_count %>% mutate(methodology_type = 'Database Search'),
@@ -1071,29 +1095,28 @@ df <- bind_rows(
 
 
 
+# Preparing the edges dataframe for creating the graph
 edges <- df %>%
-  rename(from = methodology_type,
-         to = methodology_type_specific,
-         size = n) %>%
+  rename(from = methodology_type, to = methodology_type_specific, size = n) %>%
   select(c(from,to,size)) %>%
   as.data.frame()
 
+# Preparing the vertices dataframe for creating the graph
 vertices <- df  %>%
-  rename(name = methodology_type_specific,
-         size = n) %>%
+  rename(name = methodology_type_specific, size = n) %>%
   select(c(name,size)) %>%
   as.data.frame()
 
+# Appending unique 'from' values to vertices and their corresponding summed sizes
 vertices[(nrow(edges)+1):(nrow(edges)+length(unique(edges$from))),1] <- unique(edges$from)
 N <- aggregate(edges$size, list(edges$from), FUN=sum)
 vertices[(nrow(edges)+1):(nrow(edges)+length(unique(edges$from))),2] <- N$x
 
-mygraph <- graph_from_data_frame(edges,
-                                 vertices = vertices
-                                 )
+# Creating a graph object from the edges and vertices dataframes
+mygraph <- graph_from_data_frame(edges, vertices = vertices)
 
-
-fig6 <- ggraph(mygraph, layout = 'circlepack', weight = size) + 
+# Plotting the graph using a 'circlepack' layout, adding labels and adjusting aesthetics
+fig2 <- ggraph(mygraph, layout = 'circlepack', weight = size) + 
     geom_node_circle(aes(fill = as.factor(depth)), color = NA, alpha = 0.5) +
     geom_node_text(aes(label = name, filter = leaf, size = 2), vjust = -0.3, fontface = "bold") +
     geom_node_text(aes(label = paste0("(", size, ")"), filter = leaf, size = 2), vjust = 1, fontface = "bold") +
@@ -1102,20 +1125,16 @@ fig6 <- ggraph(mygraph, layout = 'circlepack', weight = size) +
     scale_fill_manual(values = c("#1b9e77", "#E7298A"))
 
 
-fig6
-ggsave(here("figures", "fig6.pdf"), width = 21, height = 15, units = "cm", scale = 2, dpi = 800)
-ggsave(here("figures", "fig6.jpg"), width = 21, height = 15, units = "cm", scale = 2, dpi = 800)
+fig2
+ggsave(here("figures", "fig2.pdf"), width = 21, height = 15, units = "cm", scale = 2, dpi = 800)
+ggsave(here("figures", "fig2.jpg"), width = 21, height = 15, units = "cm", scale = 2, dpi = 800)
+
 ```
 
 
-# Objective 3 - To investigate current reporting practices in existing meta-analyses examining the impacts of organochlorine pesticides.
-
-## Summary plot for CEESAT data
-
-CEESAT results are presented as a percentage of result per question
-
-```{r plot CEESAT summary }
-
+## Figure 3
+The average reporting quality and rigour of meta-analysis according to CEESAT 2.1 (Woodcock et al., 2014). Gold is regard as the highest score, green is second highest score, amber is second-lowest score, and red is the lowest score. All CEESAT 2.1 items along with our interpretation are provided in the supplementary file x.
+```{r, fig.width=25, fig.height=15}
 # Start the data manipulation
 percent_ceesat_score <- sd %>%
   filter(!is.na(author_year)) %>%
