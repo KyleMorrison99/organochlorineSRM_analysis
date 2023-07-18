@@ -26,7 +26,12 @@ knitr::opts_chunk$set(
 
 In this Rmarkdown document we provide the following workflow:   
 
-- Objective 0. To investigate current literature characteristics such as time trend
+
+- Objective 0 - To examine the volume and temporal trends of existing meta-analyses on the effects of organochlorine pesticides
+- Objective 1: To evaluate the methodological patterns and quality of existing meta-analyses studying the effects of organochlorine pesticides.
+
+
+
 
 - Objective 1 . To explore the various characteristics of the organochlorine pesticides literature such as the pesticides used, the impacts elicited in response and the subjects that were investigated. 
 
@@ -69,9 +74,6 @@ knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
 Manually extracted pilot data is stored in five separate **.csv** files representing different aspects of the data (extracted via structured predefined Google Forms - one per table). 
 
 Bibliographic data records are exported from Scopus (including cited references field) in .bib format and locally saved as **scopus.bib**. 
-
-
-
 ```{r}
 # Load CSV datasets
 sd <- read_csv(here("data", "ocp_srm_study_details.csv"))
@@ -84,17 +86,16 @@ sp <- read_csv(here("data", "ocp_srm_species_details.csv"))
 bib_sco <- convert2df(here("data", "bib_sco.bib"), dbsource = "scopus", format = "bibtex")
 ```
 
+# Objective 0 - To examine the volume and temporal trends of existing meta-analyses on the effects of organochlorine pesticides
 
-# Objective 0. To investigate current literature characteristics such as time trend
 ## Figure 1 
 a) A bar plot showing the time trends of meta-analysis investigating the impacts of organochlorine pesticides. The colours represent the subjects in which the impacts were investigated. 
 b) An area plot showing the cummulative time trend of meta-analysis investigating the impacts of organochlorine pesticides. The colours represent the subjects in which the impacts were investigated. 
-
 ```{r, fig.width=16, fig.height=12}
+
 # Join the study and subject datasets
 sd_sub <- left_join(sd, sub, by = "study_id")
 
-# Data Transformation
 # Count the number of publications per year and calculate cumulative sum
 sd1 <- sd %>%
   count(publication_year) %>%
@@ -227,379 +228,11 @@ figs4
 
 ```
 
-
-# Objective 1. To characterise the organochlorine pesticides literature such as the pesticides used, the impacts elicited in response and the subjects that were investigated. 
+# Objective 1: To evaluate the methodological patterns and quality of existing meta-analyses studying the effects of organochlorine pesticides. 
 
 ## Figure s5 
-A bar plot showing the percentage and total count of total of pesticides investigate in meta-analysis investigating the impacts of organochlorine pesticides. note: some meta-analysis may contribute to multiple sections if the study involves multiple organochlorine pesticides
-```{r,fig.width=16, fig.height=10}
-# Function to replace long OCP names with abbreviations
-replace_ocp <- function(df) {
-  df %>% 
-    mutate(ocp = case_when(
-      # HCH related replacements
-      grepl("Hexachlorocyclohexane \\(HCH\\)", ocp, ignore.case = TRUE) ~ "HCH",
-      grepl("alpha-Hexachlorocyclohexane \\(alpha-HCH\\)", ocp, ignore.case = TRUE) ~ "α - HCH",
-      grepl("beta-Hexachlorocyclohexane \\(beta-HCH\\)", ocp, ignore.case = TRUE) ~ "β - HCH",
-      grepl("gamma-Hexachlorocyclohexane \\(gamma-HCH\\)", ocp, ignore.case = TRUE) ~ "Lindane",
-      # DDT related replacements
-      grepl("Dichlorodiphenyltrichloroethane \\(DDT\\)", ocp, ignore.case = TRUE) ~ "DDT",
-      grepl("p,p-Dichlorodiphenyltrichloroethane \\(p,p-DDT\\)", ocp, ignore.case = TRUE) ~ "p,p-DDT",
-      grepl("o,p-Dichlorodiphenyltrichloroethane \\(o,p-DDT\\)", ocp, ignore.case = TRUE) ~ "o,p-DDT",
-      # DDD related replacements
-      grepl("Dichlorodiphenyldichloroethane \\(DDD\\)", ocp, ignore.case = TRUE) ~ "DDD",
-      grepl("p,p-Dichlorodiphenyldichloroethane \\(p,p-DDD\\)", ocp, ignore.case = TRUE) ~ "p,p-DDD",
-      grepl("o,p-Dichlorodiphenyldichloroethane \\(o,p-DDD\\)", ocp, ignore.case = TRUE) ~ "o,p-DDD",
-      # DDE related replacements
-      grepl("Dichlorodiphenyldichloroethylene \\(DDE\\)", ocp, ignore.case = TRUE) ~ "DDE",
-      grepl("p,p-Dichlorodiphenyldichloroethylene \\(p,p-DDE\\)", ocp, ignore.case = TRUE) ~ "p,p-DDE",
-      grepl("o,p-Dichlorodiphenyldichloroethylene \\(o,p-DDE\\)", ocp, ignore.case = TRUE) ~ "o,p-DDE",
-      TRUE ~ ocp  # no change for any others
-    ))
-}
-# Transform the data 
-ocp_count <-
-  ocp %>% 
-  separate_rows(ocp, sep = ",\\s+") %>% 
-  replace_ocp %>% 
-  count(ocp) %>% 
-  filter(!is.na(ocp)) %>% # filter out NA 
-  arrange(desc(n)) %>% 
-  mutate(ocp = ifelse(n <= 6, "other OCP", as.character(ocp))) %>% 
-# Other organochlorine pesticides include: toxaphene (n=6), Methoxychlor (n=6), p,p-DDD (n=5), o,p-DDD (n=5), cis-Chlordane (n=5), trans=Chlordane (n=4), Endosulfan II (n=4), Endosulfan (n=3),o,p-DDD (n=3), cis-Nonachlor (n=3) y-Chlordane (n=2), Chlorophenol (n=2), beta-BHC (n=2), alpha-Chlordane (n=2), TCDD (n=1), Nonachlore (n=1), Endrin ketone (n=1), Endrin Aldehyde (n=1), Endosulfan sulfate (n=1), Dicofol (n=1), delta-HCH (n=1), delta-BHC (n=1), DDD (n=1), cis-Heptachlor (n=1), alpha-BHC (n=1).
-  group_by(ocp) %>% 
-  summarise(n =sum(n))
-
-# Calculate the proportion and percentage of each OCP
-ocp_pct <- ocp_count %>%
-  mutate(proportion = n/sum(ocp_count$n),
-         percentage = proportion*100)
-
-# Create the count plot for OCPs
-figs5 <- ocp_count %>%
-  ggplot(aes(x = n, y = reorder(ocp, n), fill = "#1b9e77")) +
-  geom_bar(stat = "identity", width = 0.8, alpha = 0.7) +
-  geom_text(aes(label = n, x = n / 2, y = reorder(ocp, n)), hjust = 0.5, size = 7, color = "black") +
-  geom_text(data = ocp_pct, aes(label = paste0("(", round(percentage, 1), "%)"), x = n), 
-            hjust = - 0.1, size = 6, color = "black", fontface = "bold") +
-  scale_fill_identity(guide = "none") +
-  scale_x_continuous(name = "Article Count", expand = c(0, 0), limits = c(0, max(ocp_count$n)*1.2)) +
-  labs(y = NULL) +
-  theme_minimal() +
-  theme(axis.text.y = element_text(size = 15),
-        axis.text.x = element_text(size = 15),
-        axis.line.x = element_line(color = "gray", size = 0.5),
-        axis.line.y = element_blank(),
-        axis.ticks.x = element_blank(),
-        axis.ticks.y = element_blank(),
-        axis.title.x = element_text(size = 20),
-        axis.title.y = element_text(size = 20),
-        panel.grid.major.y = element_blank(),
-        panel.grid.minor.y = element_blank(),
-        legend.position = "none"
-        )
-figs5
- # ggsave(here("figures", "figs5.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
- # ggsave(here("figures", "figs5.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
-```
-
-## Figure s6 
-A bar plot showing the  percentage and total count of total of subjects investigate in meta-analysis investigating the impacts of organochlorine pesticides 
-note: some meta-analysis may contribute to multiple sections if the study involves multiple subjects 
-```{r}
-# Calculate total count for each category
-subject_count <- 
-  sub %>% 
-    separate_rows(subject, sep = ",\\s+") %>% 
-    count(subject)
-
-# Calculate proportion and percentage for each category
-subject_pct <- subject_count %>%
-  mutate(proportion = n/sum(subject_count$n),
-         percentage = proportion*100)
-
-# Create the count plot for subjects
-figs6 <- subject_count %>%
-  ggplot(aes(x = n, y = reorder(subject, n), fill = "#1b9e77")) +
-  geom_bar(stat = "identity", width = 0.8 , alpha = 0.7) +
-  geom_text(aes(label = n, x = n / 2, y = reorder(subject, n)), hjust = 0.5, size = 7, color = "black") +
-  geom_text(data = subject_pct, aes(label = paste0("(", round(percentage, 1), "%)"), x = n), 
-            hjust = -0.1, size = 6, color = "black", fontface = "bold") +
-  scale_fill_identity(guide = "none") +
-  scale_x_continuous(name = "Article Count", expand = c(0, 0), limits = c(0, max(subject_count$n)*1.1)) +
-  labs(y = NULL) +
-  theme_minimal() +
-  theme(axis.text.y = element_text(size = 15),
-        axis.text.x = element_text(size = 15),
-        axis.line.x = element_line(color = "gray", size = 0.5),
-        axis.line.y = element_blank(),
-        axis.ticks.x = element_blank(),
-        axis.ticks.y = element_blank(),
-        axis.title.x = element_text(size = 20),
-        axis.title.y = element_text(size = 20),
-        panel.grid.major.y = element_blank(),
-        panel.grid.minor.y = element_blank(),
-        legend.position = "none"
-        )
-
-figs6
- #ggsave(here("figures", "figs6.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
- # ggsave(here("figures", "figs6.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
-```
-
-
-## Figure s7 
-A bar plot showing the  percentage and total count of total of subjects investigate in meta-analysis investigating the impacts of organochlorine pesticides 
-note: some meta-analysis may contribute to multiple sections if the study involves multiple subjects 
-```{r}
-# Calculate total count for each category
-impact_count <- 
-  im %>% 
-    separate_rows(impact, sep = ",\\s+") %>% 
-    count(impact) %>% 
-  filter(impact != "NA") %>%
-  mutate(impact = ifelse(n<= 1, "other", as.character(impact))) %>% 
-    group_by(impact) %>%
-  summarise(n = sum(n))
-
-# Calculate proportion and percentage for each category
-impact_pct <- impact_count %>%
-  mutate(proportion = n/sum(impact_count$n),
-         percentage = proportion*100)
-
-# Create the count plot for impacts 
-figs7 <- impact_count %>%
-  ggplot(aes(x = n, y = reorder(impact, n), fill = "#1b9e77")) +
-  geom_bar(stat = "identity", width = 0.8 , alpha = 0.7) +
-  geom_text(aes(label = n, x = n / 2, y = reorder(impact, n)), hjust = 0.5, size = 7, color = "black") +
-  geom_text(data = impact_pct, aes(label = paste0("(", round(percentage, 1), "%)"), x = n), 
-            hjust = -0.1, size = 6, color = "black", fontface = "bold") +
-  scale_fill_identity(guide = "none") +
-  scale_x_continuous(name = "Article Count", expand = c(0, 0), limits = c(0, max(impact_count$n)*1.1)) +
-  labs(y = NULL) +
-  theme_minimal() +
-  theme(axis.text.y = element_text(size = 15),
-        axis.text.x = element_text(size = 15),
-        axis.line.x = element_line(color = "gray", size = 0.5),
-        axis.line.y = element_blank(),
-        axis.ticks.x = element_blank(),
-        axis.ticks.y = element_blank(),
-        axis.title.x = element_text(size = 20),
-        axis.title.y = element_text(size = 20),
-        panel.grid.major.y = element_blank(),
-        panel.grid.minor.y = element_blank(),
-        legend.position = "none"
-        )
-
-figs7
-
- # ggsave(here("figures", "figs7.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
- # ggsave(here("figures", "figs7.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
-
-```
-
-```{r}
-# Create a collumn for broad impacts
-im <- im %>%
-        separate_rows(impact, sep = ",\\s+") %>% 
-  mutate(impact_broad = case_when(
-    impact %in% c("parkinsons disease", "alzheimers disease", "autism spectrum disorder", "brain tumour", "amyotrophic lateral sclerosis" ) ~ "Neurological",
-    impact %in% c("concentration", "contamination") ~ "Concentration",
-    impact %in% c("diabetes", "thyroid function", "hypertension", "endometriosis") ~ "Endocrine disrupting",
-    grepl("cancer", impact, ignore.case = TRUE) | impact %in% c("leukemia", "lymphoma", "multiple myeloma", "neuroblastoma") ~ "Carcinogen",
-    impact %in% c("respiratory health", "cardiovascular disease", "asthma", "prolonged bradycardia") ~ "Cardiovascular",
-    impact %in% c("birth outcomes", "birth weight", "preterm birth") ~ "Birth",
-    impact %in% c("obesity", "adiposity") ~ "Obesity",
-    impact %in% c("sperm quality", "neuroblastoma", "hypospadias", "cryptochidism", "reproductive system") ~ "Reproduction",
-    TRUE ~ "Other Impact"
-  ))
-
-
-# Calculate total count for each category
-impact_count_broad <- 
-  im %>% 
-    separate_rows(impact_broad, sep = ",\\s+") %>% 
-    count(impact_broad) %>% 
-  filter(impact_broad != "NA") %>%
-    group_by(impact_broad) %>%
-  summarise(n = sum(n))
-
-# Calculate proportion and percentage for each category
-impact_pct_broad <- impact_count_broad %>%
-  mutate(proportion = n/sum(impact_count_broad$n),
-         percentage = proportion*100)
-
-
-# Create the count plot for impacts 
-figs8 <- impact_count_broad %>%
-  ggplot(aes(x = n, y = reorder(impact_broad, n), fill = "#1b9e77")) +
-  geom_bar(stat = "identity", width = 0.8 , alpha = 0.7) +
-  geom_text(aes(label = n, x = n / 2, y = reorder(impact_broad, n)), hjust = 0.5, size = 7, color = "black") +
-  geom_text(data = impact_pct_broad, aes(label = paste0("(", round(percentage, 1), "%)"), x = n), 
-            hjust = -0.1, size = 6, color = "black", fontface = "bold") +
-  scale_fill_identity(guide = "none") +
-  scale_x_continuous(name = "Article Count", expand = c(0, 0), limits = c(0, max(impact_count_broad$n)*1.1)) +
-  labs(y = NULL) +
-  theme_minimal() +
-  theme(axis.text.y = element_text(size = 15),
-        axis.text.x = element_text(size = 15),
-        axis.line.x = element_line(color = "gray", size = 0.5),
-        axis.line.y = element_blank(),
-        axis.ticks.x = element_blank(),
-        axis.ticks.y = element_blank(),
-        axis.title.x = element_text(size = 20),
-        axis.title.y = element_text(size = 20),
-        panel.grid.major.y = element_blank(),
-        panel.grid.minor.y = element_blank(),
-        legend.position = "none"
-        )
-
-figs8
-
-```
-
-## Figure s8
-An alluvial plot showing the relationships between the pesticide of exposure, the subject being exposed and the impact of exposure 
-```{r}
-
-# Function to change OCP to be more general
-replace_ocp2 <- function(df) {
-  df %>% 
-  mutate(ocp = case_when(
-    grepl("Chlordane", ocp, ignore.case = TRUE) ~ "Chlordane",  
-    grepl("Endosulfan", ocp, ignore.case = TRUE) ~ "Endosulfan", 
-    grepl("Nonachlor", ocp, ignore.case = TRUE) ~ "Nonachlore", 
-    grepl("Heptachlor", ocp, ignore.case = TRUE) ~ "Heptachlor",
-    grepl("TCDD", ocp, ignore.case = TRUE) ~ "TCDD", 
-    grepl("Endrin", ocp, ignore.case = TRUE) ~ "Endrin",
-    grepl("Hexachlorobenzene", ocp, ignore.case = TRUE) ~ "HCH",
-    grepl("Lindane", ocp, ignore.case = TRUE) ~ "HCH", 
-    grepl("Hexachlorocyclohexane \\(HCH\\)", ocp, ignore.case = TRUE) ~ "HCH",
-    grepl("alpha-Hexachlorocyclohexane \\(alpha-HCH\\)", ocp, ignore.case = TRUE) ~ "HCH",
-    grepl("beta-Hexachlorocyclohexane \\(beta-HCH\\)", ocp, ignore.case = TRUE) ~ "HCH",
-    grepl("gamma-Hexachlorocyclohexane \\(gamma-HCH\\)", ocp, ignore.case = TRUE) ~ "HCH",
-    grepl("Dichlorodiphenyltrichloroethane \\(DDT\\)", ocp, ignore.case = TRUE) ~ "DDT",
-    grepl("p,p-Dichlorodiphenyltrichloroethane \\(p,p-DDT\\)", ocp, ignore.case = TRUE) ~ "DDT",
-    grepl("o,p-Dichlorodiphenyltrichloroethane \\(o,p-DDT\\)", ocp, ignore.case = TRUE) ~ "DDT",
-    grepl("Dichlorodiphenyldichloroethane \\(DDD\\)", ocp, ignore.case = TRUE) ~ "DDD",
-    grepl("p,p-Dichlorodiphenyldichloroethane \\(p,p-DDD\\)", ocp, ignore.case = TRUE) ~ "DDD",
-    grepl("o,p-Dichlorodiphenyldichloroethane \\(o,p-DDD\\)", ocp, ignore.case = TRUE) ~ "DDD",
-    grepl("Dichlorodiphenyldichloroethylene \\(DDE\\)", ocp, ignore.case = TRUE) ~ "DDE",
-    grepl("p,p-Dichlorodiphenyldichloroethylene \\(p,p-DDE\\)", ocp, ignore.case = TRUE) ~ "DDE",
-    grepl("o,p-Dichlorodiphenyldichloroethylene \\(o,p-DDE\\)", ocp, ignore.case = TRUE) ~ "DDE",
-    TRUE ~ ocp
-  ))
-}
- 
-
-# Transform the data 
-alluvial <- im %>%
-  left_join(ocp, by = "study_id") %>%
-  left_join(sub, by = "study_id") %>%
-  separate_rows(subject, sep = ",\\s+") %>% 
-  separate_rows(ocp, sep = ",\\s+") %>% 
-  separate_rows(impact_broad, sep = ",\\s+") %>%
-  replace_ocp2() %>%
-  filter(!grepl("not reported", ocp, ignore.case = TRUE)) %>%
-  group_by(ocp, subject, impact_broad) %>%
-  summarise(freq = n(), .groups = 'drop') %>%
-  group_by(ocp) %>%
-  filter(sum(freq) > 5) %>%  
-  group_by(impact_broad) %>% 
-  filter(sum(freq) > 5) %>% 
-  mutate(subject = factor(subject, levels = c("Environment", "Non-human animal", "Human"), ordered = TRUE))
-
-
-# Crate the alluvial plot
-figs8 <- alluvial %>% 
-  ggplot(
-       aes(axis1 = ocp, axis2 = subject, axis3 = impact_broad, y = freq)) +
-  scale_x_discrete(limits = c("Organochlorine Pesticide", "Subject", "Impact"), expand = c(.05, .10)) +
-  xlab("Variables") +
-  ylab("Frequency") +  
-  geom_alluvium(aes(fill = subject)) +
-  geom_stratum(width = 1/2, fill = "white", color = "black") +
-  geom_text(stat = "stratum", aes(label = after_stat(stratum)), size = 4, fontface = "bold") +  
-  theme_minimal() +
-  theme(axis.text=element_text(size=12),  
-        axis.title=element_text(size=14)) +  
-  scale_fill_brewer(palette = "Dark2", name = "Subject Category")
-figs8
-
-
-  # ggsave(here("figures", "figs8.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
- #  ggsave(here("figures", "figs8.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
-
-
-```
-
-
-## Figurex
- 
-```{r}
-
-# Join the organochlorine pesticide details with the impact details
-
-ocp_im <- left_join(ocp, im ,sub, by = "study_id") 
-
-# Separate rows in "ocp_im"
-ocp_im1 <- separate_rows(ocp_im, ocp , sep = ", ", convert = TRUE)
-
-
-# Group by "ocp" and "impact" and summarize count
-ocp_im_summary <- ocp_im1 %>%
-  mutate(ocp = str_trim(ocp),
-         impact_broad = str_trim(impact_broad)) %>%
-  group_by(ocp, impact_broad) %>%
-  summarise(count = n(), .groups = "drop") %>% 
-  replace_ocp()
-
-
-# Filter for top 5 pesticides 
-top_pesticides <- ocp_im_summary %>%
-  filter(ocp != "not reported") %>%
-  group_by(ocp) %>%
-  summarise(total_count = sum(count)) %>%
-  top_n(8, total_count) %>%
-  pull(ocp) 
-
-
-ocp_im_summary_filtered <- ocp_im_summary %>%
-  filter(ocp %in% top_pesticides)
-
-# Create a circle plot with impact on the x-axis and ocp on the y-axis
-ggplot(ocp_im_summary_filtered, 
-       aes(x = fct_rev(fct_reorder(impact_broad, count, .fun = 'sum')),
-           y = fct_reorder(ocp, count, .fun = 'sum'),
-           size = count,
-           fill = count)) +
-  geom_point(shape = 21, color = "white") +
-  scale_fill_gradient(low = "#98FB98", high = "#006400") +
-  labs(x = "Impact",
-       y = "Organochlorine Pesticide",
-       fill = "Count") +
-  theme_minimal() +
-  theme(panel.grid.major.y = element_blank(),
-        axis.line.y = element_blank(),
-        axis.ticks.y = element_blank(),
-        axis.text.x = element_text(size = 15),  
-        axis.text.y = element_text(size = 20, hjust = 1),  
-        axis.title.x = element_text(size = 25),  
-        axis.title.y = element_text(size = 25),  
-        legend.position = "none") +
-  scale_size_continuous(range = c(10, 40)) 
-
-
-
-  ggsave(here("figures", "fig3.pdf"), width = 25, height = 15, units = "cm", scale = 2, dpi = 800)
-  ggsave(here("figures", "fig3.jpg"), width = 25, height = 15, units = "cm", scale = 2, dpi = 800)
-```
-
-
-# Objective 2. To investigate current methodological practices within meta-analysis investigating the impacts of organochlorine pesticides. We will investigate how they currently search for existing literature, which effect sizes are used, how they adjust for heterogeneity and how they account for risk of bias. 
-
-## Figure s9 - Total count of each database used to search the literature within each meta-analysis
-```{r}
+A bar plot showing the percentage and total count of scientific literature databases used in meta-analysis investigating the impacts of organochlorine pesticides. Note: some meta-analysis may contribute to multiple sections if the study involves multiple scientific literature databases. “Other databases” is all other databases with a count less than or equal to 3
+```{r, fig.width=16, fig.height=10}
 # Calculate the total count for each category
 database_count <- sd %>% 
   separate_rows(database_search, sep = ",\\s+") %>% 
@@ -616,74 +249,84 @@ database_pct <- database_count %>%
   mutate(proportion = n / sum(database_count$n),
          percentage = proportion * 100)
 
-# Create the count plot
-figs9 <- database_count %>%
-  ggplot(aes(x = n, y = reorder(database_search, n), fill = "#1b9e77")) +
-  geom_bar(stat = "identity", width = 0.8 , alpha = 0.7) +
-  geom_text(aes(label = n, x = n / 2, y = reorder(database_search, n)), hjust = 0.5, size = 4, color = "black") +
-  geom_text(data = database_pct, aes(label = paste0("(", round(percentage, 1), "%)"), x = n), 
-            hjust = -0.1, size = 3, color = "black", fontface = "bold") +
-  scale_fill_identity(guide = "none") +
-  scale_y_discrete(name = "Database Search") +
-  scale_x_continuous(name = "Article Count", expand = c(0, 0), limits = c(0, max(database_count$n)*1.1)) +
-  labs(y = NULL) +
+# Create a standard theme for the supplement plots
+theme_suppl <- function() {
   theme_minimal() +
   theme(
-    axis.text.y = element_text(size = 10),
-    axis.text.x = element_text(size = 10),
+    axis.text.y = element_text(size = 15),
+    axis.text.x = element_text(size = 15),
     axis.line.x = element_line(color = "gray", size = 0.5),
     axis.line.y = element_blank(),
     axis.ticks.x = element_blank(),
     axis.ticks.y = element_blank(),
-    axis.title.x = element_text(size = 12),
-    axis.title.y = element_text(size = 12),
+    axis.title.x = element_text(size = 20),
+    axis.title.y = element_text(size = 20),
     panel.grid.major.y = element_blank(),
     panel.grid.minor.y = element_blank(),
-    legend.position = "none")
+    legend.position = "none"
+  )
+}
 
-figs9
+# Create the count plot
+figs5 <- database_count %>%
+  ggplot(aes(x = n, y = reorder(database_search, n), fill = "#1b9e77")) +
+  geom_bar(stat = "identity", width = 0.8 , alpha = 0.7) +
+  geom_text(aes(label = n, x = n / 2, y = reorder(database_search, n)), hjust = 0.5, size = 6, color = "black") +
+  geom_text(data = database_pct, aes(label = paste0("(", round(percentage, 1), "%)"), x = n), 
+            hjust = -0.1, size = 6, color = "black", fontface = "bold") +
+  scale_fill_identity(guide = "none") +
+  scale_y_discrete(name = "Database Search") +
+  scale_x_continuous(name = "Article Count", expand = c(0, 0), limits = c(0, max(database_count$n)*1.1)) +
+  labs(y = NULL) +
+  theme_suppl()
 
+figs5
 
-# ggsave(here("figures", "figs9.pdf"), width = 21, height = 10, units = "cm", scale = 2, dpi = 800)
-# ggsave(here("figures", "figs9.jpg"), width = 21, height = 10, units = "cm", scale = 2, dpi = 800)
+ # ggsave(here("figures", "figs5.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+ # ggsave(here("figures", "figs5.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 
 ```
 
+## Figure s6
+An alluvial plot showing the relationship between the Journal Citation Report Category and the scientific literature database used. Filtered for scientific literature database counts greater than or equal to 3
+```{r, fig.width=16, fig.height=10}
+# Rename Environmental Science
+sd <- sd %>%
+  mutate(Journal_Category_Allocated_Broad = str_replace(Journal_Category_Allocated_Broad, "Environmental Science", "Environmental\nScience"))
 
-
- 
-```{r}
 # Data Transformation 
-
 database_alluvial <- sd %>% 
     separate_rows(database_search, sep = ",\\s+") %>%
     group_by(Journal_Category_Allocated_Broad, database_search) %>% 
     count(database_search, Journal_Category_Allocated_Broad) %>% 
     summarise(freq = n(), .groups = 'drop') %>% 
     group_by(database_search) %>% 
-    filter(sum(freq) > 2) %>% 
+    filter(sum(freq) >= 3) %>% 
     filter(database_search != "NA")
 
 # Create the Alluvial plot
-ggplot(database_alluvial, aes(y = freq ,axis1 = Journal_Category_Allocated_Broad, axis2 = database_search)) +
+figs6 <- database_alluvial %>% 
+ggplot(aes(y = freq ,axis1 = Journal_Category_Allocated_Broad, axis2 = database_search)) +
   scale_x_discrete(limits = c("Journal Citation Report Category", "Database Search"), expand = c(.05, .05)) +
   xlab("Variables") +
   ylab("Frequency") +
   geom_alluvium(aes(fill = Journal_Category_Allocated_Broad)) +
   geom_stratum(width = 1/4.5, fill = "white", color = "black") +
-  geom_text(stat = "stratum", aes(label = after_stat(stratum)), size = 3) +
-  theme_minimal() +
+  geom_text(stat = "stratum", aes(label = after_stat(stratum)), size = 6) +
   labs(x= "Variables", y = "Frequency", fill = "Journal Category Allocated") +
-  theme(axis.title.x = element_text(size = 14, face = "bold"), 
-        axis.title.y = element_text(size = 14, face = "bold"), 
-        axis.text.x = element_text(size = 12), 
-        axis.text.y = element_text(size = 12))
+  theme_suppl()
+
+figs6
+
+ #ggsave(here("figures", "figs6.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+ #ggsave(here("figures", "figs6.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 
   
 ```
 
-## Figure x - Total count of each effect size measure used within each meta-analysis
-```{r }
+## Figure s7 
+A bar plot showing the percentage and total count of effect size calculation type used in meta-analysis investigating the impacts of organochlorine pesticides. Note: some meta-analysis may contribute to multiple sections if the study involves multiple effect size calculations. “Other effect sizes” is all other effect sizes with a count less than or equal to 2
+```{r, fig.width=16, fig.height=10}
 # Calculate the total count for each category
 effectsize_count <- sd %>% 
   separate_rows(effect_size, sep = ",\\s+") %>% 
@@ -699,37 +342,26 @@ effectsize_pct <- effectsize_count %>%
          percentage = proportion * 100)
 
 # Create the count plot
-figs8 <-  effectsize_count %>%
+figs7 <-  effectsize_count %>%
   ggplot(aes(x = n, y = reorder(effect_size, n), fill = "#1b9e77")) +
   geom_bar(stat = "identity", width = 0.8 , alpha = 0.7) +
-  geom_text(aes(label = n, x = n / 2, y = reorder(effect_size, n)), hjust = 0.5, size = 4, color = "black") +
+  geom_text(aes(label = n, x = n / 2, y = reorder(effect_size, n)), hjust = 0.5, size = 6, color = "black") +
   geom_text(data = effectsize_pct, aes(label = paste0("(", round(percentage, 1), "%)"), x = n), 
-            hjust = -0.1, size = 3, color = "black", fontface = "bold") +
+            hjust = -0.1, size = 6, color = "black", fontface = "bold") +
   scale_fill_identity(guide = "none") +
   scale_x_continuous(name = "Article Count", expand = c(0, 0), limits = c(0, max(effectsize_count$n)*1.1)) +
   labs(y = NULL) +
-  theme_minimal() +
-  theme(
-    axis.text.y = element_text(size = 10),
-    axis.text.x = element_text(size = 10),
-    axis.line.x = element_line(color = "gray", size = 0.5),
-    axis.line.y = element_blank(),
-    axis.ticks.x = element_blank(),
-    axis.ticks.y = element_blank(),
-    axis.title.x = element_text(size = 12),
-    axis.title.y = element_blank(),
-    panel.grid.major.y = element_blank(),
-    panel.grid.minor.y = element_blank(),
-    legend.position = "none")
+  theme_suppl()
 
-figs8
+figs7
 
-
-# ggsave(here("figures", "figs8.pdf"), width = 21, height = 10, units = "cm", scale = 2, dpi = 800)
-# ggsave(here("figures", "figs8.jpg"), width = 21, height = 10, units = "cm", scale = 2, dpi = 800)
+  # ggsave(here("figures", "figs7.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+  # ggsave(here("figures", "figs7.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 ```
 
-```{r}
+## Figure s8
+An alluvial plot showing the relationship between the Journal Citation Report Category and the effect size used. 
+```{r, fig.width=16, fig.height=10}
 # Data Transformation 
 effectsize_alluvial <- sd %>% 
     separate_rows(effect_size, sep = ",\\s+") %>%
@@ -741,23 +373,27 @@ effectsize_alluvial <- sd %>%
     summarise(freq = n(), .groups = 'drop') %>% 
     group_by(effect_size) 
 
+
 # Create the Alluvial plot
-ggplot(effectsize_alluvial, aes(y = freq ,axis1 = Journal_Category_Allocated_Broad, axis2 = effect_size)) +
+figs8 <- effectsize_alluvial %>% 
+ggplot(aes(y = freq ,axis1 = Journal_Category_Allocated_Broad, axis2 = effect_size)) +
   scale_x_discrete(limits = c("Journal Category", "Effect Size"), expand = c(.05, .05)) +
   xlab("Variables") +
   geom_alluvium(aes(fill = Journal_Category_Allocated_Broad)) +
-  geom_stratum(width = 1/8, fill = "white", color = "black") +
-  geom_text(stat = "stratum", aes(label = after_stat(stratum)), size = 3) +
+  geom_stratum(width = 1/4.5, fill = "white", color = "black") +
+  geom_text(stat = "stratum", aes(label = after_stat(stratum)), size = 6) +
   theme_minimal() +
   labs(x= "Variables", y = "Frequency", fill = "Journal Category Allocated") +
-  theme(axis.title.x = element_text(size = 14, face = "bold"), 
-        axis.title.y = element_text(size = 14, face = "bold"), 
-        axis.text.x = element_text(size = 12), 
-        axis.text.y = element_text(size = 12)) 
+  theme_suppl()
+  
+figs8
+ # ggsave(here("figures", "figs8.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "figs8.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 ```
 
-## Figure x - Total count of each software used to analyse the data within each meta-analysis
-```{r}
+## Figure s9
+A bar plot showing the percentage and total count of software for analysis in meta-analysis investigating the impacts of organochlorine pesticides. Note: some meta-analysis may contribute to multiple sections if the study involves multiple softwares 
+```{r, fig.width=16, fig.height=10}
 # Calculate the total count for each category
 software_count <- sd %>%
   separate_rows(software_analysis, sep = ",\\s+") %>%
@@ -778,36 +414,24 @@ software_pct <- software_count %>%
 figs9 <- software_count %>%
   ggplot(aes(x = n, y = reorder(software_analysis, n), fill = "#1b9e77")) +
   geom_bar(stat = "identity", width = 0.8 , alpha = 0.7) +
-  geom_text(aes(label = n, x = n / 2, y = reorder(software_analysis, n)), hjust = 0.5, size = 4, color = "black") +
+  geom_text(aes(label = n, x = n / 2, y = reorder(software_analysis, n)), hjust = 0.5, size = 6, color = "black") +
   geom_text(data = software_pct, aes(label = paste0("(", round(percentage, 1), "%)"), x = n), 
-            hjust = -0.1, size = 3, color = "black", fontface = "bold") +
+            hjust = -0.1, size = 6, color = "black", fontface = "bold") +
   scale_fill_identity(guide = "none") +
   scale_x_continuous(name = "Article Count", expand = c(0, 0), limits = c(0, max(software_count$n)*1.1)) +
   labs(y = NULL) +
-  theme_minimal() +
-  theme(
-    axis.text.y = element_text(size = 10),
-    axis.text.x = element_text(size = 10),
-    axis.line.x = element_line(color = "gray", size = 0.5),
-    axis.line.y = element_blank(),
-    axis.ticks.x = element_blank(),
-    axis.ticks.y = element_blank(),
-    axis.title.x = element_text(size = 12),
-    axis.title.y = element_blank(),
-    panel.grid.major.y = element_blank(),
-    panel.grid.minor.y = element_blank(),
-    legend.position = "none")
-
+  theme_suppl()
 
 figs9
 
-
-# ggsave(here("figures", "figs9.pdf"), width = 21, height = 10, units = "cm", scale = 2, dpi = 800)
-# ggsave(here("figures", "figs9.jpg"), width = 21, height = 10, units = "cm", scale = 2, dpi = 800)
+ # ggsave(here("figures", "figs9.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+ # ggsave(here("figures", "figs9.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 
 ```
 
-```{r}
+## Figure s10 
+An alluvial plot showing the relationship between the Journal Citation Report Category and the software used for analysis. 
+```{r, fig.width=16, fig.height=10}
 # Data Transformation 
 software_analysis_alluvial <- sd %>% 
     separate_rows(software_analysis, sep = ",\\s+") %>%
@@ -821,18 +445,26 @@ software_analysis_alluvial <- sd %>%
     group_by(software_analysis)
 
 # Create the Alluvial plot for Software Analysis
-ggplot(software_analysis_alluvial, aes(y = freq ,axis1 = Journal_Category_Allocated_Broad, axis2 = software_analysis)) +
+figs10 <- software_analysis_alluvial %>% 
+ggplot(aes(y = freq ,axis1 = Journal_Category_Allocated_Broad, axis2 = software_analysis)) +
   scale_x_discrete(limits = c("Journal Category", "Software Analysis"), expand = c(.05, .05)) +
   xlab("Variables") +
   geom_alluvium(aes(fill = Journal_Category_Allocated_Broad)) +
-  geom_stratum(width = 1/8, fill = "white", color = "black") +
-  geom_text(stat = "stratum", aes(label = after_stat(stratum)), size = 3) +
-  theme_minimal()
+  geom_stratum(width = 1/4, fill = "white", color = "black") +
+  geom_text(stat = "stratum", aes(label = after_stat(stratum)), size = 6) +
+  labs(x= "Variables", y = "Frequency", fill = "Journal Category Allocated") +
+  theme_suppl()
+
+figs10
+
+ # ggsave(here("figures", "figs10.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+ # ggsave(here("figures", "figs10.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 
 ```
 
-## Figure x - Total count of each heterogeneity test used within each meta-analysis
-```{r}
+## Figure s11
+A bar plot showing the percentage and total count of heterogeneity assessment in meta-analysis investigating the impacts of organochlorine pesticides. Note: some meta-analysis may contribute to multiple sections if the study involves multiple heterogeneity assessments 
+```{r, fig.width=16, fig.height=10}
 # Calculate the total count for each category
 heterogeneity_count <- sd %>% 
   separate_rows(heterogeneity_assessment_method, sep = ",\\s+") %>% 
@@ -848,39 +480,27 @@ heterogeneity_pct <- heterogeneity_count %>%
          percentage = proportion * 100)
 
 # Create the count plot
-figs10 <- heterogeneity_count %>%
+figs11 <- heterogeneity_count %>%
   ggplot(aes(x = n, y = reorder(heterogeneity_assessment_method, n), fill = "#1b9e77")) +
   geom_bar(stat = "identity", width = 0.8 , alpha = 0.7) +
-  geom_text(aes(label = n, x = n / 2, y = reorder(heterogeneity_assessment_method, n)), hjust = 0.5, size = 4, color = "black") +
+  geom_text(aes(label = n, x = n / 2, y = reorder(heterogeneity_assessment_method, n)), hjust = 0.5, size = 6, color = "black") +
   geom_text(data = heterogeneity_pct, aes(label = paste0("(", round(percentage, 1), "%)"), x = n), 
-            hjust = -0.1, size = 3, color = "black", fontface = "bold") +
+            hjust = -0.1, size = 6, color = "black", fontface = "bold") +
   scale_fill_identity(guide = "none") +
   scale_x_continuous(name = "Article Count", expand = c(0, 0), limits = c(0, max(heterogeneity_count$n)*1.1)) +
   labs(y = NULL) +
-  theme_minimal() +
-  theme(
-    axis.text.y = element_text(size = 10),
-    axis.text.x = element_text(size = 10),
-    axis.line.x = element_line(color = "gray", size = 0.5),
-    axis.line.y = element_blank(),
-    axis.ticks.x = element_blank(),
-    axis.ticks.y = element_blank(),
-    axis.title.x = element_text(size = 12),
-    axis.title.y = element_blank(),
-    panel.grid.major.y = element_blank(),
-    panel.grid.minor.y = element_blank(),
-    legend.position = "none")
+  theme_suppl()
 
-figs10
+figs11
 
-
-# ggsave(here("figures", "figs10.pdf"), width = 21, height = 10, units = "cm", scale = 2, dpi = 800)
-# ggsave(here("figures", "figs10.jpg"), width = 21, height = 10, units = "cm", scale = 2, dpi = 800)
+ # ggsave(here("figures", "figs11.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+ # ggsave(here("figures", "figs11.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 
 ```
  
- 
-```{r}
+## Figure s12 
+An alluvial plot showing the relationship between the Journal Citation Report Category and heterogeneity assessment 
+```{r, fig.width=16, fig.height=10}
 # Data Transformation 
 heterogeneity_alluvial <- sd %>% 
     separate_rows(heterogeneity_assessment_method, sep = ",\\s+") %>%
@@ -893,18 +513,25 @@ heterogeneity_alluvial <- sd %>%
     group_by(heterogeneity_assessment_method) 
 
 # Create the Alluvial plot
-ggplot(heterogeneity_alluvial, aes(y = freq ,axis1 = Journal_Category_Allocated_Broad, axis2 = heterogeneity_assessment_method)) +
-  scale_x_discrete(limits = c("Journal Citation Report Category", "Heterogeneity Assessment Method"), expand = c(.05, .05)) +
+figs12 <- heterogeneity_alluvial %>% 
+ggplot(aes(y = freq ,axis1 = Journal_Category_Allocated_Broad, axis2 = heterogeneity_assessment_method)) +
+  scale_x_discrete(limits = c("Journal Citation Report Category", "Heterogeneity"), expand = c(.05, .05)) +
   xlab("Variables") +
   geom_alluvium(aes(fill = Journal_Category_Allocated_Broad)) +
-  geom_stratum(width = 1/8, fill = "white", color = "black") +
-  geom_text(stat = "stratum", aes(label = after_stat(stratum)), size = 3) +
-  theme_minimal()
+  geom_stratum(width = 1/4.5, fill = "white", color = "black") +
+  geom_text(stat = "stratum", aes(label = after_stat(stratum)), size = 6) +
+  labs(x= "Variables", y = "Frequency", fill = "Journal Category Allocated") +
+  theme_suppl()
 
+figs12
+
+#  ggsave(here("figures", "figs12.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+#  ggsave(here("figures", "figs12.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 ```
  
-## Figure xx - Total count for each sensitivity analysis used in each meta-analysis
-```{r}
+## Figure s13
+A bar plot showing the percentage and total count of sensitivity analysis in meta-analysis investigating the impacts of organochlorine pesticides. Note: some meta-analysis may contribute to multiple sections if the study involves multiple sensitivity analyses are completed
+```{r, fig.width=16, fig.height=10}
 # Calculate the total count for each category
 sensitivity_count <- sd %>% 
   separate_rows(sensitivity_analysis_method, sep = ",\\s+") %>% 
@@ -919,38 +546,27 @@ sensitivity_pct <- sensitivity_count %>%
          percentage = proportion * 100)
 
 # Create the count plot
-figs11 <- sensitivity_count %>%
+figs13 <- sensitivity_count %>%
   ggplot(aes(x = n, y = reorder(sensitivity_analysis_method, n), fill = "#1b9e77")) +
   geom_bar(stat = "identity", width = 0.8 , alpha = 0.7) +
-  geom_text(aes(label = n, x = n / 2, y = reorder(sensitivity_analysis_method, n)), hjust = 0.5, size = 4, color = "black") +
+  geom_text(aes(label = n, x = n / 2, y = reorder(sensitivity_analysis_method, n)), hjust = 0.5, size = 6, color = "black") +
   geom_text(data = sensitivity_pct, aes(label = paste0("(", round(percentage, 1), "%)"), x = n), 
-            hjust = -0.1, size = 3, color = "black", fontface = "bold") +
+            hjust = -0.1, size = 6, color = "black", fontface = "bold") +
   scale_fill_identity(guide = "none") +
   scale_x_continuous(name = "Article Count", expand = c(0, 0), limits = c(0, max(sensitivity_count$n)*1.1)) +
   labs(y = NULL) +
-  theme_minimal() +
-  theme(
-    axis.text.y = element_text(size = 10),
-    axis.text.x = element_text(size = 10),
-    axis.line.x = element_line(color = "gray", size = 0.5),
-    axis.line.y = element_blank(),
-    axis.ticks.x = element_blank(),
-    axis.ticks.y = element_blank(),
-    axis.title.x = element_text(size = 12),
-    axis.title.y = element_blank(),
-    panel.grid.major.y = element_blank(),
-    panel.grid.minor.y = element_blank(),
-    legend.position = "none")
+ theme_suppl()
 
-figs11
+figs13
 
-
-# ggsave(here("figures", "figs11.pdf"), width = 21, height = 10, units = "cm", scale = 2, dpi = 800)
-# ggsave(here("figures", "figs11.jpg"), width = 21, height = 10, units = "cm", scale = 2, dpi = 800)
+ # ggsave(here("figures", "figs13.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+ # ggsave(here("figures", "figs13.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 
 ```
 
-```{r}
+## Figure s14
+An alluvial plot showing the relationship between the Journal Citation Report Category and sensitivity analysis 
+```{r, fig.width=16, fig.height=10}
 # Data Transformation 
 sensitivity_analysis_alluvial <- sd %>% 
     separate_rows(sensitivity_analysis_method, sep = ",\\s+") %>%
@@ -962,18 +578,26 @@ sensitivity_analysis_alluvial <- sd %>%
     group_by(sensitivity_analysis_method)
 
 # Create the Alluvial plot
-ggplot(sensitivity_analysis_alluvial, aes(y = freq ,axis1 = Journal_Category_Allocated_Broad, axis2 = sensitivity_analysis_method)) +
+figs14 <- sensitivity_analysis_alluvial %>% 
+ggplot(aes(y = freq ,axis1 = Journal_Category_Allocated_Broad, axis2 = sensitivity_analysis_method)) +
   scale_x_discrete(limits = c("Journal Citation Report Category", "Sensitivity Analysis Method"), expand = c(.05, .05)) +
   xlab("Variables") +
   geom_alluvium(aes(fill = Journal_Category_Allocated_Broad)) +
-  geom_stratum(width = 1/8, fill = "white", color = "black") +
-  geom_text(stat = "stratum", aes(label = after_stat(stratum)), size = 3) +
-  theme_minimal()
+  geom_stratum(width = 1/4.5, fill = "white", color = "black") +
+  geom_text(stat = "stratum", aes(label = after_stat(stratum)), size = 6) +
+  labs(x= "Variables", y = "Frequency", fill = "Journal Category Allocated") +
+  theme_suppl()
+
+figs14
+
+  ggsave(here("figures", "figs14.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+  ggsave(here("figures", "figs14.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 
 ```
 
-## Figure x - Total count of each type of between study bias investiagted in each meta-analysis
-```{r}
+## Figure s15 
+A bar plot showing the percentage and total count of bias type assessed in meta-analysis investigating the impacts of organochlorine pesticides. Note: some meta-analysis may contribute to multiple sections if the study involves multiple bias types are assessed 
+```{r, fig.width=16, fig.height=10}
 # Calculate the total count for each category
 bias_type_count <- sd %>% 
   separate_rows(bias_assessment_type, sep = ",\\s+") %>% 
@@ -988,39 +612,27 @@ bias_type_pct <- bias_type_count %>%
          percentage = proportion * 100)
 
 # Create the count plot
-figs12 <- bias_type_count %>%
+figs15 <- bias_type_count %>%
   ggplot(aes(x = n, y = reorder(bias_assessment_type, n), fill = "#1b9e77")) +
   geom_bar(stat = "identity", width = 0.8 , alpha = 0.7) +
-  geom_text(aes(label = n, x = n / 2, y = reorder(bias_assessment_type, n)), hjust = 0.5, size = 4, color = "black") +
+  geom_text(aes(label = n, x = n / 2, y = reorder(bias_assessment_type, n)), hjust = 0.5, size = 6, color = "black") +
   geom_text(data = bias_type_pct, aes(label = paste0("(", round(percentage, 1), "%)"), x = n), 
-            hjust = -0.1, size = 3, color = "black", fontface = "bold") +
+            hjust = -0.1, size = 6, color = "black", fontface = "bold") +
   scale_fill_identity(guide = "none") +
   scale_x_continuous(name = "Article Count", expand = c(0, 0), limits = c(0, max(bias_type_count$n)*1.1)) +
   labs(y = NULL) +
-  theme_minimal() +
-  theme(
-    axis.text.y = element_text(size = 10),
-    axis.text.x = element_text(size = 10),
-    axis.line.x = element_line(color = "gray", size = 0.5),
-    axis.line.y = element_blank(),
-    axis.ticks.x = element_blank(),
-    axis.ticks.y = element_blank(),
-    axis.title.x = element_text(size = 12),
-    axis.title.y = element_blank(),
-    panel.grid.major.y = element_blank(),
-    panel.grid.minor.y = element_blank(),
-    legend.position = "none")
+  theme_suppl()
 
-figs12 
+figs15
 
-# ggsave(here("figures", "figs12.pdf"), width = 21, height = 10, units = "cm", scale = 2, dpi = 800)
-# ggsave(here("figures", "figs12.jpg"), width = 21, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "figs15.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "figs15.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 
 ```
 
-
-```{r}
-
+## Figure s16
+An alluvial plot showing the relationship between the Journal Citation Report Category and bias assessment type
+```{r, fig.width=16, fig.height=10}
 # Data Transformation 
 bias_assessment_alluvial <- sd %>% 
     separate_rows(bias_assessment_type, sep = ",\\s+") %>%
@@ -1032,18 +644,23 @@ bias_assessment_alluvial <- sd %>%
     group_by(bias_assessment_type)
 
 # Create the Alluvial plot
-ggplot(bias_assessment_alluvial, aes(y = freq ,axis1 = Journal_Category_Allocated_Broad, axis2 = bias_assessment_type)) +
+figs16 <- bias_assessment_alluvial %>% 
+ggplot(aes(y = freq ,axis1 = Journal_Category_Allocated_Broad, axis2 = bias_assessment_type)) +
   scale_x_discrete(limits = c("Journal Citation Report Category", "Bias Assessment Type"), expand = c(.05, .05)) +
   xlab("Variables") +
   geom_alluvium(aes(fill = Journal_Category_Allocated_Broad)) +
-  geom_stratum(width = 1/8, fill = "white", color = "black") +
-  geom_text(stat = "stratum", aes(label = after_stat(stratum)), size = 3) +
-  theme_minimal()
+  geom_stratum(width = 1/4, fill = "white", color = "black") +
+  geom_text(stat = "stratum", aes(label = after_stat(stratum)), size = 6) +
+  theme_suppl()
 
+figs16
 
+ ggsave(here("figures", "figs16.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+ ggsave(here("figures", "figs16.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 ```
 
-## Figure x - Total count for each statistical methodology to investigate within study bias used in each meta-analysis
+## Figure s17 
+A bar plot showing the percentage and total count of bias methodology used in meta-analysis investigating the impacts of organochlorine pesticides. Note: some meta-analysis may contribute to multiple sections if the study involves multiple bias methodologies are used 
 ```{r}
 # Calculate the total count for each category
 bias_method_count <- sd %>% 
@@ -1059,36 +676,26 @@ bias_method_pct <- bias_method_count %>%
          percentage = proportion * 100)
 
 # Create the count plot
-figs13 <- bias_method_count %>%
+figs17 <- bias_method_count %>%
   ggplot(aes(x = n, y = reorder(bias_assessment_method, n), fill = "#1b9e77")) +
   geom_bar(stat = "identity", width = 0.8 , alpha = 0.7) +
-  geom_text(aes(label = n, x = n / 2, y = reorder(bias_assessment_method, n)), hjust = 0.5, size = 4, color = "black") +
+  geom_text(aes(label = n, x = n / 2, y = reorder(bias_assessment_method, n)), hjust = 0.5, size = 6, color = "black") +
   geom_text(data = bias_method_pct, aes(label = paste0("(", round(percentage, 1), "%)"), x = n), 
-            hjust = -0.1, size = 3, color = "black", fontface = "bold") +
+            hjust = -0.1, size = 6, color = "black", fontface = "bold") +
   scale_fill_identity(guide = "none") +
   scale_x_continuous(name = "Article Count", expand = c(0, 0), limits = c(0, max(bias_method_count$n)*1.1)) +
   labs(y = NULL) +
-  theme_minimal() +
-  theme(
-    axis.text.y = element_text(size = 10),
-    axis.text.x = element_text(size = 10),
-    axis.line.x = element_line(color = "gray", size = 0.5),
-    axis.line.y = element_blank(),
-    axis.ticks.x = element_blank(),
-    axis.ticks.y = element_blank(),
-    axis.title.x = element_text(size = 12),
-    axis.title.y = element_blank(),
-    panel.grid.major.y = element_blank(),
-    panel.grid.minor.y = element_blank(),
-    legend.position = "none")
+  theme_suppl()
 
+figs17
 
-figs13
-
-# ggsave(here("figures", "figs13.pdf"), width = 21, height = 10, units = "cm", scale = 2, dpi = 800)
-# ggsave(here("figures", "figs13.jpg"), width = 21, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "figs17.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "figs17.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 ```
 
+
+Figure s18
+An alluvial plot showing the relationship between the Journal Citation Report Category and bias assessment method
 ```{r}
 # Data Transformation 
 bias_assessment_alluvial <- sd %>% 
@@ -1101,13 +708,19 @@ bias_assessment_alluvial <- sd %>%
     group_by(bias_assessment_method)
 
 # Create the Alluvial plot
-ggplot(bias_assessment_alluvial, aes(y = freq ,axis1 = Journal_Category_Allocated_Broad, axis2 = bias_assessment_method)) +
+figs18 <- bias_assessment_alluvial %>% 
+  ggplot(aes(y = freq ,axis1 = Journal_Category_Allocated_Broad, axis2 = bias_assessment_method)) +
   scale_x_discrete(limits = c("Journal Citation Report Category", "Bias Assessment Method"), expand = c(.05, .05)) +
   xlab("Variables") +
   geom_alluvium(aes(fill = Journal_Category_Allocated_Broad)) +
-  geom_stratum(width = 1/8, fill = "white", color = "black") +
-  geom_text(stat = "stratum", aes(label = after_stat(stratum)), size = 3) +
-  theme_minimal()
+  geom_stratum(width = 1/4, fill = "white", color = "black") +
+  geom_text(stat = "stratum", aes(label = after_stat(stratum)), size = 6) +
+  theme_suppl()
+
+figs18
+
+# ggsave(here("figures", "figs18.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "figs18.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 
 ```
 
@@ -1551,6 +1164,377 @@ ggsave(here("figures", "fig4.pdf"), width = 25, height = 15, units = "cm", scale
 ggsave(here("figures", "fig4.jpg"), width = 25, height = 15, units = "cm", scale = 2, dpi = 800)
 
 ```
+
+## Figure s5 
+A bar plot showing the percentage and total count of total of pesticides investigate in meta-analysis investigating the impacts of organochlorine pesticides. Note: some meta-analysis may contribute to multiple sections if the study involves multiple organochlorine pesticides. Filtered for pesticide counts greater than 6. 
+```{r,fig.width=16, fig.height=10}
+# Function to replace long OCP names with abbreviations
+replace_ocp <- function(df) {
+  df %>% 
+    mutate(ocp = case_when(
+      # HCH related replacements
+      grepl("Hexachlorocyclohexane \\(HCH\\)", ocp, ignore.case = TRUE) ~ "HCH",
+      grepl("alpha-Hexachlorocyclohexane \\(alpha-HCH\\)", ocp, ignore.case = TRUE) ~ "α - HCH",
+      grepl("beta-Hexachlorocyclohexane \\(beta-HCH\\)", ocp, ignore.case = TRUE) ~ "β - HCH",
+      grepl("gamma-Hexachlorocyclohexane \\(gamma-HCH\\)", ocp, ignore.case = TRUE) ~ "Lindane",
+      # DDT related replacements
+      grepl("Dichlorodiphenyltrichloroethane \\(DDT\\)", ocp, ignore.case = TRUE) ~ "DDT",
+      grepl("p,p-Dichlorodiphenyltrichloroethane \\(p,p-DDT\\)", ocp, ignore.case = TRUE) ~ "p,p-DDT",
+      grepl("o,p-Dichlorodiphenyltrichloroethane \\(o,p-DDT\\)", ocp, ignore.case = TRUE) ~ "o,p-DDT",
+      # DDD related replacements
+      grepl("Dichlorodiphenyldichloroethane \\(DDD\\)", ocp, ignore.case = TRUE) ~ "DDD",
+      grepl("p,p-Dichlorodiphenyldichloroethane \\(p,p-DDD\\)", ocp, ignore.case = TRUE) ~ "p,p-DDD",
+      grepl("o,p-Dichlorodiphenyldichloroethane \\(o,p-DDD\\)", ocp, ignore.case = TRUE) ~ "o,p-DDD",
+      # DDE related replacements
+      grepl("Dichlorodiphenyldichloroethylene \\(DDE\\)", ocp, ignore.case = TRUE) ~ "DDE",
+      grepl("p,p-Dichlorodiphenyldichloroethylene \\(p,p-DDE\\)", ocp, ignore.case = TRUE) ~ "p,p-DDE",
+      grepl("o,p-Dichlorodiphenyldichloroethylene \\(o,p-DDE\\)", ocp, ignore.case = TRUE) ~ "o,p-DDE",
+      TRUE ~ ocp  # no change for any others
+    ))
+}
+# Transform the data 
+ocp_count <-
+  ocp %>% 
+  separate_rows(ocp, sep = ",\\s+") %>% 
+  replace_ocp %>% 
+  count(ocp) %>% 
+  filter(!is.na(ocp)) %>% # filter out NA 
+  arrange(desc(n)) %>% 
+  mutate(ocp = ifelse(n <= 6, "other OCP", as.character(ocp))) %>% 
+# Other organochlorine pesticides include: toxaphene (n=6), Methoxychlor (n=6), p,p-DDD (n=5), o,p-DDD (n=5), cis-Chlordane (n=5), trans=Chlordane (n=4), Endosulfan II (n=4), Endosulfan (n=3),o,p-DDD (n=3), cis-Nonachlor (n=3) y-Chlordane (n=2), Chlorophenol (n=2), beta-BHC (n=2), alpha-Chlordane (n=2), TCDD (n=1), Nonachlore (n=1), Endrin ketone (n=1), Endrin Aldehyde (n=1), Endosulfan sulfate (n=1), Dicofol (n=1), delta-HCH (n=1), delta-BHC (n=1), DDD (n=1), cis-Heptachlor (n=1), alpha-BHC (n=1).
+  group_by(ocp) %>% 
+  summarise(n =sum(n))
+
+# Calculate the proportion and percentage of each OCP
+ocp_pct <- ocp_count %>%
+  mutate(proportion = n/sum(ocp_count$n),
+         percentage = proportion*100)
+
+# Create the count plot for OCPs
+figs5 <- ocp_count %>%
+  ggplot(aes(x = n, y = reorder(ocp, n), fill = "#1b9e77")) +
+  geom_bar(stat = "identity", width = 0.8, alpha = 0.7) +
+  geom_text(aes(label = n, x = n / 2, y = reorder(ocp, n)), hjust = 0.5, size = 6, color = "black") +
+  geom_text(data = ocp_pct, aes(label = paste0("(", round(percentage, 1), "%)"), x = n), 
+            hjust = - 0.1, size = 6, color = "black", fontface = "bold") +
+  scale_fill_identity(guide = "none") +
+  scale_x_continuous(name = "Article Count", expand = c(0, 0), limits = c(0, max(ocp_count$n)*1.2)) +
+  labs(y = NULL) +
+  theme_minimal() +
+  theme(axis.text.y = element_text(size = 15),
+        axis.text.x = element_text(size = 15),
+        axis.line.x = element_line(color = "gray", size = 0.5),
+        axis.line.y = element_blank(),
+        axis.ticks.x = element_blank(),
+        axis.ticks.y = element_blank(),
+        axis.title.x = element_text(size = 20),
+        axis.title.y = element_text(size = 20),
+        panel.grid.major.y = element_blank(),
+        panel.grid.minor.y = element_blank(),
+        legend.position = "none"
+        )
+figs5
+ # ggsave(here("figures", "figs5.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+ # ggsave(here("figures", "figs5.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+```
+
+## Figure s6 
+A bar plot showing the percentage and total count of total of subjects investigate in meta-analysis investigating the impacts of organochlorine pesticides. Note: some meta-analysis may contribute to multiple sections if the study involves multiple subjects
+```{r}
+# Calculate total count for each category
+subject_count <- 
+  sub %>% 
+    separate_rows(subject, sep = ",\\s+") %>% 
+    count(subject)
+
+# Calculate proportion and percentage for each category
+subject_pct <- subject_count %>%
+  mutate(proportion = n/sum(subject_count$n),
+         percentage = proportion*100)
+
+# Create the count plot for subjects
+figs6 <- subject_count %>%
+  ggplot(aes(x = n, y = reorder(subject, n), fill = "#1b9e77")) +
+  geom_bar(stat = "identity", width = 0.8 , alpha = 0.7) +
+  geom_text(aes(label = n, x = n / 2, y = reorder(subject, n)), hjust = 0.5, size = 7, color = "black") +
+  geom_text(data = subject_pct, aes(label = paste0("(", round(percentage, 1), "%)"), x = n), 
+            hjust = -0.1, size = 6, color = "black", fontface = "bold") +
+  scale_fill_identity(guide = "none") +
+  scale_x_continuous(name = "Article Count", expand = c(0, 0), limits = c(0, max(subject_count$n)*1.1)) +
+  labs(y = NULL) +
+  theme_minimal() +
+  theme(axis.text.y = element_text(size = 15),
+        axis.text.x = element_text(size = 15),
+        axis.line.x = element_line(color = "gray", size = 0.5),
+        axis.line.y = element_blank(),
+        axis.ticks.x = element_blank(),
+        axis.ticks.y = element_blank(),
+        axis.title.x = element_text(size = 20),
+        axis.title.y = element_text(size = 20),
+        panel.grid.major.y = element_blank(),
+        panel.grid.minor.y = element_blank(),
+        legend.position = "none"
+        )
+
+figs6
+ #ggsave(here("figures", "figs6.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+ # ggsave(here("figures", "figs6.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+```
+
+## Figure s7 
+A bar plot showing the percentage and total count of total of subjects investigate in meta-analysis investigating the impacts of organochlorine pesticides. Note: some meta-analysis may contribute to multiple sections if the study involves multiple subjects. Filtered for impact counts greater than 1. 
+```{r}
+# Calculate total count for each category
+impact_count <- 
+  im %>% 
+    separate_rows(impact, sep = ",\\s+") %>% 
+    count(impact) %>% 
+  filter(impact != "NA") %>%
+  mutate(impact = ifelse(n<= 1, "other", as.character(impact))) %>% 
+    group_by(impact) %>%
+  summarise(n = sum(n))
+
+# Calculate proportion and percentage for each category
+impact_pct <- impact_count %>%
+  mutate(proportion = n/sum(impact_count$n),
+         percentage = proportion*100)
+
+# Create the count plot for impacts 
+figs7 <- impact_count %>%
+  ggplot(aes(x = n, y = reorder(impact, n), fill = "#1b9e77")) +
+  geom_bar(stat = "identity", width = 0.8 , alpha = 0.7) +
+  geom_text(aes(label = n, x = n / 2, y = reorder(impact, n)), hjust = 0.5, size = 7, color = "black") +
+  geom_text(data = impact_pct, aes(label = paste0("(", round(percentage, 1), "%)"), x = n), 
+            hjust = -0.1, size = 6, color = "black", fontface = "bold") +
+  scale_fill_identity(guide = "none") +
+  scale_x_continuous(name = "Article Count", expand = c(0, 0), limits = c(0, max(impact_count$n)*1.1)) +
+  labs(y = NULL) +
+  theme_minimal() +
+  theme(axis.text.y = element_text(size = 15),
+        axis.text.x = element_text(size = 15),
+        axis.line.x = element_line(color = "gray", size = 0.5),
+        axis.line.y = element_blank(),
+        axis.ticks.x = element_blank(),
+        axis.ticks.y = element_blank(),
+        axis.title.x = element_text(size = 20),
+        axis.title.y = element_text(size = 20),
+        panel.grid.major.y = element_blank(),
+        panel.grid.minor.y = element_blank(),
+        legend.position = "none"
+        )
+
+figs7
+
+ # ggsave(here("figures", "figs7.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+ # ggsave(here("figures", "figs7.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+
+```
+
+## Figure s8
+A bar plot showing the percentage and total count of total of impact categories investigated in meta-analysis investigating the impacts of organochlorine pesticides. 
+Note: some meta-analysis may contribute to multiple sections if the study involves multiple impacts
+```{r}
+# Create a collumn for broad impacts
+im <- im %>%
+        separate_rows(impact, sep = ",\\s+") %>% 
+  mutate(impact_broad = case_when(
+    impact %in% c("parkinsons disease", "alzheimers disease", "autism spectrum disorder", "brain tumour", "amyotrophic lateral sclerosis" ) ~ "Neurological",
+    impact %in% c("concentration", "contamination") ~ "Concentration",
+    impact %in% c("diabetes", "thyroid function", "hypertension", "endometriosis") ~ "Endocrine",
+    grepl("cancer", impact, ignore.case = TRUE) | impact %in% c("leukemia", "lymphoma", "multiple myeloma", "neuroblastoma") ~ "Carcinogen",
+    impact %in% c("respiratory health", "cardiovascular disease", "asthma", "prolonged bradycardia") ~ "Cardiovascular",
+ #   impact %in% c("birth outcomes", "birth weight", "preterm birth") ~ "Birth",
+    impact %in% c("obesity", "adiposity") ~ "Obesity",
+    impact %in% c("sperm quality", "neuroblastoma", "hypospadias", "cryptochidism", "reproductive system") ~ "Reproduction",
+    TRUE ~ "Other Impact"
+  ))
+
+
+# Calculate total count for each category
+impact_count_broad <- 
+  im %>% 
+    separate_rows(impact_broad, sep = ",\\s+") %>% 
+    count(impact_broad) %>% 
+  filter(impact_broad != "NA") %>%
+    group_by(impact_broad) %>%
+  summarise(n = sum(n))
+
+# Calculate proportion and percentage for each category
+impact_pct_broad <- impact_count_broad %>%
+  mutate(proportion = n/sum(impact_count_broad$n),
+         percentage = proportion*100)
+
+
+# Create the count plot for impacts 
+figs8 <- impact_count_broad %>%
+  ggplot(aes(x = n, y = reorder(impact_broad, n), fill = "#1b9e77")) +
+  geom_bar(stat = "identity", width = 0.8 , alpha = 0.7) +
+  geom_text(aes(label = n, x = n / 2, y = reorder(impact_broad, n)), hjust = 0.5, size = 7, color = "black") +
+  geom_text(data = impact_pct_broad, aes(label = paste0("(", round(percentage, 1), "%)"), x = n), 
+            hjust = -0.1, size = 6, color = "black", fontface = "bold") +
+  scale_fill_identity(guide = "none") +
+  scale_x_continuous(name = "Article Count", expand = c(0, 0), limits = c(0, max(impact_count_broad$n)*1.1)) +
+  labs(y = NULL) +
+  theme_minimal() +
+  theme(axis.text.y = element_text(size = 15),
+        axis.text.x = element_text(size = 15),
+        axis.line.x = element_line(color = "gray", size = 0.5),
+        axis.line.y = element_blank(),
+        axis.ticks.x = element_blank(),
+        axis.ticks.y = element_blank(),
+        axis.title.x = element_text(size = 20),
+        axis.title.y = element_text(size = 20),
+        panel.grid.major.y = element_blank(),
+        panel.grid.minor.y = element_blank(),
+        legend.position = "none"
+        )
+
+figs8
+
+  # ggsave(here("figures", "figs8.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+  # ggsave(here("figures", "figs8.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+
+```
+
+## Figure s9
+An alluvial plot showing the relationships between the pesticide of exposure, the subject being exposed and the impact of exposure 
+```{r}
+
+# Function to change OCP to be more general
+replace_ocp2 <- function(df) {
+  df %>% 
+  mutate(ocp = case_when(
+    grepl("Chlordane", ocp, ignore.case = TRUE) ~ "Chlordane",  
+    grepl("Endosulfan", ocp, ignore.case = TRUE) ~ "Endosulfan", 
+    grepl("Nonachlor", ocp, ignore.case = TRUE) ~ "Nonachlore", 
+    grepl("Heptachlor", ocp, ignore.case = TRUE) ~ "Heptachlor",
+    grepl("TCDD", ocp, ignore.case = TRUE) ~ "TCDD", 
+    grepl("Endrin", ocp, ignore.case = TRUE) ~ "Endrin",
+    grepl("Hexachlorobenzene", ocp, ignore.case = TRUE) ~ "HCH",
+    grepl("Lindane", ocp, ignore.case = TRUE) ~ "HCH", 
+    grepl("Hexachlorocyclohexane \\(HCH\\)", ocp, ignore.case = TRUE) ~ "HCH",
+    grepl("alpha-Hexachlorocyclohexane \\(alpha-HCH\\)", ocp, ignore.case = TRUE) ~ "HCH",
+    grepl("beta-Hexachlorocyclohexane \\(beta-HCH\\)", ocp, ignore.case = TRUE) ~ "HCH",
+    grepl("gamma-Hexachlorocyclohexane \\(gamma-HCH\\)", ocp, ignore.case = TRUE) ~ "HCH",
+    grepl("Dichlorodiphenyltrichloroethane \\(DDT\\)", ocp, ignore.case = TRUE) ~ "DDT",
+    grepl("p,p-Dichlorodiphenyltrichloroethane \\(p,p-DDT\\)", ocp, ignore.case = TRUE) ~ "DDT",
+    grepl("o,p-Dichlorodiphenyltrichloroethane \\(o,p-DDT\\)", ocp, ignore.case = TRUE) ~ "DDT",
+    grepl("Dichlorodiphenyldichloroethane \\(DDD\\)", ocp, ignore.case = TRUE) ~ "DDD",
+    grepl("p,p-Dichlorodiphenyldichloroethane \\(p,p-DDD\\)", ocp, ignore.case = TRUE) ~ "DDD",
+    grepl("o,p-Dichlorodiphenyldichloroethane \\(o,p-DDD\\)", ocp, ignore.case = TRUE) ~ "DDD",
+    grepl("Dichlorodiphenyldichloroethylene \\(DDE\\)", ocp, ignore.case = TRUE) ~ "DDE",
+    grepl("p,p-Dichlorodiphenyldichloroethylene \\(p,p-DDE\\)", ocp, ignore.case = TRUE) ~ "DDE",
+    grepl("o,p-Dichlorodiphenyldichloroethylene \\(o,p-DDE\\)", ocp, ignore.case = TRUE) ~ "DDE",
+    TRUE ~ ocp
+  ))
+}
+ 
+
+# Transform the data 
+alluvial <- im %>%
+  left_join(ocp, by = "study_id") %>%
+  left_join(sub, by = "study_id") %>%
+  separate_rows(subject, sep = ",\\s+") %>% 
+  separate_rows(ocp, sep = ",\\s+") %>% 
+  separate_rows(impact_broad, sep = ",\\s+") %>%
+  replace_ocp2() %>%
+  filter(!grepl("not reported", ocp, ignore.case = TRUE)) %>%
+  group_by(ocp, subject, impact_broad) %>%
+  summarise(freq = n(), .groups = 'drop') %>%
+  group_by(ocp) %>%
+  filter(sum(freq) > 10) %>%  
+  group_by(impact_broad) %>% 
+  filter(sum(freq) > 5) %>% 
+  mutate(subject = factor(subject, levels = c("Environment", "Non-human animal", "Human"), ordered = TRUE))
+
+
+figs9 <- alluvial %>% 
+  ggplot(
+       aes(axis1 = ocp, axis2 = subject, axis3 = impact_broad, y = freq)) +
+  scale_x_discrete(limits = c("Organochlorine Pesticide", "Subject", "Impact"), expand = c(.05, .10)) +
+  xlab("Variables") +
+  ylab("Frequency") +  
+  geom_alluvium(aes(fill = subject)) +
+  geom_stratum(width = 1/2, fill = "white", color = "black") +
+  geom_text(stat = "stratum", aes(label = after_stat(stratum)), size = 5, fontface = "bold") +  
+  theme_minimal() +
+  theme(axis.text=element_text(size=15),  
+        axis.title=element_text(size=20),
+        legend.position="none",
+        panel.grid.major = element_blank(),  
+        panel.grid.minor = element_blank()  
+  ) + 
+  scale_fill_brewer(palette = "Dark2", name = "Subject Category")
+
+figs9
+
+   # ggsave(here("figures", "figs9.pdf"), width =18, height = 12, units = "cm", scale = 2, dpi = 800)
+   # ggsave(here("figures", "figs9.jpg"), width = 18, height = 12, units = "cm", scale = 2, dpi = 800)
+
+
+```
+
+
+## Figure
+ 
+```{r}
+
+# Join the organochlorine pesticide details with the impact details
+ocp_im <- left_join(ocp, im ,sub, by = "study_id") 
+
+# Separate rows in "ocp_im"
+ocp_im1 <- separate_rows(ocp_im, ocp , sep = ", ", convert = TRUE)
+
+
+# Group by "ocp" and "impact" and summarize count
+ocp_im_summary <- ocp_im1 %>%
+  mutate(ocp = str_trim(ocp),
+         impact_broad = str_trim(impact_broad)) %>%
+    replace_ocp2() %>% 
+  group_by(ocp, impact_broad) %>%
+  summarise(count = n(), .groups = "drop") 
+
+
+# Filter for top 5 pesticides 
+top_pesticides <- ocp_im_summary %>%
+  filter(ocp != "not reported") %>%
+  group_by(ocp) %>%
+  summarise(total_count = sum(count)) %>%
+  top_n(8, total_count) %>%
+  pull(ocp) 
+
+
+ocp_im_summary_filtered <- ocp_im_summary %>%
+  filter(ocp %in% top_pesticides)
+
+# Create a circle plot with impact on the x-axis and ocp on the y-axis
+ocp_im_summary_filtered %>% 
+ggplot(aes(x = fct_rev(fct_reorder(impact_broad, count, .fun = 'sum')),
+           y = fct_reorder(ocp, count, .fun = 'sum'),
+           size = count,
+           fill = count)) +
+  geom_point(shape = 21, color = "white") +
+  geom_text(aes(label = count), size = 8, fontface = "bold") +  
+  scale_fill_gradient(low = "#98FB98", high = "#006400") +
+  labs(x = "Impact",
+       y = "Organochlorine Pesticide",
+       fill = "Count") +
+  theme_minimal() +
+  theme(
+        axis.ticks.y = element_blank(),
+        axis.text.x = element_text(size = 20),  
+        axis.text.y = element_text(size = 20, hjust = 1),  
+        axis.title.x = element_text(size = 25),  
+        axis.title.y = element_text(size = 25),  
+        legend.position = "none") +
+  scale_size_continuous(range = c(15, 45)) 
+
+  ggsave(here("figures", "fig3.pdf"), width = 25, height = 15, units = "cm", scale = 2, dpi = 800)
+  ggsave(here("figures", "fig3.jpg"), width = 25, height = 15, units = "cm", scale = 2, dpi = 800)
+  
+```
+
+
 
  - **Objective 4.	Bibliometrics: How is synthesized organochlorine pesticide evidence connected?** We will investigate the countries and institutions that are primarily engaged in secondary research on organochlorine pesticides, and analyze the networks that exist between them. By doing so, we hope to gain insights into the collaborative relationships between different institutions and identify any patterns or trends in the distribution of research efforts.
 
