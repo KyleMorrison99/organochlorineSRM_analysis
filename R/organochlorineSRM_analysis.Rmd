@@ -25,10 +25,11 @@ knitr::opts_chunk$set(
 
 
 In this Rmarkdown document we provide the following workflow:   
-
-
 - Objective 0 - To examine the volume and temporal trends of existing meta-analyses on the effects of organochlorine pesticides
 - Objective 1: To evaluate the methodological patterns and quality of existing meta-analyses studying the effects of organochlorine pesticides.
+
+
+
 - Objective 2 . To explore the various characteristics of the organochlorine pesticides literature such as the pesticides used, the impacts elicited in response and the subjects that were investigated. 
 
 
@@ -36,10 +37,8 @@ In this Rmarkdown document we provide the following workflow:
  - Objective 4 - To investigate the research outputs across different countries and continents and investigate the degree of cross-country collaboration.
  
 
-# **Load packages and data**
-
-## Load Packages 
-
+# Load packages and data
+##Load Packages 
 ```{r, results="hide"}
 rm(list = ls())
 pacman::p_load(tidyverse,
@@ -64,9 +63,7 @@ knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
 
 
 ## Load data
-
 Manually extracted pilot data is stored in five separate **.csv** files representing different aspects of the data (extracted via structured predefined Google Forms - one per table). 
-
 Bibliographic data records are exported from Scopus (including cited references field) in .bib format and locally saved as **scopus.bib**. 
 ```{r}
 # Load CSV datasets
@@ -83,8 +80,8 @@ bib_sco <- convert2df(here("data", "bib_sco.bib"), dbsource = "scopus", format =
 # Objective 0 - To examine the volume and temporal trends of existing meta-analyses on the effects of organochlorine pesticides
 
 ## Figure 1 
-a) A bar plot showing the time trends of meta-analysis investigating the impacts of organochlorine pesticides. The colours represent the subjects in which the impacts were investigated. 
-b) An area plot showing the cummulative time trend of meta-analysis investigating the impacts of organochlorine pesticides. The colours represent the subjects in which the impacts were investigated. 
+A) A bar plot showing the time trends of meta-analysis investigating the impacts of organochlorine pesticides. The colours represent the subjects in which the impacts were investigated. 
+B) An area plot showing the cummulative time trend of meta-analysis investigating the impacts of organochlorine pesticides. The colours represent the subjects in which the impacts were investigated. 
 ```{r, fig.width=16, fig.height=12}
 
 # Join the study and subject datasets
@@ -164,8 +161,8 @@ fig1
 ```
 
 ## Figure s4 
-a) A bar plot showing the time trends of meta-analysis investigating the impacts of organochlorine pesticides. 
-b) An area plot showing the cummulative time trend of meta-analysis investigating the impacts of organochlorine pesticides. 
+A) A bar plot showing the time trends of meta-analysis investigating the impacts of organochlorine pesticides. 
+B) An area plot showing the cummulative time trend of meta-analysis investigating the impacts of organochlorine pesticides. 
 ```{r, fig.width=16, fig.height=12}
 # Create the annual Count Plot
 figs4a <- sd1 %>%
@@ -222,7 +219,8 @@ figs4
 
 ```
 
-# Objective 1: To evaluate the methodological patterns and quality of existing meta-analyses studying the effects of organochlorine pesticides. 
+# Objective 1
+To evaluate the methodological patterns and quality of existing meta-analyses studying the effects of organochlorine pesticides. 
 
 ## Figure s5 
 A bar plot showing the percentage and total count of scientific literature databases used in meta-analysis investigating the impacts of organochlorine pesticides. Note: some meta-analysis may contribute to multiple sections if the study involves multiple scientific literature databases. “Other databases” is all other databases with a count less than or equal to 3
@@ -1113,11 +1111,12 @@ mygraph <- graph_from_data_frame(edges, vertices = vertices)
 # Plotting the graph using a 'circlepack' layout, adding labels and adjusting aesthetics
 fig2 <- ggraph(mygraph, layout = 'circlepack', weight = size) + 
     geom_node_circle(aes(fill = as.factor(depth)), color = NA, alpha = 0.5) +
-    geom_node_text(aes(label = name, filter = leaf, size = 2), vjust = -0.3, fontface = "bold") +
-    geom_node_text(aes(label = paste0("(", size, ")"), filter = leaf, size = 2), vjust = 1, fontface = "bold") +
+    geom_node_text(aes(label = name, filter = leaf, size = 4), vjust = -0.3, fontface = "bold") +
+    geom_node_text(aes(label = paste0("(", size, ")"), filter = leaf, size = 4), vjust = 1, fontface = "bold") +
     theme_void() +
     theme(legend.position = "none") +
     scale_fill_manual(values = c("#1b9e77", "#E7298A"))
+
 
 
 fig2
@@ -1181,6 +1180,7 @@ fig3 <- ggplot(data = percent_ceesat_score, aes(x = question, y = percent, fill 
   ylab("Percentage") + 
   xlab("CEESAT Question")
 
+fig3
 
 
 ggsave(here("figures", "fig3.pdf"), width = 25, height = 15, units = "cm", scale = 2, dpi = 800)
@@ -1501,7 +1501,8 @@ figs31
 ```
 
 
-## Figure
+## Figure 4
+A bubble plot showing the counts of each pesticide per impact included in current meta-analysis on the impacts of orhanochlorine pesticides 
  
 ```{r,fig.width=25, fig.height=15}
 
@@ -1534,7 +1535,7 @@ ocp_im_summary_filtered <- ocp_im_summary %>%
   filter(ocp %in% top_pesticides)
 
 # Create a circle plot with impact on the x-axis and ocp on the y-axis
-ocp_im_summary_filtered %>% 
+fig4 <-  %>% 
 ggplot(aes(x = fct_rev(fct_reorder(impact_broad, count, .fun = 'sum')),
            y = fct_reorder(ocp, count, .fun = 'sum'),
            size = count,
@@ -1555,8 +1556,8 @@ ggplot(aes(x = fct_rev(fct_reorder(impact_broad, count, .fun = 'sum')),
         legend.position = "none") +
   scale_size_continuous(range = c(15, 45)) 
 
-  ggsave(here("figures", "fig3.pdf"), width = 25, height = 15, units = "cm", scale = 2, dpi = 800)
-  ggsave(here("figures", "fig3.jpg"), width = 25, height = 15, units = "cm", scale = 2, dpi = 800)
+  ggsave(here("figures", "fig4.pdf"), width = 25, height = 15, units = "cm", scale = 2, dpi = 800)
+  ggsave(here("figures", "fig4.jpg"), width = 25, height = 15, units = "cm", scale = 2, dpi = 800)
   
 ```
 
