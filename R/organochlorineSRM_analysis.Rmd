@@ -27,9 +27,6 @@ knitr::opts_chunk$set(
 In this Rmarkdown document we provide the following workflow:   
 - Objective 0 - To examine the volume and temporal trends of existing meta-analyses on the effects of organochlorine pesticides
 - Objective 1: To evaluate the methodological patterns and quality of existing meta-analyses studying the effects of organochlorine pesticides.
-
-
-
 - Objective 2 . To explore the various characteristics of the organochlorine pesticides literature such as the pesticides used, the impacts elicited in response and the subjects that were investigated. 
 
 
@@ -80,8 +77,8 @@ bib_sco <- convert2df(here("data", "bib_sco.bib"), dbsource = "scopus", format =
 # Objective 0 - To examine the volume and temporal trends of existing meta-analyses on the effects of organochlorine pesticides
 
 ## Figure 1 
-A) A bar plot showing the time trends of meta-analysis investigating the impacts of organochlorine pesticides. The colours represent the subjects in which the impacts were investigated. 
-B) An area plot showing the cummulative time trend of meta-analysis investigating the impacts of organochlorine pesticides. The colours represent the subjects in which the impacts were investigated. 
+A) Bar chart showing the annual number of published meta-analysis synthesising research on the impacts of organochlorine pesticides. Divided for different subjects of exposure. 
+B) Area graph showing the cumulative time trends of meta-analysis synthesising research on the impacts of organochlorine pesticides. Divided for different subjects of exposure.
 ```{r, fig.width=16, fig.height=12}
 
 # Join the study and subject datasets
@@ -91,6 +88,24 @@ sd_sub <- left_join(sd, sub, by = "study_id")
 sd1 <- sd %>%
   count(publication_year) %>%
   mutate(n_cumulative = cumsum(n))
+
+
+# Create a theme for the count plots 
+theme_count <- function() {
+  theme_minimal() +
+  theme(
+    panel.grid.major.y = element_line(color = "gray", linetype = "dashed"),
+    panel.grid.minor.y = element_blank(),
+    axis.line.x = element_line(size = 1.2),
+    axis.line.y = element_line(size = 1.2),
+    axis.title.x = element_text(size = 20, face = "bold"),
+    axis.title.y = element_text(size = 20, face = "bold"),
+    axis.text.x = element_text(angle = 45, hjust = 1, size = 15, color = "#666666"),
+    axis.text.y = element_text(size = 20, color = "#666666"),
+    legend.position = "none"
+  )
+}
+
 
 # Create the annual count plot
 fig1a <- sd_sub %>%
@@ -105,24 +120,12 @@ fig1a <- sd_sub %>%
     scale_x_continuous(breaks = seq(min(sd1$publication_year), max(sd1$publication_year), by = 1), 
                        expand = expansion(0,0)) +  
     scale_y_continuous("Annual Article Count", limits = c(0,15)) +
-    theme_minimal() +
     labs(y = "Article Count", tag = "A", fill = "Subjects") +
-    theme(
-      panel.grid.major.y = element_line(color = "gray", linetype = "dashed"),
-      panel.grid.minor.y = element_blank(),
-      axis.line.x = element_line(size = 1.2),
-      axis.line.y = element_line(size = 1.2),
-      axis.title.x = element_blank(),
-      axis.title.y = element_text(size = 20, face = "bold"),
-      axis.text.x = element_text(angle = 45, hjust = 1, size = 15, color = "#666666"),
-      axis.text.y = element_text(size = 20, color = "#666666"),
-      legend.text = element_text(size = 15),
-      legend.title = element_text(size = 15),
-      legend.position = c(0, 1),
-      legend.justification = c(0, 1)
-    ) +
+    theme_count() +
+    theme(axis.title.x = element_blank()) +
     scale_fill_brewer(palette = "Dark2") +
     guides(fill = guide_legend(override.aes = list(size=10)))
+
 
 # Create the cumulative count plot
 fig1b <- sd_sub %>%
@@ -136,19 +139,8 @@ fig1b <- sd_sub %>%
     scale_y_continuous("Cumulative Article Count", limits = c(0,115)) +
     scale_x_continuous(breaks = seq(min(sd_sub$publication_year), max(sd_sub$publication_year), by = 1), 
                        expand = expansion(0,0)) +  
-    theme_minimal() +
     labs(x = "Year", y = "Cumulative Article Count", tag = "B", fill = "Subjects") +
-    theme(
-      panel.grid.major.y = element_line(color = "gray", linetype = "dashed"),
-      panel.grid.minor.y = element_blank(),
-      axis.line.x = element_line(size = 1.2),
-      axis.line.y = element_line(size = 1.2),
-      axis.title.x = element_text(size = 20, face = "bold"),
-      axis.title.y = element_text(size = 20, face = "bold"),
-      axis.text.x = element_text(angle = 45, hjust = 1, size = 15, color = "#666666"),
-      axis.text.y = element_text(size = 20, color = "#666666"),
-      legend.position = "none"
-    ) +
+    theme_count() +
     scale_fill_brewer(palette = "Dark2") +
     guides(fill = guide_legend(override.aes = list(size=10)))
 
@@ -156,13 +148,13 @@ fig1b <- sd_sub %>%
 fig1 <- fig1a / fig1b
 fig1
 
-  ggsave(here("figures", "fig1.pdf"), width = 16, height = 12, units = "cm", scale = 2, dpi = 800)
-  ggsave(here("figures", "fig1.jpg"), width = 16, height = 12, units = "cm", scale = 2, dpi = 800)
+ # ggsave(here("figures", "fig1.pdf"), width = 16, height = 12, units = "cm", scale = 2, dpi = 800)
+ # ggsave(here("figures", "fig1.jpg"), width = 16, height = 12, units = "cm", scale = 2, dpi = 800)
 ```
 
 ## Figure s4 
-A) A bar plot showing the time trends of meta-analysis investigating the impacts of organochlorine pesticides. 
-B) An area plot showing the cummulative time trend of meta-analysis investigating the impacts of organochlorine pesticides. 
+A) Bar chart showing the annual number of published meta-analyses synthesising research on the impacts of organochlorine pesticides.  
+B) Line graph showing the cumulative time trends of meta-analyses synthesising research on the impacts of organochlorine pesticides.
 ```{r, fig.width=16, fig.height=12}
 # Create the annual Count Plot
 figs4a <- sd1 %>%
@@ -174,18 +166,9 @@ figs4a <- sd1 %>%
                        expand = expansion(0,1)) +
     scale_y_continuous("Annual Article Count", limits = c(0,15)) +
     labs(x = "Year", tag = "A") +
-    theme_minimal() +
-    theme(
-      panel.grid.major.y = element_line(color = "gray", linetype = "dashed"),
-      panel.grid.minor.y = element_blank(),
-      axis.line.x = element_line(size = 1.2),
-      axis.line.y = element_line(size = 1.2),
-      axis.title.x = element_blank(),
-      axis.title.y = element_text(size = 20, face = "bold"),
-      axis.text.x = element_text(angle = 45, hjust = 1, size = 15, color = "#666666"),
-      axis.text.y = element_text(size = 20, color = "#666666"),
-      legend.position = "none"
-    )
+    theme_count() +
+    theme(axis.title.x = element_blank())
+
 
 # Create the cumulative Count Plot
 figs4b <- sd1 %>%
@@ -197,25 +180,14 @@ figs4b <- sd1 %>%
                        expand = expansion(0,1)) +
     scale_y_continuous("Cumulative Article Count", limits = c(0,120)) +
     labs(x = "Year", tag = "B") +
-    theme_minimal() +
-    theme(
-      panel.grid.major.y = element_line(color = "gray", linetype = "dashed"),
-      panel.grid.minor.y = element_blank(),
-      axis.line.x = element_line(size = 1.2),
-      axis.line.y = element_line(size = 1.2),
-      axis.title.x = element_text(size = 20, face = "bold"),
-      axis.title.y = element_text(size = 20, face = "bold"),
-      axis.text.x = element_text(angle = 45, hjust = 1, size = 15, color = "#666666"),
-      axis.text.y = element_text(size = 20, color = "#666666"),
-      legend.position = "none"
-    )
+    theme_count()
 
 # Combine the two plots
 figs4 <- figs4a / figs4b
 figs4
 
-  ggsave(here("figures", "figs4.pdf"), width = 16, height = 12, units = "cm", scale = 2, dpi = 800)
-  ggsave(here("figures", "figs4.jpg"), width = 16, height = 12, units = "cm", scale = 2, dpi = 800)
+ # ggsave(here("figures", "figs4.pdf"), width = 16, height = 12, units = "cm", scale = 2, dpi = 800)
+ # ggsave(here("figures", "figs4.jpg"), width = 16, height = 12, units = "cm", scale = 2, dpi = 800)
 
 ```
 
@@ -223,7 +195,7 @@ figs4
 To evaluate the methodological patterns and quality of existing meta-analyses studying the effects of organochlorine pesticides. 
 
 ## Figure s5 
-A bar plot showing the percentage and total count of scientific literature databases used in meta-analysis investigating the impacts of organochlorine pesticides. Note: some meta-analysis may contribute to multiple sections if the study involves multiple scientific literature databases. “Other databases” is all other databases with a count less than or equal to 3
+Bar plot showing the percentage and total count of scientific literature databases used in meta-analyses investigating the impacts of organochlorine pesticides. Note that some meta-analyses may contribute to multiple sections if the study involved multiple scientific literature databases. The "Other databases" category includes all databases with a count of 3 or less.
 ```{r, fig.width=16, fig.height=10}
 # Calculate the total count for each category
 database_count <- sd %>% 
@@ -280,7 +252,7 @@ figs5
 ```
 
 ## Figure s6
-An alluvial plot showing the relationship between the Journal Citation Report Category and the scientific literature database used. Filtered for scientific literature database counts greater than or equal to 3
+Alluvial plot showing the relationship between the Journal Citation Report Category and the scientific literature database used. Filtered for scientific literature database counts greater than or equal to 3. 
 ```{r, fig.width=16, fig.height=10}
 # Rename Environmental Science
 sd <- sd %>%
@@ -317,14 +289,14 @@ figs6
 ```
 
 ## Figure s7 
-A bar plot showing the percentage and total count of effect size calculation type used in meta-analysis investigating the impacts of organochlorine pesticides. Note: some meta-analysis may contribute to multiple sections if the study involves multiple effect size calculations. “Other effect sizes” is all other effect sizes with a count less than or equal to 2
+Bar plot showing the percentage and total count of effect size calculation types used in meta-analyses investigating the impacts of organochlorine pesticides. Note that some meta-analyses may contribute to multiple sections if the study involved multiple effect size calculations. The "Other effect sizes" category includes all effect sizes with a count of 2 or less.
 ```{r, fig.width=16, fig.height=10}
 # Calculate the total count for each category
 effectsize_count <- sd %>% 
   separate_rows(effect_size, sep = ",\\s+") %>% 
   count(effect_size) %>%
   filter(effect_size != "NA") %>%
-  mutate(effect_size = ifelse(n<= 2, "Other effect sizes", as.character(effect_size))) %>% 
+ # mutate(effect_size = ifelse(n<= 2, "other effect sizes", as.character(effect_size))) %>% 
   group_by(effect_size) %>%
   summarise(n = sum(n))
 
@@ -347,12 +319,12 @@ figs7 <-  effectsize_count %>%
 
 figs7
 
-  ggsave(here("figures", "figs7.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
-  ggsave(here("figures", "figs7.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+#  ggsave(here("figures", "figs7.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+#  ggsave(here("figures", "figs7.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 ```
 
 ## Figure s8
-An alluvial plot showing the relationship between the Journal Citation Report Category and the effect size used. 
+Alluvial plot showing the relationship between the Journal Citation Report Category and the effect size used. Filtered for scientific literature database counts greater than or equal to 3.
 ```{r, fig.width=16, fig.height=10}
 # Data Transformation 
 effectsize_alluvial <- sd %>% 
@@ -372,8 +344,8 @@ ggplot(aes(y = freq ,axis1 = Journal_Category_Allocated_Broad, axis2 = effect_si
   scale_x_discrete(limits = c("Journal Category", "Effect Size"), expand = c(.05, .05)) +
   xlab("Variables") +
   geom_alluvium(aes(fill = Journal_Category_Allocated_Broad)) +
-  geom_stratum(width = 1/4.5, fill = "white", color = "black") +
-  geom_text(stat = "stratum", aes(label = after_stat(stratum)), size = 6) +
+  geom_stratum(width = 1/2.5, fill = "white", color = "black") +
+  geom_text(stat = "stratum", aes(label = after_stat(stratum)), size = 5) +
   theme_minimal() +
   labs(x= "Variables", y = "Frequency", fill = "Journal Category Allocated") +
   theme_suppl()
@@ -385,7 +357,7 @@ figs8
 ```
 
 ## Figure s9
-A bar plot showing the percentage and total count of software for analysis in meta-analysis investigating the impacts of organochlorine pesticides. Note: some meta-analysis may contribute to multiple sections if the study involves multiple softwares 
+Bar plot showing the percentage and total count of software for analysis used in meta-analyses investigating the impacts of organochlorine pesticides. Note that some meta-analyses may contribute to multiple sections if the study involved multiple software. 
 ```{r, fig.width=16, fig.height=10}
 # Calculate the total count for each category
 software_count <- sd %>%
@@ -423,7 +395,7 @@ figs9
 ```
 
 ## Figure s10 
-An alluvial plot showing the relationship between the Journal Citation Report Category and the software used for analysis. 
+Alluvial plot showing the relationship between the Journal Citation Report Category and the software used for analysis.
 ```{r, fig.width=16, fig.height=10}
 # Data Transformation 
 software_analysis_alluvial <- sd %>% 
@@ -456,7 +428,7 @@ figs10
 ```
 
 ## Figure s11
-A bar plot showing the percentage and total count of heterogeneity assessment in meta-analysis investigating the impacts of organochlorine pesticides. Note: some meta-analysis may contribute to multiple sections if the study involves multiple heterogeneity assessments 
+Bar plot showing the percentage and total count of heterogeneity assessment methods used in meta-analyses investigating the impacts of organochlorine pesticides. Note that some meta-analyses may contribute to multiple sections if the study involved multiple heterogeneity assessments.
 ```{r, fig.width=16, fig.height=10}
 # Calculate the total count for each category
 heterogeneity_count <- sd %>% 
@@ -492,7 +464,7 @@ figs11
 ```
  
 ## Figure s12 
-An alluvial plot showing the relationship between the Journal Citation Report Category and heterogeneity assessment 
+Alluvial plot showing the relationship between the Journal Citation Report Category and heterogeneity assessment method.
 ```{r, fig.width=16, fig.height=10}
 # Data Transformation 
 heterogeneity_alluvial <- sd %>% 
@@ -523,7 +495,7 @@ figs12
 ```
  
 ## Figure s13
-A bar plot showing the percentage and total count of sensitivity analysis in meta-analysis investigating the impacts of organochlorine pesticides. Note: some meta-analysis may contribute to multiple sections if the study involves multiple sensitivity analyses are completed
+Bar plot showing the percentage and total count of sensitivity analyses conducted in meta-analyses investigating the impacts of organochlorine pesticides. Note that some meta-analyses may contribute to multiple sections if the study involved multiple sensitivity analyses.
 ```{r, fig.width=16, fig.height=10}
 # Calculate the total count for each category
 sensitivity_count <- sd %>% 
@@ -558,7 +530,7 @@ figs13
 ```
 
 ## Figure s14
-An alluvial plot showing the relationship between the Journal Citation Report Category and sensitivity analysis 
+Alluvial plot showing the relationship between the Journal Citation Report Category and sensitivity analysis.
 ```{r, fig.width=16, fig.height=10}
 # Data Transformation 
 sensitivity_analysis_alluvial <- sd %>% 
@@ -576,8 +548,8 @@ ggplot(aes(y = freq ,axis1 = Journal_Category_Allocated_Broad, axis2 = sensitivi
   scale_x_discrete(limits = c("Journal Citation Report Category", "Sensitivity Analysis Method"), expand = c(.05, .05)) +
   xlab("Variables") +
   geom_alluvium(aes(fill = Journal_Category_Allocated_Broad)) +
-  geom_stratum(width = 1/4.5, fill = "white", color = "black") +
-  geom_text(stat = "stratum", aes(label = after_stat(stratum)), size = 6) +
+  geom_stratum(width = 1/4, fill = "white", color = "black") +
+  geom_text(stat = "stratum", aes(label = after_stat(stratum)), size = 5) +
   labs(x= "Variables", y = "Frequency", fill = "Journal Category Allocated") +
   theme_suppl()
 
@@ -589,7 +561,7 @@ figs14
 ```
 
 ## Figure s15 
-A bar plot showing the percentage and total count of bias type assessed in meta-analysis investigating the impacts of organochlorine pesticides. Note: some meta-analysis may contribute to multiple sections if the study involves multiple bias types are assessed 
+Bar plot showing the percentage and total count of bias types assessed in meta-analyses investigating the impacts of organochlorine pesticides. Note that some meta-analyses may contribute to multiple sections if the study involved the assessment of multiple bias types. 
 ```{r, fig.width=16, fig.height=10}
 # Calculate the total count for each category
 bias_type_count <- sd %>% 
@@ -624,7 +596,7 @@ figs15
 ```
 
 ## Figure s16
-An alluvial plot showing the relationship between the Journal Citation Report Category and bias assessment type
+Alluvial plot showing the relationship between the Journal Citation Report Category and bias assessment method
 ```{r, fig.width=16, fig.height=10}
 # Data Transformation 
 bias_assessment_alluvial <- sd %>% 
@@ -654,7 +626,7 @@ figs16
 ```
 
 ## Figure s17 
-A bar plot showing the percentage and total count of bias methodology used in meta-analysis investigating the impacts of organochlorine pesticides. Note: some meta-analysis may contribute to multiple sections if the study involves multiple bias methodologies are used 
+Bar plot showing the percentage and total count of bias methodologies used in meta-analyses investigating the impacts of organochlorine pesticides. Note that some meta-analyses may contribute to multiple sections if the study involved the use of multiple bias assessment methodologies. 
 ```{r, fig.width=16, fig.height=10}
 # Calculate the total count for each category
 bias_method_count <- sd %>% 
@@ -689,7 +661,7 @@ figs17
 
 
 ## Figure s18
-An alluvial plot showing the relationship between the Journal Citation Report Category and bias assessment method
+Alluvial plot showing the relationship between the Journal Citation Report Category and bias assessment method.
 ```{r, fig.width=16, fig.height=10}
 # Data Transformation 
 bias_assessment_alluvial <- sd %>% 
@@ -707,7 +679,7 @@ figs18 <- bias_assessment_alluvial %>%
   scale_x_discrete(limits = c("Journal Citation Report Category", "Bias Assessment Method"), expand = c(.05, .05)) +
   xlab("Variables") +
   geom_alluvium(aes(fill = Journal_Category_Allocated_Broad)) +
-  geom_stratum(width = 1/4, fill = "white", color = "black") +
+  geom_stratum(width = 1/3.5, fill = "white", color = "black") +
   geom_text(stat = "stratum", aes(label = after_stat(stratum)), size = 6) +
   labs(x= "Variables", y = "Frequency", fill = "Journal Category Allocated") +
   theme_suppl()
@@ -720,7 +692,7 @@ figs18
 ```
 
 ## Figure s19
-A bar plot showing the percentage and total count of bias visualizations used in meta-analysis investigating the impacts of organochlorine pesticides. Note: some meta-analysis may contribute to multiple sections if the study involves multiple bias visualizations are used 
+Bar plot showing the percentage and total count of bias visualizations used in meta-analyses investigating the impacts of organochlorine pesticides. Note that some meta-analyses may contribute to multiple sections if the study involved the use of multiple bias visualizations. 
 ```{r, fig.width=16, fig.height=10}
 # Calculate the total count for each category
 bias_visualization_count <- sd %>% 
@@ -754,7 +726,7 @@ figs19
 ```
 
 ## Figure s20
-An alluvial plot showing the relationship between the Journal Citation Report Category and bias visualization method
+Alluvial plot showing the relationship between the Journal Citation Report Category and bias visualization method.
 ```{r, fig.width=16, fig.height=10}
 # Data Transformation 
 bias_vizualisation_alluvial <- sd %>% 
@@ -785,7 +757,7 @@ figs20
 ```
 
 ## Figure s21 
-A bar plot showing the percentage and total count of risk of bias tests used in meta-analysis investigating the impacts of organochlorine pesticides. Note: some meta-analysis may contribute to multiple sections if the study involves multiple risk of bias tests are used 
+Bar plot showing the percentage and total count of risk of bias tests used in meta-analyses investigating the impacts of organochlorine pesticides. Note that some meta-analyses may contribute to multiple sections if the study involved the use of multiple risk of bias tests. 
 ```{r, fig.width=16, fig.height=10}
 # Calculate the total count for each category
 rob_method_count <- sd %>% 
@@ -819,7 +791,7 @@ figs21
 ```
 
 ## Figure s22
-An alluvial plot showing the relationship between the Journal Citation Report Category and risk of bias methodology 
+Alluvial plot showing the relationship between the Journal Citation Report Category and risk of bias methodology. 
 ```{r, fig.width=16, fig.height=10}
 # Data Transformation 
 robmethod_alluvial <- sd %>% 
@@ -838,8 +810,8 @@ ggplot(aes(y = freq ,axis1 = Journal_Category_Allocated_Broad, axis2 = rob_asses
   scale_x_discrete(limits = c("Journal Citation Report Category", "ROB Assessment Method"), expand = c(.05, .05)) +
   xlab("Variables") +
   geom_alluvium(aes(fill = Journal_Category_Allocated_Broad)) +
-  geom_stratum(width = 1/4, fill = "white", color = "black") +
-  geom_text(stat = "stratum", aes(label = after_stat(stratum)), size = 6) +
+  geom_stratum(width = 1/3, fill = "white", color = "black") +
+  geom_text(stat = "stratum", aes(label = after_stat(stratum)), size = 5) +
   labs(x= "Variables", y = "Frequency", fill = "Journal Category Allocated") +
   theme_suppl()
 
@@ -851,7 +823,7 @@ figs22
 ```
 
 ## Figure s23
-A bar plot showing the percentage and total count of visualization methods used in meta-analysis investigating the impacts of organochlorine pesticides. Note: some meta-analysis may contribute to multiple sections if the study involves multiple visualization methods are used
+Bar plot showing the percentage and total count of visualization methods used in meta-analyses investigating the impacts of organochlorine pesticides. Note that some meta-analyses may contribute to multiple sections if the study involved the use of multiple visualization methods.
 ```{r, fig.width=16, fig.height=10}
 # Calculate the total count for each category
 visualization_count <- sd %>% 
@@ -885,7 +857,7 @@ figs23
 ```
 
 ## Figure s24
-An alluvial plot showing the relationship between the Journal Citation Report Category and visualization method 
+Alluvial plot showing the relationship between the Journal Citation Report Category and visualization method. 
 ```{r, fig.width=16, fig.height=10}
 # Data Transformation 
 vizualization_alluvial <- sd %>% 
@@ -917,7 +889,7 @@ figs24
 ```
 
 ## Figure s25
-A bar plot showing the percentage and total count of reporting guidelines used in meta-analysis investigating the impacts of organochlorine pesticides. Note: some meta-analysis may contribute to multiple sections if the study involves multiple reporting guidelines are used
+Bar plot showing the percentage and total count of reporting guidelines used in meta-analyses investigating the impacts of organochlorine pesticides. Note that some meta-analyses may contribute to multiple sections if the study involved the use of multiple reporting guidelines.
 ```{r, fig.width=16, fig.height=10}
 # Calculate the total count for each category
 reporting_guide_count <- sd %>% 
@@ -964,14 +936,13 @@ reporting_standards_alluvial <- sd %>%
     summarise(freq = n(), .groups = 'drop') %>% 
     group_by(reporting_standards_type)
 
-
 # Create the Alluvial plot
 figs26 <- reporting_standards_alluvial %>% 
 ggplot( aes(y = freq ,axis1 = Journal_Category_Allocated_Broad, axis2 = reporting_standards_type)) +
   scale_x_discrete(limits = c("Journal Citation Report Category", "Reporting Standards Type"), expand = c(.05, .05)) +
   xlab("Variables") +
   geom_alluvium(aes(fill = Journal_Category_Allocated_Broad)) +
-  geom_stratum(width = 1/4, fill = "white", color = "black") +
+  geom_stratum(width = 1/3.5, fill = "white", color = "black") +
   labs(x= "Variables", y = "Frequency", fill = "Journal Category Allocated") +
   geom_text(stat = "stratum", aes(label = after_stat(stratum)), size = 6) +
   theme_suppl()
@@ -1001,11 +972,11 @@ effectsize_count <- sd %>%
   summarise(n = sum(n))
 
 effectsize_count <- effectsize_count %>% 
-  mutate(effect_size = if_else(effect_size %in% c("Beta regression coefficient", "Correlation coefficient"), "Correlation", effect_size)) %>% 
-  mutate(effect_size = if_else(effect_size %in% c("OR (odds ratio)", "RR (response ratio)", "SMD (standardized mean difference)", "lnPR (log partitioning ratio)", "lnOR (log odds ratio)", "Ratio of means", "InRR (log response ratio)"), "Mean difference", effect_size)) %>% 
+  mutate(effect_size = if_else(effect_size %in% c("Beta regression coefficient", "correlation coefficient"), "Correlation", effect_size)) %>% 
+  mutate(effect_size = if_else(effect_size %in% c("odds ratio", "response ratio", "SMD (standardized mean difference)", "lnPR (log partitioning ratio)", "lnOR (log odds ratio)", "ratio of means", "InRR (log response ratio)"), "Mean difference", effect_size)) %>% 
   mutate(effect_size = if_else(effect_size %in% c("lnCVR (log coefficient variation ratio)"), "Variation difference", effect_size)) %>% 
-  mutate(effect_size = if_else(effect_size %in% c("RR (risk ratio)"), "2x2", effect_size)) %>% 
-  mutate(effect_size = if_else(effect_size %in% c("Raw weight", "Transfer rate", "Geometric mean", "Maternal transfer ratio", "SMR (standardized mortality rate)", "Transfer rate", "z-score"), "Other ES", effect_size)) %>% 
+  mutate(effect_size = if_else(effect_size %in% c("risk ratio"), "2x2", effect_size)) %>% 
+  mutate(effect_size = if_else(effect_size %in% c("raw weight", "transfer rate", "geometric mean", "maternal transfer ratio", "standardized mortality rate", "Transfer rate", "z-score"), "Other ES", effect_size)) %>% 
   group_by(effect_size) %>%
   summarise(n = sum(n))
 
@@ -1473,7 +1444,7 @@ alluvial <- im %>%
   filter(sum(freq) > 5) %>% 
   mutate(subject = factor(subject, levels = c("Environment", "Non-human animal", "Human"), ordered = TRUE))
 
-
+# Make alluvial plot
 figs31 <- alluvial %>% 
   ggplot(
        aes(axis1 = ocp, axis2 = subject, axis3 = impact_broad, y = freq)) +
@@ -1503,7 +1474,6 @@ figs31
 
 ## Figure 4
 A bubble plot showing the counts of each pesticide per impact included in current meta-analysis on the impacts of orhanochlorine pesticides 
- 
 ```{r,fig.width=25, fig.height=15}
 
 # Join the organochlorine pesticide details with the impact details
@@ -1535,7 +1505,7 @@ ocp_im_summary_filtered <- ocp_im_summary %>%
   filter(ocp %in% top_pesticides)
 
 # Create a circle plot with impact on the x-axis and ocp on the y-axis
-fig4 <-  %>% 
+fig4 <- ocp_im_summary_filtered %>% 
 ggplot(aes(x = fct_rev(fct_reorder(impact_broad, count, .fun = 'sum')),
            y = fct_reorder(ocp, count, .fun = 'sum'),
            size = count,
@@ -1556,6 +1526,8 @@ ggplot(aes(x = fct_rev(fct_reorder(impact_broad, count, .fun = 'sum')),
         legend.position = "none") +
   scale_size_continuous(range = c(15, 45)) 
 
+fig4
+
   ggsave(here("figures", "fig4.pdf"), width = 25, height = 15, units = "cm", scale = 2, dpi = 800)
   ggsave(here("figures", "fig4.jpg"), width = 25, height = 15, units = "cm", scale = 2, dpi = 800)
   
@@ -1566,8 +1538,9 @@ ggplot(aes(x = fct_rev(fct_reorder(impact_broad, count, .fun = 'sum')),
  - **Objective 4.	Bibliometrics: How is synthesized organochlorine pesticide evidence connected?** We will investigate the countries and institutions that are primarily engaged in secondary research on organochlorine pesticides, and analyze the networks that exist between them. By doing so, we hope to gain insights into the collaborative relationships between different institutions and identify any patterns or trends in the distribution of research efforts.
 
 ```{r}
-fig5a <- biblioAnalysis(bib_sco)
-plot(fig5a)
+figs32 <- biblioAnalysis(bib_sco)
+plot(figs32)
+summary(figs32)
 ```
 
 ## fig5c - thematic map based on keywords
@@ -1974,7 +1947,7 @@ colnames(net_matrix) <- Bib_names$Journal_Category_Allocated_Broad
 
 # reducing matrix according to discipline_code
 rect_matrix<- t(rowsum(t(net_matrix), group = colnames(net_matrix), na.rm = T))
-small_matrix <- rowsum(rect_matrix, group = rownames(rect_matrix))
+small_matrix <- rowsum(rect_matrix, group = rownames(rect_matrix))s
 
 # getting rid of lower triangle (as this is duplication of info)
 small_matrix[lower.tri(small_matrix)] <- 0 
