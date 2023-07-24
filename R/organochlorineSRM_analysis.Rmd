@@ -35,7 +35,7 @@ In this Rmarkdown document we provide the following workflow:
  
 
 # Load packages and data
-##Load Packages 
+##Load packages 
 ```{r, results="hide"}
 rm(list = ls())
 pacman::p_load(tidyverse,
@@ -148,8 +148,8 @@ fig1b <- sd_sub %>%
 fig1 <- fig1a / fig1b
 fig1
 
- # ggsave(here("figures", "fig1.pdf"), width = 16, height = 12, units = "cm", scale = 2, dpi = 800)
- # ggsave(here("figures", "fig1.jpg"), width = 16, height = 12, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "fig1.pdf"), width = 16, height = 12, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "fig1.jpg"), width = 16, height = 12, units = "cm", scale = 2, dpi = 800)
 ```
 
 ## Figure s4 
@@ -186,8 +186,8 @@ figs4b <- sd1 %>%
 figs4 <- figs4a / figs4b
 figs4
 
- # ggsave(here("figures", "figs4.pdf"), width = 16, height = 12, units = "cm", scale = 2, dpi = 800)
- # ggsave(here("figures", "figs4.jpg"), width = 16, height = 12, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "figs4.pdf"), width = 16, height = 12, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "figs4.jpg"), width = 16, height = 12, units = "cm", scale = 2, dpi = 800)
 
 ```
 
@@ -246,8 +246,8 @@ figs5 <- database_count %>%
 
 figs5
 
-  ggsave(here("figures", "figs5.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
-  ggsave(here("figures", "figs5.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "figs5.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "figs5.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 
 ```
 
@@ -282,8 +282,8 @@ ggplot(aes(y = freq ,axis1 = Journal_Category_Allocated_Broad, axis2 = database_
 
 figs6
 
- ggsave(here("figures", "figs6.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
- ggsave(here("figures", "figs6.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "figs6.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "figs6.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 
   
 ```
@@ -389,8 +389,8 @@ figs9 <- software_count %>%
 
 figs9
 
- ggsave(here("figures", "figs9.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
- ggsave(here("figures", "figs9.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "figs9.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "figs9.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 
 ```
 
@@ -422,8 +422,8 @@ ggplot(aes(y = freq ,axis1 = Journal_Category_Allocated_Broad, axis2 = software_
 
 figs10
 
- ggsave(here("figures", "figs10.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
- ggsave(here("figures", "figs10.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "figs10.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "figs10.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 
 ```
 
@@ -458,8 +458,8 @@ figs11 <- heterogeneity_count %>%
 
 figs11
 
- ggsave(here("figures", "figs11.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
- ggsave(here("figures", "figs11.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "figs11.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "figs11.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 
 ```
  
@@ -490,8 +490,8 @@ ggplot(aes(y = freq ,axis1 = Journal_Category_Allocated_Broad, axis2 = heterogen
 
 figs12
 
-  ggsave(here("figures", "figs12.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
-  ggsave(here("figures", "figs12.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "figs12.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "figs12.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 ```
  
 ## Figure s13
@@ -524,8 +524,8 @@ figs13 <- sensitivity_count %>%
 
 figs13
 
-  ggsave(here("figures", "figs13.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
-  ggsave(here("figures", "figs13.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "figs13.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "figs13.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 
 ```
 
@@ -555,8 +555,8 @@ ggplot(aes(y = freq ,axis1 = Journal_Category_Allocated_Broad, axis2 = sensitivi
 
 figs14
 
-  ggsave(here("figures", "figs14.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
-  ggsave(here("figures", "figs14.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "figs14.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "figs14.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 
 ```
 
@@ -590,8 +590,8 @@ figs15 <- bias_type_count %>%
 
 figs15
 
- ggsave(here("figures", "figs15.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
- ggsave(here("figures", "figs15.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "figs15.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "figs15.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 
 ```
 
@@ -621,8 +621,8 @@ ggplot(aes(y = freq ,axis1 = Journal_Category_Allocated_Broad, axis2 = bias_asse
 
 figs16
 
- ggsave(here("figures", "figs16.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
- ggsave(here("figures", "figs16.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "figs16.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "figs16.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 ```
 
 ## Figure s17 
@@ -655,8 +655,8 @@ figs17 <- bias_method_count %>%
 
 figs17
 
- ggsave(here("figures", "figs17.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
- ggsave(here("figures", "figs17.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "figs17.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "figs17.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 ```
 
 
@@ -686,8 +686,8 @@ figs18 <- bias_assessment_alluvial %>%
 
 figs18
 
- ggsave(here("figures", "figs18.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
- ggsave(here("figures", "figs18.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "figs18.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "figs18.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 
 ```
 
@@ -721,8 +721,8 @@ figs19 <- bias_visualization_count %>%
 
 figs19
 
- ggsave(here("figures", "figs19.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
- ggsave(here("figures", "figs19.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "figs19.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "figs19.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 ```
 
 ## Figure s20
@@ -751,8 +751,8 @@ figs20 <- bias_vizualisation_alluvial %>%
 
 figs20
 
- ggsave(here("figures", "figs20.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
- ggsave(here("figures", "figs20.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "figs20.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "figs20.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 
 ```
 
@@ -786,8 +786,8 @@ figs21 <- rob_method_count %>%
 
 figs21
 
- ggsave(here("figures", "figs21.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
- ggsave(here("figures", "figs21.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "figs21.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "figs21.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 ```
 
 ## Figure s22
@@ -817,8 +817,8 @@ ggplot(aes(y = freq ,axis1 = Journal_Category_Allocated_Broad, axis2 = rob_asses
 
 figs22
 
- ggsave(here("figures", "figs22.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
- ggsave(here("figures", "figs22.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "figs22.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "figs22.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 
 ```
 
@@ -852,8 +852,8 @@ figs23 <- visualization_count %>%
 
 figs23
 
- ggsave(here("figures", "figs23.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
- ggsave(here("figures", "figs23.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "figs23.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "figs23.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 ```
 
 ## Figure s24
@@ -883,9 +883,8 @@ ggplot(aes(y = freq ,axis1 = Journal_Category_Allocated_Broad, axis2 = visualiza
 
 figs24
 
-  ggsave(here("figures", "figs24.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
-  ggsave(here("figures", "figs24.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
-
+# ggsave(here("figures", "figs24.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "figs24.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 ```
 
 ## Figure s25
@@ -918,8 +917,8 @@ figs25 <- reporting_guide_count %>%
 
 figs25
 
- ggsave(here("figures", "figs25.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
- ggsave(here("figures", "figs25.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "figs25.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "figs25.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 ```
 
 ## Figure s26
@@ -949,8 +948,8 @@ ggplot( aes(y = freq ,axis1 = Journal_Category_Allocated_Broad, axis2 = reportin
 
 figs26
 
- ggsave(here("figures", "figs26.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
- ggsave(here("figures", "figs26.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "figs26.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "figs26.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 ```
 
 
@@ -1057,8 +1056,6 @@ df <- bind_rows(
        bias_assessment_visualization,
        remove = TRUE, na.rm = TRUE)
 
-
-
 # Preparing the edges dataframe for creating the graph
 edges <- df %>%
   rename(from = methodology_type, to = methodology_type_specific, size = n) %>%
@@ -1088,11 +1085,9 @@ fig2 <- ggraph(mygraph, layout = 'circlepack', weight = size) +
     theme(legend.position = "none") +
     scale_fill_manual(values = c("#1b9e77", "#E7298A"))
 
-
-
 fig2
-ggsave(here("figures", "fig2.pdf"), width = 21, height = 15, units = "cm", scale = 2, dpi = 800)
-ggsave(here("figures", "fig2.jpg"), width = 21, height = 15, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "fig2.pdf"), width = 21, height = 15, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "fig2.jpg"), width = 21, height = 15, units = "cm", scale = 2, dpi = 800)
 
 ```
 
@@ -1130,9 +1125,7 @@ percent_ceesat_score <- sd %>%
          question = factor(question, levels = rev(levels(question))),
          score = factor(score, levels = levels(score)[c(4,1,3,2)]))
 
-
-
-
+# Create CEESAT plot 
 fig3 <- ggplot(data = percent_ceesat_score, aes(x = question, y = percent, fill = score)) +
   geom_col(width = 0.7, position = "fill", color = "black") +
   geom_text(aes(label = n), position = position_fill(vjust = 0.5), size = 7, fontface = "bold") +
@@ -1153,10 +1146,8 @@ fig3 <- ggplot(data = percent_ceesat_score, aes(x = question, y = percent, fill 
 
 fig3
 
-
-ggsave(here("figures", "fig3.pdf"), width = 25, height = 15, units = "cm", scale = 2, dpi = 800)
-ggsave(here("figures", "fig3.jpg"), width = 25, height = 15, units = "cm", scale = 2, dpi = 800)
-
+# ggsave(here("figures", "fig3.pdf"), width = 25, height = 15, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "fig3.jpg"), width = 25, height = 15, units = "cm", scale = 2, dpi = 800)
 ```
 
 # Objective 2 
@@ -1230,9 +1221,11 @@ figs27 <- ocp_count %>%
         panel.grid.minor.y = element_blank(),
         legend.position = "none"
         )
+
 figs27
-  ggsave(here("figures", "figs27.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
-  ggsave(here("figures", "figs27.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+
+# ggsave(here("figures", "figs27.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "figs27.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 ```
 
 ## Figure s28
@@ -1274,8 +1267,9 @@ figs28 <- subject_count %>%
         )
 
 figs28
- ggsave(here("figures", "figs28.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
- ggsave(here("figures", "figs28.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+
+# ggsave(here("figures", "figs28.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "figs28.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 ```
 
 ## Figure s29 
@@ -1322,8 +1316,8 @@ figs29 <- impact_count %>%
 
 figs29
 
-  ggsave(here("figures", "figs29.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
-  ggsave(here("figures", "figs29.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "figs29.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "figs29.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 
 ```
 
@@ -1388,8 +1382,8 @@ figs30 <- impact_count_broad %>%
 
 figs30
 
-   ggsave(here("figures", "figs30.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
-   ggsave(here("figures", "figs30.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "figs30.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "figs30.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 
 ```
 
@@ -1465,8 +1459,8 @@ figs31 <- alluvial %>%
 
 figs31
 
-    ggsave(here("figures", "figs31.pdf"), width =18, height = 12, units = "cm", scale = 2, dpi = 800)
-    ggsave(here("figures", "figs31.jpg"), width = 18, height = 12, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "figs31.pdf"), width =18, height = 12, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "figs31.jpg"), width = 18, height = 12, units = "cm", scale = 2, dpi = 800)
 
 
 ```
@@ -1528,39 +1522,33 @@ ggplot(aes(x = fct_rev(fct_reorder(impact_broad, count, .fun = 'sum')),
 
 fig4
 
-  ggsave(here("figures", "fig4.pdf"), width = 25, height = 15, units = "cm", scale = 2, dpi = 800)
-  ggsave(here("figures", "fig4.jpg"), width = 25, height = 15, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "fig4.pdf"), width = 25, height = 15, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "fig4.jpg"), width = 25, height = 15, units = "cm", scale = 2, dpi = 800)
   
 ```
 
+# Objective 3
+To investigate global research output and collaboration networks
 
-
- - **Objective 4.	Bibliometrics: How is synthesized organochlorine pesticide evidence connected?** We will investigate the countries and institutions that are primarily engaged in secondary research on organochlorine pesticides, and analyze the networks that exist between them. By doing so, we hope to gain insights into the collaborative relationships between different institutions and identify any patterns or trends in the distribution of research efforts.
-
-```{r}
+## Figure s32, s33, s34, s35 & s36
+```{r,fig.width=16, fig.height=10}
 figs32 <- biblioAnalysis(bib_sco)
 plot(figs32)
 summary(figs32)
+
 ```
 
-## fig5c - thematic map based on keywords
-```{r}
+## Figure s37
+Thematic map based on keywords extracted from ID field (obtained on the Scopus scientific literature database) of meta-analysis included in the systematic review map. 
+```{r,fig.width=16, fig.height=10}
 par(mfrow=c(1,1), mar=c(0,2,0,2))
-fig5c <- thematicMap(bib_sco, field = "ID", n = 1000, minfreq = 5, stemming = FALSE, size = 0.5, n.labels = 1, repel = TRUE)
-plot(fig5c$map)
+fig37 <- thematicMap(bib_sco, field = "ID", n = 1500, minfreq = 1, stemming = FALSE, size = 1, n.labels = 1, repel = TRUE)
+plot(fig37$map)
 
 ```
 
-## fig 5d - author collaboration network
-```{r}
-NetMatrix_authors <- biblioNetwork(bib_sco, analysis = "collaboration",  network = "authors", sep = ";")
-fig5d <- networkPlot(NetMatrix_authors,  n = 100, 
-                                      Title = "Author collaboration", 
-                                      type = "auto", size = 4, size.cex = TRUE, 
-                                      edgesize = 10, labelsize = 1.1)
-```
-
-## fig5e - country publications map
+## Figure 5 
+Heat map of world showing the country-level counts for first authors’ country of affiliation of meta-analysis investigating the impacts of organochlorine pesticides. Grey indicates no publications affiliated with a given country in our data set. 
 ```{r}
 # Extract country information from the "AU1_CO" and "AU_CO" fields of the "bib_sco" dataset
 bibmap <- metaTagExtraction(bib_sco, Field = "AU1_CO", sep = ";") 
@@ -1580,6 +1568,7 @@ world_map <- map_data("world") %>%
 firstcountrycounts$region <- str_to_title(firstcountrycounts$AU1_CO)
 firstcountrycounts$region[firstcountrycounts$region == "Usa"] <- "USA" 
 firstcountrycounts$region[firstcountrycounts$region == "Korea"] <- "South Korea"
+firstcountrycounts$region[firstcountrycounts$region == "United Kingdom"] <- "UK"
 
 # Join count data with map data and set missing counts to zero
 emptymap <- tibble(region = unique(world_map$region), n = rep(0,length(unique(world_map$region))))
@@ -1622,32 +1611,37 @@ fig5
 
 ```
 
-## Map of europe 
+## Figure s43
+Heat map of Europe showing the country-level counts for first authors’ country of affiliation of meta-analysis investigating the impacts of organochlorine pesticides. Grey indicates no publications affiliated with a given country in our data set. 
 ```{r}
-fig5f <- fullmap %>%
+figs43 <- fullmap %>%
 ggplot(aes(fill = n, map_id = region)) +
 geom_map(map = world_map, color = "gray50") +
-coord_map("mercator", ylim = c(30, 65), xlim = c(-25, 45)) + # set limits for Europe
-theme(legend.position = "right") +
+coord_map("mercator", ylim = c(30, 65), xlim = c(-35, 55)) + 
+theme(
+    axis.text = element_blank(),  
+    axis.title = element_blank(),  
+    legend.box = "horizontal",  
+    legend.box.just = "center",  
+    legend.margin = margin(t = 10, unit = "pt"),  
+    legend.text = element_text(size = 12),  
+    legend.title = element_text(size = 14, face = "bold"),  
+    legend.key.width = unit(30, "mm"),
+    legend.position = "bottom"  
+  ) +
 scale_fill_gradient(low = "#98FB98", high = "#006400",
-name = "Score", na.value = "gray70",
-limits = c(1, 10),
-guide = guide_colorbar(direction = "vertical.")) +
-guides(fill = guide_colourbar(barwidth = unit(10, units = "mm"), barheight = unit(20, units = "mm"))) +
-theme(axis.text.x = element_blank(),
-axis.text.y = element_blank(),
-axis.title.x = element_blank(),
-axis.title.y = element_blank(),
-panel.grid.major = element_blank(),
-panel.grid.minor = element_blank(),
-panel.background = element_blank())
+    name = "Score", na.value = "gray70",
+    limits = c(1, 10)) +
+guides(fill = guide_colourbar(barwidth = unit(180, units = "mm"), barheight = unit(3, units = "mm")))
 
-fig5f
+figs43
 
-
+ ggsave(here("figures", "figs43.pdf"), width = 21, height = 12, units = "cm", scale = 2, dpi = 800)
+ ggsave(here("figures", "figs43.jpg"), width = 21, height = 12, units = "cm", scale = 2, dpi = 800)
 ```
 
-## fig5f - country collaboration network circle plot
+## Figure s44
+Chord diagram of collaborations across countries. Countries represent the location of the primary authors’ affiliated institution. 
 ```{r}
 # Extract countries from the affiliations
 bib_sco2 <- metaTagExtraction(bib_sco, Field = "AU_CO", sep = ";")
@@ -1673,55 +1667,11 @@ rownames(NetMatrix_country)[rownames(NetMatrix_country) == "Usa"] <- "USA"
 colnames(NetMatrix_country)[colnames(NetMatrix_country) == "United Kingdom"] <- "UK"
 rownames(NetMatrix_country)[rownames(NetMatrix_country) == "United Kingdom"] <- "UK"
 
-# Define colors for each country
-my.cols2 <- c(
-  USA = "#377eb8",
-  Spain = "#ffff33",
-  China = "#e41a1c",
-  France = "#999999",
-  Canada = "#a6cee3",
-  Denmark = "#b2df8a",
-  Netherlands = "#377eb8",
-  Belgium = "#984ea3",
-  UK = "#ffff33",
-  Australia = "#4daf4a",
-  Brazil = "#4daf4a",
-  Germany = "#b2df8a",
-  Greece = "#f781bf",
-  Korea = "#f781bf",
-  Ireland = "#a65628",
-  Norway = "#ff7f00",
-  Sweden = "#4daf4a",
-  Egypt = "#f781bf",
-  Italy = "#e41a1c",
-  Japan = "#1f78b4",
-  Switzerland = "#984ea3",
-  Turkey = "#33a02c",
-  Austria = "#b2df8a",
-  Israel = "#f781bf",
-  NewZealand = "#4daf4a",
-  Russia = "#999999",
-  Singapore = "#b2df8a",
-  Portugal = "#984ea3",
-  Finland = "#b2df8a",
-  Mexico = "#a65628",
-  Poland = "#b2df8a",
-  SouthAfrica = "#f781bf",
-  Argentina = "#ff7f00",
-  Chile = "#ff7f00",
-  CzechRepublic = "#b2df8a",
-  Iceland = "#b2df8a",
-  Peru = "#ff7f00",
-  Romania = "#fb9a99",
-  Serbia = "#fb9a99",
-  UAE = "#a65628"
-)
-
 # Setting up custom parameters
 circos.par(cell.padding = c(0, 0, 0, 0), track.margin = c(0, 0))
 
 # Create a chord diagram of the network matrix
-fig5f <- chordDiagram(NetMatrix_country, annotationTrack = "grid", preAllocateTracks = 1, grid.col = my.cols2)
+figs44 <- chordDiagram(NetMatrix_country, annotationTrack = "grid", preAllocateTracks = 1)
 
 # Add a track to label each sector with its name
 circos.trackPlotRegion(track.index = 1, bg.border = NA, panel.fun = function(x, y) {
@@ -1734,13 +1684,14 @@ circos.trackPlotRegion(track.index = 1, bg.border = NA, panel.fun = function(x, 
 
 ```
 
-## fig5g collaboration matrix with self citation removed
+## Figure s45
+Chord diagram illustration of collaborations across countries. Countries represent the location of the primary authors’ affiliated institution. Collaborations within countries are not shown.
 ```{r}
 
 diag(NetMatrix_country) <- 0
 
 # Create a chord diagram of the network matrix
-fig5g <- chordDiagram(NetMatrix_country, annotationTrack = "grid", preAllocateTracks = 1, grid.col = my.cols2)
+figs45 <- chordDiagram(NetMatrix_country, annotationTrack = "grid", preAllocateTracks = 1)
 
 # Add a track to label each sector with its name
 circos.trackPlotRegion(track.index = 1, panel.fun = function(x, y) {
@@ -1752,13 +1703,13 @@ circos.trackPlotRegion(track.index = 1, panel.fun = function(x, y) {
 }, bg.border = NA)
 ```
 
-## fig 5h contitnent collaboration 
+## Figure s46
+Chord diagram illustration of collaborations across continents. Continents represent the location of the primary authors’ affiliated institution. Collaborations within countries are not shown.
 ```{r}
-
-
+# Country rename to continents
 NetMatrix_continent <- NetMatrix_country
-colnames(NetMatrix_continent)[colnames(NetMatrix_continent) == "USA"] <- "North America"
-rownames(NetMatrix_continent)[rownames(NetMatrix_continent) == "USA"] <- "North America"
+colnames(NetMatrix_continent)[colnames(NetMatrix_continent) == "USA"] <- "North\nAmerica"
+rownames(NetMatrix_continent)[rownames(NetMatrix_continent) == "USA"] <- "North\nAmerica"
 
 colnames(NetMatrix_continent)[colnames(NetMatrix_continent) == "Spain"] <- "Europe"
 rownames(NetMatrix_continent)[rownames(NetMatrix_continent) == "Spain"] <- "Europe"
@@ -1769,8 +1720,8 @@ rownames(NetMatrix_continent)[rownames(NetMatrix_continent) == "China"] <- "Asia
 colnames(NetMatrix_continent)[colnames(NetMatrix_continent) == "France"] <- "Europe"
 rownames(NetMatrix_continent)[rownames(NetMatrix_continent) == "France"] <- "Europe"
 
-colnames(NetMatrix_continent)[colnames(NetMatrix_continent) == "Canada"] <- "North America"
-rownames(NetMatrix_continent)[rownames(NetMatrix_continent) == "Canada"] <- "North America"
+colnames(NetMatrix_continent)[colnames(NetMatrix_continent) == "Canada"] <- "North\nAmerica"
+rownames(NetMatrix_continent)[rownames(NetMatrix_continent) == "Canada"] <- "North\nAmerica"
 
 colnames(NetMatrix_continent)[colnames(NetMatrix_continent) == "Denmark"] <- "Europe"
 rownames(NetMatrix_continent)[rownames(NetMatrix_continent) == "Denmark"] <- "Europe"
@@ -1795,7 +1746,6 @@ rownames(NetMatrix_continent)[rownames(NetMatrix_continent) == "Germany"] <- "Eu
 
 colnames(NetMatrix_continent)[colnames(NetMatrix_continent) == "Finland"] <- "Europe"
 rownames(NetMatrix_continent)[rownames(NetMatrix_continent) == "Finland"] <- "Europe"
-
 
 colnames(NetMatrix_continent)[colnames(NetMatrix_continent) == "Greece"] <- "Europe"
 rownames(NetMatrix_continent)[rownames(NetMatrix_continent) == "Greece"] <- "Europe"
@@ -1833,8 +1783,8 @@ rownames(NetMatrix_continent)[rownames(NetMatrix_continent) == "India"] <- "Asia
 colnames(NetMatrix_continent)[colnames(NetMatrix_continent) == "Iran"] <- "Asia"
 rownames(NetMatrix_continent)[rownames(NetMatrix_continent) == "Iran"] <- "Asia"
 
-colnames(NetMatrix_continent)[colnames(NetMatrix_continent) == "Costa Rica"] <- "North America"
-rownames(NetMatrix_continent)[rownames(NetMatrix_continent) == "Costa Rica"] <- "North America"
+colnames(NetMatrix_continent)[colnames(NetMatrix_continent) == "Costa Rica"] <- "North\nAmerica"
+rownames(NetMatrix_continent)[rownames(NetMatrix_continent) == "Costa Rica"] <- "North\nAmerica"
 
 colnames(NetMatrix_continent)[colnames(NetMatrix_continent) == "Czech Republic"] <- "Europe"
 rownames(NetMatrix_continent)[rownames(NetMatrix_continent) == "Czech Republic"] <- "Europe"
@@ -1848,8 +1798,8 @@ rownames(NetMatrix_continent)[rownames(NetMatrix_continent) == "Iceland"] <- "Eu
 colnames(NetMatrix_continent)[colnames(NetMatrix_continent) == "Ireland"] <- "Europe"
 rownames(NetMatrix_continent)[rownames(NetMatrix_continent) == "Ireland"] <- "Europe"
 
-colnames(NetMatrix_continent)[colnames(NetMatrix_continent) == "Mexico"] <- "North America"
-rownames(NetMatrix_continent)[rownames(NetMatrix_continent) == "Mexico"] <- "North America"
+colnames(NetMatrix_continent)[colnames(NetMatrix_continent) == "Mexico"] <- "North\nAmerica"
+rownames(NetMatrix_continent)[rownames(NetMatrix_continent) == "Mexico"] <- "North\nAmerica"
 
 colnames(NetMatrix_continent)[colnames(NetMatrix_continent) == "Romania"] <- "Europe"
 rownames(NetMatrix_continent)[rownames(NetMatrix_continent) == "Romania"] <- "Europe"
@@ -1870,24 +1820,16 @@ rownames(NetMatrix_continent)[rownames(NetMatrix_continent) == "Kazakhstan"] <- 
 # collapsing
 merge_matrix <- t(rowsum(t(NetMatrix_continent), group = colnames(NetMatrix_continent), na.rm = T))
 merge_matrix2 <- rowsum(merge_matrix, group = rownames(merge_matrix))
+
+
 # remove diagonal elements
 diag(merge_matrix2) <- 0
+
 # chord plot
 chordDiagramFromMatrix(merge_matrix2)
 
-# Define colors for each continent
-my.cols2 <- c(
-  Africa = "#CC79A7",
-  NorthAmerica = "#F0E442",
-  Asia = "#0072B2",
-  Europe = "#E69F00",
-  Oceania = "#009E73",
-  SouthAmerica = "#D55E00"
-)
-
-
 # Create a chord diagram of the network matrix
-fig5h <- chordDiagram(merge_matrix2, annotationTrack = "grid", preAllocateTracks = 1)
+figs46<- chordDiagram(merge_matrix2, annotationTrack = "grid", preAllocateTracks = 1)
 # Add a track to label each sector with its name
 circos.trackPlotRegion(track.index = 1, panel.fun = function(x, y) {
   xlim = get.cell.meta.data("xlim")
@@ -1902,7 +1844,7 @@ circos.trackPlotRegion(track.index = 1, panel.fun = function(x, y) {
 ## discipline collab
 
 ```{r}
-Fields <- sd %>%
+fields <- sd %>%
   mutate(
     title = str_to_lower(paper_title),
     ntitle = paste(str_to_lower(str_split_fixed(study_id, "\\_", n = 2)[,1]), paper_title, sep = " "),
@@ -1910,54 +1852,45 @@ Fields <- sd %>%
   ) %>% 
   select(ntitle, Journal_Category_Allocated_Broad)
 
-Bib_names <- bib_sco %>% rownames_to_column(., var = "mat_names") %>% 
+bib_names <- bib_sco %>% rownames_to_column(., var = "mat_names") %>% 
   mutate(TI2 = tolower(unlist(lapply(data.frame(t(str_split_fixed(TI, " ", n = 15)[,1:14])), 
                                      function(x) str_c(x, collapse  = " ")))),
-         # stri_trans_general = getting rid of special letters
          name2 = stri_trans_general(tolower(str_split_fixed(SR, " ", n = 2)[,1]), "latin-ascii"),
          TI2 = paste(name2, TI2, sep= " "),
          TI2 = trimws(TI2)) %>% 
   select(TI2, mat_names)
 
-#stringdist(Bib_names$TI2, Fields$ntitle[1], method = 'osa')
-pos <- lapply(Bib_names$TI2, function(x) stringdist(Fields$ntitle, x))
+pos <- lapply(bib_names$TI2, function(x) stringdist(Fields$ntitle, x))
 pos2<- map_dbl(pos, which.min)
 
-# these are looking good - both have the perfect matches (at least at a glance)
-Bib_names$TI2
-Fields$ntitle[pos2]
+
 
 # now we can merge two datasets 
-Bib_names$Journal_Category_Allocated_Broad <- Fields$Journal_Category_Allocated_Broad[pos2]
+bib_names$Journal_Category_Allocated_Broad <- fields$Journal_Category_Allocated_Broad[pos2]
 
 # Creating matrix for bibliometric coupling
 NetMatrix <- biblioNetwork(bib_sco, analysis = "coupling", network = "references", sep = ";")
 
 # forcing into a nromal matrix
 net_matrix <- as.matrix(NetMatrix)
+
 diag(net_matrix) <- 0 #get rid of counts for the same papers
 
 # replacing names with Journal_Category_Allocated_Broad
-rownames(net_matrix) <- Bib_names$Journal_Category_Allocated_Broad
-colnames(net_matrix) <- Bib_names$Journal_Category_Allocated_Broad
-
-
-
-
+rownames(net_matrix) <- bib_names$Journal_Category_Allocated_Broad
+colnames(net_matrix) <- bib_names$Journal_Category_Allocated_Broad
 
 # reducing matrix according to discipline_code
 rect_matrix<- t(rowsum(t(net_matrix), group = colnames(net_matrix), na.rm = T))
-small_matrix <- rowsum(rect_matrix, group = rownames(rect_matrix))s
+small_matrix <- rowsum(rect_matrix, group = rownames(rect_matrix))
 
 # getting rid of lower triangle (as this is duplication of info)
 small_matrix[lower.tri(small_matrix)] <- 0 
-
-
 par(mar = c(0, 0, 0, 0), mfrow = c(1, 1))
 
 
 # Create a chord diagram of the network matrix
-fig5h <- chordDiagram(small_matrix, annotationTrack = "grid", preAllocateTracks = 1)
+figs47  <- chordDiagram(small_matrix, annotationTrack = "grid", preAllocateTracks = 1)
 # Add a track to label each sector with its name
 circos.trackPlotRegion(track.index = 1, panel.fun = function(x, y) {
   xlim = get.cell.meta.data("xlim")
@@ -1968,39 +1901,6 @@ circos.trackPlotRegion(track.index = 1, panel.fun = function(x, y) {
 }, bg.border = NA)
 
 
-```
-
-
-```{r}
-diag(small_matrix) <- 0
-
-# Create a chord diagram of the network matrix
-fig5g <- chordDiagram(small_matrix, annotationTrack = "grid", preAllocateTracks = 1)
-
-# Add a track to label each sector with its name
-circos.trackPlotRegion(track.index = 1, panel.fun = function(x, y) {
-  xlim = get.cell.meta.data("xlim")
-  ylim = get.cell.meta.data("ylim")
-  sector.name = get.cell.meta.data("sector.index")
-  circos.text(mean(xlim), ylim[1] + .1, sector.name, facing = "clockwise", niceFacing = TRUE, adj = c(0, 0.5))
-  circos.axis(h = "top", labels.cex = 0.5, major.tick.length = 0.2, sector.index = sector.name, track.index = 2)
-}, bg.border = NA)
-```
-
-```{r most cited articles and authors}
-
-CR <- citations(bib_sco, field = "article", sep = ";") #list of most cited articles
- cbind(CR$Cited[1:10]) #ten most cited articles
- 
-CR <- citations(bib_sco, field = "author", sep = ";")
-cbind(CR$Cited[1:10]) #ten most cited authors
-``` 
-
-```{r bibliometric coupling network}
-NetMatrix_coupling <- biblioNetwork(bib_sco, analysis = "coupling", network = "references", sep = "; ")
-NetMatrix_coupling_plot <- networkPlot(NetMatrix_coupling, n = 20, 
-                                       Title = "Paper co-citation", type = "fruchterman", size=T, 
-                                       remove.multiple=FALSE, labelsize=0.8,edgesize = 5)
 ```
 
 
