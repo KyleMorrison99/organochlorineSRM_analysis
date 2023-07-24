@@ -1860,7 +1860,7 @@ bib_names <- bib_sco %>% rownames_to_column(., var = "mat_names") %>%
          TI2 = trimws(TI2)) %>% 
   select(TI2, mat_names)
 
-pos <- lapply(bib_names$TI2, function(x) stringdist(Fields$ntitle, x))
+pos <- lapply(bib_names$TI2, function(x) stringdist(fields$ntitle, x))
 pos2<- map_dbl(pos, which.min)
 
 
