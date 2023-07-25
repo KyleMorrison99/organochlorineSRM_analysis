@@ -567,7 +567,7 @@ Bar plot showing the percentage and total count of bias types assessed in meta-a
 bias_type_count <- sd %>% 
   separate_rows(bias_assessment_type, sep = ",\\s+") %>% 
   count(bias_assessment_type) %>%
-  filter(bias_assessment_type != "NA") %>%
+   filter(bias_assessment_type != "NA") %>%
   group_by(bias_assessment_type) %>%
   summarise(n = sum(n))
 
