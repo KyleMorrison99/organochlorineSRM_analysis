@@ -1,5 +1,5 @@
 ---
-title: "Sixty years since Silent Spring: towards a balanced view of the organochlorine pesticide literature "
+title: "Sixty  years since Silent Spring: A systematic review map and bibliometric analysis provides a holistic view of organochlorine pesticide impacts"
 author: "Kyle Morrison, Coralie Williams, Lorenzo Ricolfi, Yefeng Yang,  Malgorazata Lagisz, Shinichi Nakagawa" 
 date: "2023-03-09"
 output: 
@@ -22,20 +22,19 @@ knitr::opts_chunk$set(
 ```
 
 
-
-
 In this Rmarkdown document we provide the following workflow:   
+
 - Objective 0 - To examine the volume and temporal trends of existing meta-analyses on the effects of organochlorine pesticides
+
 - Objective 1: To evaluate the methodological patterns and quality of existing meta-analyses studying the effects of organochlorine pesticides.
+
 - Objective 2 . To explore the various characteristics of the organochlorine pesticides literature such as the pesticides used, the impacts elicited in response and the subjects that were investigated. 
 
-
- 
- - Objective 4 - To investigate the research outputs across different countries and continents and investigate the degree of cross-country collaboration.
+- Objective 4 - To investigate the research outputs across different countries, continents and disciplines, and investigate the degree of cross-country collaboration.
  
 
 # Load packages and data
-##Load packages 
+## Load packages 
 ```{r, results="hide"}
 rm(list = ls())
 pacman::p_load(tidyverse,
@@ -61,8 +60,8 @@ knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
 
 ## Load data
 Manually extracted pilot data is stored in five separate **.csv** files representing different aspects of the data (extracted via structured predefined Google Forms - one per table). 
-Bibliographic data records are exported from Scopus (including cited references field) in .bib format and locally saved as **scopus.bib**. 
-```{r}
+Bibliographic data records are exported from Scopus (including cited references field) in .bib format and locally saved as **bib_sco.bib**. 
+```{r,  results="hide"}
 # Load CSV datasets
 sd <- read_csv(here("data", "ocp_srm_study_details.csv"))
 ocp <- read_csv(here("data", "ocp_srm_ocp_details.csv"))
@@ -239,7 +238,6 @@ figs5 <- database_count %>%
   geom_text(data = database_pct, aes(label = paste0("(", round(percentage, 1), "%)"), x = n), 
             hjust = -0.1, size = 6, color = "black", fontface = "bold") +
   scale_fill_identity(guide = "none") +
-  scale_y_discrete(name = "Database Search") +
   scale_x_continuous(name = "Article Count", expand = c(0, 0), limits = c(0, max(database_count$n)*1.1)) +
   labs(y = NULL) +
   theme_suppl()
@@ -296,7 +294,7 @@ effectsize_count <- sd %>%
   separate_rows(effect_size, sep = ",\\s+") %>% 
   count(effect_size) %>%
   filter(effect_size != "NA") %>%
- # mutate(effect_size = ifelse(n<= 2, "other effect sizes", as.character(effect_size))) %>% 
+  mutate(effect_size = ifelse(n<= 2, "other effect sizes", as.character(effect_size))) %>% 
   group_by(effect_size) %>%
   summarise(n = sum(n))
 
@@ -352,8 +350,8 @@ ggplot(aes(y = freq ,axis1 = Journal_Category_Allocated_Broad, axis2 = effect_si
   
 figs8
 
- ggsave(here("figures", "figs8.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
- ggsave(here("figures", "figs8.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "figs8.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "figs8.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 ```
 
 ## Figure s9
@@ -972,37 +970,35 @@ effectsize_count <- sd %>%
 
 effectsize_count <- effectsize_count %>% 
   mutate(effect_size = if_else(effect_size %in% c("Beta regression coefficient", "correlation coefficient"), "Correlation", effect_size)) %>% 
-  mutate(effect_size = if_else(effect_size %in% c("odds ratio", "response ratio", "SMD (standardized mean difference)", "lnPR (log partitioning ratio)", "lnOR (log odds ratio)", "ratio of means", "InRR (log response ratio)"), "Mean difference", effect_size)) %>% 
-  mutate(effect_size = if_else(effect_size %in% c("lnCVR (log coefficient variation ratio)"), "Variation difference", effect_size)) %>% 
+  mutate(effect_size = if_else(effect_size %in% c("odds ratio", "response ratio", "SMD (standardized mean difference)", "lnPR (log partitioning ratio)", "lnOR (log odds ratio)", "ratio of means", "InRR (log response ratio)"), "Mean diff", effect_size)) %>% 
   mutate(effect_size = if_else(effect_size %in% c("risk ratio"), "2x2", effect_size)) %>% 
-  mutate(effect_size = if_else(effect_size %in% c("raw weight", "transfer rate", "geometric mean", "maternal transfer ratio", "standardized mortality rate", "Transfer rate", "z-score"), "Other ES", effect_size)) %>% 
+  mutate(effect_size = if_else(effect_size %in% c("raw weight", "transfer rate", "geometric mean", "maternal transfer ratio", "standardized mortality rate", "Transfer rate", "z-score", "lnCVR (log coefficient variation ratio)"), "Other ES", effect_size)) %>% 
   group_by(effect_size) %>%
   summarise(n = sum(n))
 
 # Categorizing software as either "Code-based software" or "GUI" and summing the counts
 software_count <- software_count %>%
-  mutate(software_analysis = if_else(software_analysis %in% c("Stata", "R"), "Code-based software", software_analysis)) %>%
+  mutate(software_analysis = if_else(software_analysis %in% c("Stata", "R"), "Code-based", software_analysis)) %>%
   mutate(software_analysis = if_else(software_analysis %in% c("CMAS", "Excel", "RevMan", "SAS", "XLSTAT"), "GUI", software_analysis)) %>% 
   group_by(software_analysis) %>%
   summarise(n = sum(n))
 
 # Grouping heterogeneity assessment methods and summing the counts
 heterogeneity_count <- heterogeneity_count %>% 
-  mutate(heterogeneity_assessment_method = if_else(heterogeneity_assessment_method %in% c("Tau square"), "I square", heterogeneity_assessment_method)) %>% 
+  mutate(heterogeneity_assessment_method = if_else(heterogeneity_assessment_method %in% c("Tau square"), "I squared", heterogeneity_assessment_method)) %>% 
   mutate(heterogeneity_assessment_method = if_else(heterogeneity_assessment_method %in% c("Chi square"), "Q statistic", heterogeneity_assessment_method)) %>% 
-  mutate(heterogeneity_assessment_method = if_else(heterogeneity_assessment_method %in% c("Galbraith plot", "Baujats plot"), "Plot", heterogeneity_assessment_method)) %>% 
   group_by(heterogeneity_assessment_method) %>%
   summarise(n = sum(n))
 
 # Grouping bias assessment methods with count <= 3 under "Other BA" and summing the counts
 bias_method_count <- bias_method_count %>% 
-  mutate(bias_assessment_method = ifelse(n<= 3, "Other BA", as.character(bias_assessment_method))) %>% 
+  mutate(bias_assessment_method = if_else(bias_assessment_method %in% c("Egger's regression test", "Fail safe", "Begg's test", "Kendall's tau statistic"),"Bias statistical test", bias_assessment_method)) %>% 
   group_by(bias_assessment_method) %>%
   summarise(n = sum(n))
 
-# Grouping sensitivity analysis methods with count <= 3 under "Other SA" and summing the counts
+# Grouping sensitivity analysis methods and summing the counts
 sensitivity_count <-  sensitivity_count %>%  
-  mutate(sensitivity_analysis_method = ifelse(n<= 3, "Other SA", as.character(sensitivity_analysis_method))) %>% 
+  mutate(sensitivity_analysis_method = ifelse(n<= 8, "Other sensitivity analysis", as.character(sensitivity_analysis_method))) %>% 
   group_by(sensitivity_analysis_method) %>%
   summarise(n = sum(n))
 
@@ -1026,7 +1022,7 @@ reporting_guide_count <- reporting_guide_count %>%
 
 # Grouping bias assessment visualization types and summing the counts
 bias_visualization_count <- bias_visualization_count %>% 
-  mutate(bias_assessment_visualization = if_else(bias_assessment_visualization %in% c("doi plot", "trim and fill", "Funnel plot"), "Bias visualization", bias_assessment_visualization)) %>% 
+  mutate(bias_assessment_visualization = if_else(bias_assessment_visualization %in% c("Doi plot", "Trim and fill", "Funnel plot", "Galbraith plot"), "Bias visualization", bias_assessment_visualization)) %>% 
   group_by(bias_assessment_visualization) %>%
   summarise(n = sum(n))
 
@@ -1077,23 +1073,24 @@ vertices[(nrow(edges)+1):(nrow(edges)+length(unique(edges$from))),2] <- N$x
 mygraph <- graph_from_data_frame(edges, vertices = vertices)
 
 # Plotting the graph using a 'circlepack' layout, adding labels and adjusting aesthetics
+
 fig2 <- ggraph(mygraph, layout = 'circlepack', weight = size) + 
-    geom_node_circle(aes(fill = as.factor(depth)), color = NA, alpha = 0.5) +
-    geom_node_text(aes(label = name, filter = leaf, size = 4), vjust = -0.3, fontface = "bold") +
-    geom_node_text(aes(label = paste0("(", size, ")"), filter = leaf, size = 4), vjust = 1, fontface = "bold") +
+    geom_node_circle(aes(fill = as.factor(depth)), color = NA) +
+    scale_fill_manual(values = c("#1b9e77", "#88D1AD")) + 
+    geom_node_text(aes(label = name, filter = leaf, size = 10), vjust = -0.3, fontface = "bold") +
+    geom_node_text(aes(label = paste0("(", size, ")"), filter = leaf, size = 10), vjust = 1, fontface = "bold") +
     theme_void() +
-    theme(legend.position = "none") +
-    scale_fill_manual(values = c("#1b9e77", "#E7298A"))
+    theme(legend.position = "none") 
 
 fig2
-# ggsave(here("figures", "fig2.pdf"), width = 21, height = 15, units = "cm", scale = 2, dpi = 800)
-# ggsave(here("figures", "fig2.jpg"), width = 21, height = 15, units = "cm", scale = 2, dpi = 800)
+ ggsave(here("figures", "fig2.pdf"), width = 18, height = 15, units = "cm", scale = 2, dpi = 800)
+ ggsave(here("figures", "fig2.jpg"), width = 18, height = 15, units = "cm", scale = 2, dpi = 800)
 
 ```
 
 
 ## Figure 3
-The average reporting quality and rigour of meta-analysis according to CEESAT 2.1 (Woodcock et al., 2014). Gold is regard as the highest score, green is second highest score, amber is second-lowest score, and red is the lowest score. All CEESAT 2.1 items along with our interpretation are provided in the supplementary file x.
+The average reporting quality and rigour of meta-analysis according to CEESAT 2.1 (Woodcock et al., 2014). Gold is regard as the highest score, green is second highest score, amber is second-lowest score, and red is the lowest score. All CEESAT 2.1 items along with our interpretation are provided in the Supplementary File 2.
 ```{r, fig.width=25, fig.height=15}
 # Start the data manipulation
 percent_ceesat_score <- sd %>%
@@ -1420,7 +1417,6 @@ replace_ocp2 <- function(df) {
   ))
 }
  
-
 # Transform the data 
 alluvial <- im %>%
   left_join(ocp, by = "study_id") %>%
@@ -1549,7 +1545,7 @@ plot(fig37$map)
 
 ## Figure 5 
 Heat map of world showing the country-level counts for first authors’ country of affiliation of meta-analysis investigating the impacts of organochlorine pesticides. Grey indicates no publications affiliated with a given country in our data set. 
-```{r}
+```{r,fig.width= 21, fig.height=12}
 # Extract country information from the "AU1_CO" and "AU_CO" fields of the "bib_sco" dataset
 bibmap <- metaTagExtraction(bib_sco, Field = "AU1_CO", sep = ";") 
 bibmap <- metaTagExtraction(bibmap, Field = "AU_CO", sep = ";") 
@@ -1613,7 +1609,7 @@ fig5
 
 ## Figure s43
 Heat map of Europe showing the country-level counts for first authors’ country of affiliation of meta-analysis investigating the impacts of organochlorine pesticides. Grey indicates no publications affiliated with a given country in our data set. 
-```{r}
+```{r,fig.width= 21, fig.height=12}
 figs43 <- fullmap %>%
 ggplot(aes(fill = n, map_id = region)) +
 geom_map(map = world_map, color = "gray50") +
@@ -1636,13 +1632,13 @@ guides(fill = guide_colourbar(barwidth = unit(180, units = "mm"), barheight = un
 
 figs43
 
- ggsave(here("figures", "figs43.pdf"), width = 21, height = 12, units = "cm", scale = 2, dpi = 800)
- ggsave(here("figures", "figs43.jpg"), width = 21, height = 12, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "figs43.pdf"), width = 21, height = 12, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "figs43.jpg"), width = 21, height = 12, units = "cm", scale = 2, dpi = 800)
 ```
 
 ## Figure s44
 Chord diagram of collaborations across countries. Countries represent the location of the primary authors’ affiliated institution. 
-```{r}
+```{r,fig.width= 12, fig.height=12}
 # Extract countries from the affiliations
 bib_sco2 <- metaTagExtraction(bib_sco, Field = "AU_CO", sep = ";")
 
@@ -1686,8 +1682,7 @@ circos.trackPlotRegion(track.index = 1, bg.border = NA, panel.fun = function(x, 
 
 ## Figure s45
 Chord diagram illustration of collaborations across countries. Countries represent the location of the primary authors’ affiliated institution. Collaborations within countries are not shown.
-```{r}
-
+```{r,fig.width= 12, fig.height=12}
 diag(NetMatrix_country) <- 0
 
 # Create a chord diagram of the network matrix
@@ -1705,7 +1700,7 @@ circos.trackPlotRegion(track.index = 1, panel.fun = function(x, y) {
 
 ## Figure s46
 Chord diagram illustration of collaborations across continents. Continents represent the location of the primary authors’ affiliated institution. Collaborations within countries are not shown.
-```{r}
+```{r,fig.width= 12, fig.height=12}
 # Country rename to continents
 NetMatrix_continent <- NetMatrix_country
 colnames(NetMatrix_continent)[colnames(NetMatrix_continent) == "USA"] <- "North\nAmerica"
@@ -1841,14 +1836,15 @@ circos.trackPlotRegion(track.index = 1, panel.fun = function(x, y) {
 
 ```
 
-## discipline collab
-
-```{r}
+## Figure s47
+Chord diagram illustration of collaborations across disciplines. Disciplines have been allocated based on the Journal Citation Categories on Web of Science. Collaborations within disciplines are not shown.
+```{r,fig.width= 12, fig.height=12}
 fields <- sd %>%
   mutate(
     title = str_to_lower(paper_title),
     ntitle = paste(str_to_lower(str_split_fixed(study_id, "\\_", n = 2)[,1]), paper_title, sep = " "),
-    ntitle = str_squish(ntitle)
+    ntitle = str_squish(ntitle),
+    Journal_Category_Allocated_Broad = str_replace_all(Journal_Category_Allocated_Broad, "Environmental Science", "Environmental\nScience ")
   ) %>% 
   select(ntitle, Journal_Category_Allocated_Broad)
 
@@ -1902,5 +1898,3 @@ circos.trackPlotRegion(track.index = 1, panel.fun = function(x, y) {
 
 
 ```
-
-
