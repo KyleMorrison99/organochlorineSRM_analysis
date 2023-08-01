@@ -52,7 +52,8 @@ stringi,
 stringdist,
 circlize,
 ggalluvial,
-ggraph)
+ggraph,
+rAltmetric)
 knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
 
 ```
@@ -149,7 +150,6 @@ fig1
 
 # ggsave(here("figures", "fig1.pdf"), width = 16, height = 12, units = "cm", scale = 2, dpi = 800)
 # ggsave(here("figures", "fig1.jpg"), width = 16, height = 12, units = "cm", scale = 2, dpi = 800)
-
 
 
 # Total number of included primary literature
@@ -1157,6 +1157,236 @@ fig3
 # ggsave(here("figures", "fig3.jpg"), width = 25, height = 15, units = "cm", scale = 2, dpi = 800)
 ```
 
+
+```{r}
+# load data
+bib_alt <- read_csv(here("data","scopus.csv")) 
+
+
+# function getAltmetrics(), the only parameter is doi; see example below
+getAltmetrics <- function(doi = NULL,
+                          foptions = list(),
+                           ...) {
+    if (!is.null(doi)) doi <- stringr::str_c("doi/", doi)
+    identifiers <- purrr::compact(list(doi))
+    if (!is.null(identifiers)) {
+      ids <- identifiers[[1]]
+    }
+    base_url <- "http://api.altmetric.com/v1/"
+    #request <- httr::GET(paste0(base_url, ids), httr::add_headers("user-agent" = "#rstats rAltmertic package https://github.com/ropensci/rAltmetric"))
+    request <- httr::GET(paste0(base_url, ids))
+    results <-
+      jsonlite::fromJSON(httr::content(request, as = "text"), flatten = TRUE)
+    results <- rlist::list.flatten(results)
+    class(results) <- "altmetric"
+    results
+}
+
+
+altmetric.crawler <- list(NULL)
+for (n in 1:length(bib_alt$DOI)) {
+ # format altmetric object
+  format.Altmetric <- function(altmetric.object) {
+  stats <- altmetric.object[grep("^cited", names(altmetric.object))]
+  stats <- data.frame(stats, stringsAsFactors = FALSE)
+  data.frame(paper_title = altmetric.object$title,
+             journal = altmetric.object$journal,
+             doi = altmetric.object$doi,
+             #subject = altmetric.object$subjects,
+             Altmetric.score = altmetric.object$score,
+             stats = stats)
+}
+   # JASON formate
+  altmetric.crawler[[n]]  <-  try(list(format.Altmetric(getAltmetrics(doi = bib_alt$DOI[n])))) # https://stackoverflow.com/questions/14059657/how-to-skip-an-error-in-a-loop?rq=1
+  
+  # create a dataframe function
+  altmetric_df <- function(altmetric.object) {
+  df <- data.frame(t(unlist(altmetric.object)), stringsAsFactors = FALSE)
+  }
+  #altmetric.crawler[[n]]  <-  try(list(altmetric_df(getAltmetrics(doi = DOIs[n]))))
+  # create a function to summarize Altmetric object
+  summary.altmetric <- function(x, ...) {
+  if (inherits(x, "altmetric"))  {
+string <- "Altmetrics on: \"%s\" with altmetric_id: %s published in %s."
+vals   <- c(x$title,  x$altmetric_id, x$journal)
+ if("journal" %in% names(x)) {
+  cat(do.call(sprintf, as.list(c(string, vals))))
+ } else {
+   string <- "Altmetrics on: \"%s\" with altmetric_id: %s"
+   cat(do.call(sprintf, as.list(c(string, vals))))
+ }
+  cat("\n")
+  stats <- x[grep("^cited", names(x))]
+  stats <- data.frame(stats, stringsAsFactors = FALSE)
+  print(data.frame(stats = t(stats)))
+  }
+}
+  # crawl
+ # altmetric.crawler[[n]] <- try(list(summary.altmetric(getAltmetrics(doi = DOIs[n]))))
+}
+
+# save results from altmetric.crawler and retrieve lists within lists
+altmetric.crawler2 <- sapply(altmetric.crawler, function(x) {x})
+
+# retrieve stats
+altmetric.summary <- data.frame(paper_title = sapply(altmetric.crawler2, function(x)  ifelse(class(x) == "data.frame",x$paper_title,NA)),
+           journal = sapply(altmetric.crawler2, function(x) ifelse(class(x) == "data.frame",x$journal,NA)),
+           doi = sapply(altmetric.crawler2, function(x) ifelse(class(x) == "data.frame",x$doi,NA)),
+           #subject = sapply(altmetric.crawler2, function(x) ifelse(class(x) == "data.frame",x$subject,NA)),
+           Altmetric.score = sapply(altmetric.crawler2, function(x) ifelse(class(x) == "data.frame",x$Altmetric.score,0)),
+           policy = sapply(altmetric.crawler2, function(x) ifelse(class(x) == "data.frame",ifelse(!is.null(x$stats.cited_by_policies_count),x$stats.cited_by_policies_count,0),0)),
+           patent = sapply(altmetric.crawler2, function(x) ifelse(class(x) == "data.frame",ifelse(!is.null(x$stats.cited_by_patents_count),x$stats.cited_by_patents_count,0),0))
+           )
+
+# Adding new columns to bib_alt dataframe
+bib_alt <- bib_alt %>%
+   mutate(Altmetric.score = altmetric.summary$Altmetric.score, 
+          policy = altmetric.summary$policy, 
+          patent = altmetric.summary$patent)
+
+```
+
+
+
+```{r}
+
+# Defining the scoring function
+score <- function(x) {
+  case_when(
+    x == 'Red' ~ 0,
+    x == 'Amber' ~ 1,
+    x == 'Green' ~ 3,
+    x == 'Gold' ~ 4,
+    TRUE ~ NA_real_
+  )
+}
+
+# Apply the scoring function across all columns starting with "CEESAT"
+sd <- sd %>%
+  mutate(across(starts_with("CEESAT"), score, .names = "points_{.col}"))
+
+# Sum all the points columns to create a 'total_points' column
+sd <- sd %>%
+  mutate(total_points = rowSums(select(., starts_with("points_")), na.rm = TRUE))
+
+# Citation vs. Altmetric score
+bib_alt %>% 
+  ggplot(aes(x = `Cited by`, y = Altmetric.score)) +
+  geom_point(color = "#5F85AE", alpha = 0.8) +
+  labs(x = "Citations", y = "Altmetric Score", title = "Citation vs. Altmetric Score") +
+  theme_minimal()
+
+
+sd_bib_alt <- sd %>%
+  left_join(bib_alt, by = "DOI")
+
+
+# Converting policy to binary and dropping NAs
+sd_bib_alt <- sd_bib_alt %>%
+  mutate(binary_policy = if_else(policy != 0, "Cited in Policy", "Not Cited in Policy")) %>%
+  drop_na(binary_policy, total_points)
+
+
+# Total CEESAT points vs. Policy count plot
+sd_bib_alt %>%
+  filter(total_points != 0, policy != 0) %>%
+  ggplot(aes(x = total_points, y = policy)) +
+  geom_point(color = "#5F85AE", alpha = 0.8) +
+  geom_smooth(method = lm, se = TRUE, color = "red") +
+  labs(x = "Total CEESAT points", y = "Policy Count") +
+  theme_minimal() +
+  theme(panel.grid.major.y = element_blank(),
+        axis.line.y = element_blank(),
+        axis.ticks.y = element_blank(),
+        axis.text.x = element_text(size = 15),
+        axis.text.y = element_text(size = 20),
+        axis.title.x = element_text(size = 20),
+        axis.title.y = element_text(size = 20),
+        plot.title = element_blank())
+
+
+# Violin plot for Binary Policy vs. Total CEESAT Points
+sd_bib_alt %>%
+  ggplot(aes(x = binary_policy, y = total_points)) +
+  geom_violin(fill = "#5F85AE", alpha =0.2, color = NA, trim = FALSE) +
+  geom_boxplot(width = 0.05, fill = "white", color = "#5F85AE", outlier.shape = NA) +
+  geom_jitter(width = 0.1, height = 0.05, color = "#5F85AE", alpha = 0.8) +
+  scale_y_continuous(limits = c(0, max(sd_bib_alt$total_points))) +
+  labs( x = "Policy", y = "Total CEESAT Points") +
+  theme_minimal() +
+  theme(panel.grid.major.y = element_blank(),
+        axis.line.y = element_blank(),
+        axis.ticks.y = element_blank(),
+        axis.text.x = element_text(size = 15),
+        axis.text.y = element_text(size = 20),
+        axis.title.x = element_text(size = 20),
+        axis.title.y = element_text(size = 20),
+        plot.title = element_blank())
+
+
+
+percent_ceesat_score1 <- sd_bib_alt %>%
+  filter(!is.na(author_year)) %>%
+  select(studies = author_year, binary_policy, starts_with("CEE")) %>%
+  na.omit() %>%
+  pivot_longer(cols = -c(studies, binary_policy), names_to = "question", values_to = "score") %>%
+  group_by(binary_policy, question, score) %>%
+  summarise(n = n(), .groups = 'drop') %>%
+  mutate(percent = (n/sum(n))*100, 
+         across(c(question, score), as.factor),
+         question = fct_recode(question, 
+           `1.1 Are the elements of the review question clear?` = "CEESAT2_1.1",
+           `2.1 Is there an a-priori method protocol document?` = "CEESAT2_2.1",
+           `3.1. Is the approach to searching clearly definedsystematic and\ntransparent?` = "CEESAT2_3.1",
+           `3.2. Is the search comprehensive?` = "CEESAT2_3.2",
+           `4.1. Are eligibility criteria clearly defined?` = "CEESAT2_4.1",
+           `4.2. Are eligibility criteria consistently applied to all potentially relevant\narticles and studies found during the search?` = "CEESAT2_4.2",
+           `4.3. Are eligibility decisions transparently reported?` = "CEESAT2_4.3",
+           `5.1. Does the review critically appraise each study?` = "CEESAT2_5.1",
+           `5.2. During critical appraisal was an effort made to minimise\nsubjectivity?` = "CEESAT2_5.2",
+           `6.1. Is the method of data extraction fully documented?` = "CEESAT2_6.1",
+           `6.2. Are the extracted data reported for each study?` = "CEESAT2_6.2",
+           `6.3. Were extracted data cross checked by more than one reviewer?` = "CEESAT2_6.3",
+           `7.1. Is the choice of synthesis approach appropriate?` = "CEESAT2_7.1",
+           `7.2. Is a statistical estimate of pooled effect provided together with\nmeasure of variance and heterogeneity among studies?` = "CEESAT2_7.2",
+           `7.3 Is variability in the study findings investigated and discussed?` = "CEESAT2_7.3",
+           `8.1 Have the authors considered limitations in the synthesis?` = "CEESAT2_8.1"),
+         question = factor(question, levels = rev(levels(question))),
+         score = factor(score, levels = levels(score)[c(4,1,3,2)]))
+
+
+ggplot(data = percent_ceesat_score1, aes(x = question, y = percent, fill = score)) +
+  geom_col(width = 0.7, position = "fill", color = "black") +
+  geom_text(aes(label = n), position = position_fill(vjust = 0.5), size = 7, fontface = "bold") +
+  coord_flip() +
+  guides(fill = guide_legend(reverse = TRUE)) +
+  scale_fill_manual(values = c("#FF0000","#FFD700","#008000", "#DAA520"), name = "Score:") +
+  scale_y_continuous(labels = scales::percent) +
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(), 
+        panel.background = element_blank(),
+        axis.text.y = element_text(size = 20),
+        axis.text.x = element_text(size = 20),
+        axis.title.x = element_text(size = 25),
+        axis.title.y = element_text(size = 25), 
+        legend.position = "none",
+        strip.text = element_text(size = 20),
+        strip.background = element_blank()) +  # Add this line to remove facet label background
+  ylab("Percentage") + 
+  xlab("CEESAT Question") +
+  facet_wrap(~binary_policy)
+
+
+```
+
+
+
+
+
+
+
+
+
 # Objective 2 
 To explore the various characteristics of the organochlorine pesticides literature such as the pesticides used, the impacts elicited in response and the subjects that were investigated.
 
@@ -1872,3 +2102,8 @@ circos.trackPlotRegion(track.index = 1, panel.fun = function(x, y) {
 
 
 ```
+
+
+
+
+
