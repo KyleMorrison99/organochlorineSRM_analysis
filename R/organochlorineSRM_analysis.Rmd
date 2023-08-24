@@ -204,7 +204,7 @@ figs4
 # Section 1
 To evaluate the methodological quality and patterns of existing meta-analyses studying the effects of organochlorine pesticides. 
 
-## Figure 3
+## Figure 2a
 The average reporting quality and rigour of meta-analysis according to CEESAT 2.1 (Woodcock et al., 2014). Gold is regard as the highest score, green is second highest score, amber is second-lowest score, and red is the lowest score. All CEESAT 2.1 items along with our interpretation are provided in the Supplementary File 2.
 ```{r, fig.width=25, fig.height=15}
 # Start the data manipulation
@@ -238,7 +238,7 @@ percent_ceesat_score <- sd %>%
          score = factor(score, levels = levels(score)[c(4,1,3,2)]))
 
 # Create CEESAT plot 
-fig3 <- ggplot(data = percent_ceesat_score, aes(x = question, y = percent, fill = score)) +
+fig2a <- ggplot(data = percent_ceesat_score, aes(x = question, y = percent, fill = score)) +
   geom_col(width = 0.7, position = "fill", color = "black") +
   geom_text(aes(label = n), position = position_fill(vjust = 0.5), size = 7, fontface = "bold") +
   coord_flip() +
@@ -254,15 +254,28 @@ fig3 <- ggplot(data = percent_ceesat_score, aes(x = question, y = percent, fill 
         axis.title.y = element_text(size = 25), 
           legend.position = "none") +
   ylab("Percentage") + 
-  xlab("CEESAT Question")
+  xlab("CEESAT Question") +
+  labs(tag = "A")
 
-fig3
 
-# ggsave(here("figures", "fig3.pdf"), width = 25, height = 15, units = "cm", scale = 2, dpi = 800)
-# ggsave(here("figures", "fig3.jpg"), width = 25, height = 15, units = "cm", scale = 2, dpi = 800)
+fig2a
+
+
+total_n <- sum(percent_ceesat_score$n)
+percentages <- tibble(
+  red_percentage = sum(percent_ceesat_score$n[percent_ceesat_score$score == "Red"]) / total_n * 100,
+  amber_percentage = sum(percent_ceesat_score$n[percent_ceesat_score$score == "Amber"]) / total_n * 100,
+  green_percentage = sum(percent_ceesat_score$n[percent_ceesat_score$score == "Green"]) / total_n * 100,
+  gold_percentage = sum(percent_ceesat_score$n[percent_ceesat_score$score == "Gold"]) / total_n * 100
+)
+
+
+
+# ggsave(here("figures", "fig2a.pdf"), width = 25, height = 15, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "fig2a.jpg"), width = 25, height = 15, units = "cm", scale = 2, dpi = 800)
 ```
 
-## figsx
+## 
 Calculating altmetric for each study 
 ```{r}
 # load data
@@ -453,7 +466,7 @@ figsx
 ```
 
 
-## figsx 
+## Figure 2b
 The average reporting quality and rigour of meta-analysis according to CEESAT 2.1 (Woodcock et al., 2014). Gold is regard as the highest score, green is second highest score, amber is second-lowest score, and red is the lowest score. All CEESAT 2.1 items along with our interpretation are provided in the Supplementary File 2. Split for studies cited in policy documents and those not cited in policy decisions. 
 
 ```{r}
@@ -467,27 +480,27 @@ percent_ceesat_score1 <- sd_bib_alt %>%
   mutate(percent = (n/sum(n))*100, 
          across(c(question, score), as.factor),
          question = fct_recode(question, 
-           `1.1 Are the elements of the review question clear?` = "CEESAT2_1.1",
-           `2.1 Is there an a-priori method protocol document?` = "CEESAT2_2.1",
-           `3.1. Is the approach to searching clearly definedsystematic and\ntransparent?` = "CEESAT2_3.1",
-           `3.2. Is the search comprehensive?` = "CEESAT2_3.2",
-           `4.1. Are eligibility criteria clearly defined?` = "CEESAT2_4.1",
-           `4.2. Are eligibility criteria consistently applied to all potentially relevant\narticles and studies found during the search?` = "CEESAT2_4.2",
-           `4.3. Are eligibility decisions transparently reported?` = "CEESAT2_4.3",
-           `5.1. Does the review critically appraise each study?` = "CEESAT2_5.1",
-           `5.2. During critical appraisal was an effort made to minimise\nsubjectivity?` = "CEESAT2_5.2",
-           `6.1. Is the method of data extraction fully documented?` = "CEESAT2_6.1",
-           `6.2. Are the extracted data reported for each study?` = "CEESAT2_6.2",
-           `6.3. Were extracted data cross checked by more than one reviewer?` = "CEESAT2_6.3",
-           `7.1. Is the choice of synthesis approach appropriate?` = "CEESAT2_7.1",
-           `7.2. Is a statistical estimate of pooled effect provided together with\nmeasure of variance and heterogeneity among studies?` = "CEESAT2_7.2",
-           `7.3 Is variability in the study findings investigated and discussed?` = "CEESAT2_7.3",
-           `8.1 Have the authors considered limitations in the synthesis?` = "CEESAT2_8.1"),
+           `1.1` = "CEESAT2_1.1",
+           `2.1` = "CEESAT2_2.1",
+           `3.1` = "CEESAT2_3.1",
+           `3.2` = "CEESAT2_3.2",
+           `4.1` = "CEESAT2_4.1",
+           `4.2` = "CEESAT2_4.2",
+           `4.3` = "CEESAT2_4.3",
+           `5.1` = "CEESAT2_5.1",
+           `5.2` = "CEESAT2_5.2",
+           `6.1` = "CEESAT2_6.1",
+           `6.2` = "CEESAT2_6.2",
+           `6.3` = "CEESAT2_6.3",
+           `7.1` = "CEESAT2_7.1",
+           `7.2` = "CEESAT2_7.2",
+           `7.3` = "CEESAT2_7.3",
+           `8.1` = "CEESAT2_8.1"),
          question = factor(question, levels = rev(levels(question))),
          score = factor(score, levels = levels(score)[c(4,1,3,2)]))
 
 
-ggplot(data = percent_ceesat_score1, aes(x = question, y = percent, fill = score)) +
+fig2b <- ggplot(data = percent_ceesat_score1, aes(x = question, y = percent, fill = score)) +
   geom_col(width = 0.7, position = "fill", color = "black") +
   geom_text(aes(label = n), position = position_fill(vjust = 0.5), size = 7, fontface = "bold") +
   coord_flip() +
@@ -506,7 +519,11 @@ ggplot(data = percent_ceesat_score1, aes(x = question, y = percent, fill = score
         strip.background = element_blank()) +  
   ylab("Percentage") + 
   xlab("CEESAT Question") +
-  facet_wrap(~binary_policy)
+  facet_wrap(~binary_policy) +
+  labs(tag = "B")
+
+ ggsave(here("figures", "fig2b.pdf"), width = 25, height = 15, units = "cm", scale = 2, dpi = 800)
+ ggsave(here("figures", "fig2b.jpg"), width = 25, height = 15, units = "cm", scale = 2, dpi = 800)
 
 
 
@@ -517,8 +534,21 @@ t.test(group1, group2)
 
 ```
 
+## Figure 2
+```{r}
+fig2 <- (fig2a / fig2b)
+
+fig2
+
+ ggsave(here("figures", "fig2.pdf"), width = 30, height = 20, units = "cm", scale = 2, dpi = 800)
+ ggsave(here("figures", "fig2.jpg"), width = 30, height = 20, units = "cm", scale = 2, dpi = 800)
+```
+
+
+
+
 ## Figure s5 
-Bar plot showing the percentage and total count of scientific literature databases used in meta-analyses investigating the impacts of organochlorine pesticides. Note that some meta-analyses may contribute to multiple sections if the study involved multiple scientific literature databases. The "Other databases" category includes all databases with a count of 3 or less.
+Bar plot showing the percentage and total count of scientific literature databases used in meta-analyses investigating the impacts of organochlorine pesticides. Note that some meta-analyses may contribute to multiple sections if the study involved multiple scientific literature databases. The "Other databases" category includes all databases with a count of 3 or less. Percentage is showing the proportion of studies.
 ```{r, fig.width=16, fig.height=10}
 # Calculate the total count for each category
 database_count <- sd %>% 
@@ -533,7 +563,7 @@ database_count <- sd %>%
 
 # Calculate proportion and percentage for each category
 database_pct <- database_count %>%
-  mutate(proportion = n / sum(database_count$n),
+  mutate(proportion = n / 83, # 83 is number of studies assessed for CEESAT
          percentage = proportion * 100)
 
 # Create a standard theme for the supplement plots
@@ -609,77 +639,8 @@ figs6
 
   
 ```
-
-## Figure s7 
-Bar plot showing the percentage and total count of effect size calculation types used in meta-analyses investigating the impacts of organochlorine pesticides. Note that some meta-analyses may contribute to multiple sections if the study involved multiple effect size calculations. The "Other effect sizes" category includes all effect sizes with a count of 2 or less.
-```{r, fig.width=16, fig.height=10}
-# Calculate the total count for each category
-effectsize_count <- sd %>% 
-  separate_rows(effect_size, sep = ",\\s+") %>% 
-  count(effect_size) %>%
-  filter(effect_size != "NA") %>%
-  mutate(effect_size = ifelse(n<= 2, "other effect sizes", as.character(effect_size))) %>% 
-  group_by(effect_size) %>%
-  summarise(n = sum(n))
-
-# Calculate proportion and percentage for each category
-effectsize_pct <- effectsize_count %>%
-  mutate(proportion = n / sum(effectsize_count$n),
-         percentage = proportion * 100)
-
-# Create the count plot
-figs7 <-  effectsize_count %>%
-  ggplot(aes(x = n, y = reorder(effect_size, n), fill = "#1b9e77")) +
-  geom_bar(stat = "identity", width = 0.8 , alpha = 0.7) +
-  geom_text(aes(label = n, x = n / 2, y = reorder(effect_size, n)), hjust = 0.5, size = 6, color = "black") +
-  geom_text(data = effectsize_pct, aes(label = paste0("(", round(percentage, 1), "%)"), x = n), 
-            hjust = -0.1, size = 6, color = "black", fontface = "bold") +
-  scale_fill_identity(guide = "none") +
-  scale_x_continuous(name = "Article Count", expand = c(0, 0), limits = c(0, max(effectsize_count$n)*1.1)) +
-  labs(y = NULL) +
-  theme_suppl()
-
-figs7
-
-#  ggsave(here("figures", "figs7.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
-#  ggsave(here("figures", "figs7.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
-```
-
-## Figure s8
-Alluvial plot showing the relationship between the Journal Citation Report Category and the effect size used. Filtered for scientific literature database counts greater than or equal to 3.
-```{r, fig.width=16, fig.height=10}
-# Data Transformation 
-effectsize_alluvial <- sd %>% 
-    separate_rows(effect_size, sep = ",\\s+") %>%
-    separate_rows(Journal_Category_Allocated_Broad, sep = "/\\s+") %>% 
-    filter(!grepl("no category found", Journal_Category_Allocated_Broad, ignore.case = TRUE)) %>% 
-    filter(!is.na(effect_size)) %>%
-    group_by(Journal_Category_Allocated_Broad, effect_size) %>% 
-    count(effect_size, Journal_Category_Allocated_Broad) %>% 
-    summarise(freq = n(), .groups = 'drop') %>% 
-    group_by(effect_size) 
-
-
-# Create the Alluvial plot
-figs8 <- effectsize_alluvial %>% 
-ggplot(aes(y = freq ,axis1 = Journal_Category_Allocated_Broad, axis2 = effect_size)) +
-  scale_x_discrete(limits = c("Journal Category", "Effect Size"), expand = c(.05, .05)) +
-  xlab("Variables") +
-  geom_alluvium(aes(fill = Journal_Category_Allocated_Broad)) +
-  geom_stratum(width = 1/2.5, fill = "white", color = "black") +
-  geom_text(stat = "stratum", aes(label = after_stat(stratum)), size = 5) +
-  theme_minimal() +
-  labs(x= "Variables", y = "Frequency", fill = "Journal Category Allocated") +
-  theme_suppl()
-  
-figs8
-
-# ggsave(here("figures", "figs8.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
-# ggsave(here("figures", "figs8.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
-```
-
 ## Figure s9
-Bar plot showing the percentage and total count of software for analysis used in meta-analyses investigating the impacts of organochlorine pesticides. Note that some meta-analyses may contribute to multiple sections if the study involved multiple software. 
+Bar plot showing the percentage and total count of software for analysis used in meta-analyses investigating the impacts of organochlorine pesticides. Note that some meta-analyses may contribute to multiple sections if the study involved multiple software. Percentage is showing the proportion of studies.
 ```{r, fig.width=16, fig.height=10}
 # Calculate the total count for each category
 software_count <- sd %>%
@@ -694,7 +655,7 @@ software_count <- sd %>%
 
 # Calculate proportion and percentage for each category
 software_pct <- software_count %>%
-  mutate(proportion = n / sum(software_count$n),
+  mutate(proportion = n / 83,
          percentage = proportion * 100)
 
 # Create the count plot
@@ -748,9 +709,142 @@ figs10
 # ggsave(here("figures", "figs10.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 
 ```
+## Figure s7 
+Bar plot showing the percentage and total count of effect size calculation types used in meta-analyses investigating the impacts of organochlorine pesticides. Note that some meta-analyses may contribute to multiple sections if the study involved multiple effect size calculations. The "Other effect sizes" category includes all effect sizes with a count of 2 or less. Percentage is showing the proportion of studies.
+```{r, fig.width=16, fig.height=10}
+# Calculate the total count for each category
+effectsize_count <- sd %>% 
+  separate_rows(effect_size, sep = ",\\s+") %>% 
+  count(effect_size) %>%
+  filter(effect_size != "NA") %>%
+  mutate(effect_size = ifelse(n<= 2, "other effect sizes", as.character(effect_size))) %>% 
+  group_by(effect_size) %>%
+  summarise(n = sum(n))
+
+# Calculate proportion and percentage for each category
+effectsize_pct <- effectsize_count %>%
+  mutate(proportion = n / 83,
+         percentage = proportion * 100)
+
+# Create the count plot
+figs7 <-  effectsize_count %>%
+  ggplot(aes(x = n, y = reorder(effect_size, n), fill = "#1b9e77")) +
+  geom_bar(stat = "identity", width = 0.8 , alpha = 0.7) +
+  geom_text(aes(label = n, x = n / 2, y = reorder(effect_size, n)), hjust = 0.5, size = 6, color = "black") +
+  geom_text(data = effectsize_pct, aes(label = paste0("(", round(percentage, 1), "%)"), x = n), 
+            hjust = -0.1, size = 6, color = "black", fontface = "bold") +
+  scale_fill_identity(guide = "none") +
+  scale_x_continuous(name = "Article Count", expand = c(0, 0), limits = c(0, max(effectsize_count$n)*1.1)) +
+  labs(y = NULL) +
+  theme_suppl()
+
+figs7
+
+#  ggsave(here("figures", "figs7.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+#  ggsave(here("figures", "figs7.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+```
+
+## Figure s8
+Alluvial plot showing the relationship between the Journal Citation Report Category and the effect size used. Filtered for scientific literature database counts greater than or equal to 3.
+```{r, fig.width=16, fig.height=10}
+# Data Transformation 
+effectsize_alluvial <- sd %>% 
+    separate_rows(effect_size, sep = ",\\s+") %>%
+    separate_rows(Journal_Category_Allocated_Broad, sep = "/\\s+") %>% 
+    filter(!grepl("no category found", Journal_Category_Allocated_Broad, ignore.case = TRUE)) %>% 
+    filter(!is.na(effect_size)) %>%
+    group_by(Journal_Category_Allocated_Broad, effect_size) %>% 
+    count(effect_size, Journal_Category_Allocated_Broad) %>% 
+    summarise(freq = n(), .groups = 'drop') %>% 
+    group_by(effect_size) 
+
+
+# Create the Alluvial plot
+figs8 <- effectsize_alluvial %>% 
+ggplot(aes(y = freq ,axis1 = Journal_Category_Allocated_Broad, axis2 = effect_size)) +
+  scale_x_discrete(limits = c("Journal Category", "Effect Size"), expand = c(.05, .05)) +
+  xlab("Variables") +
+  geom_alluvium(aes(fill = Journal_Category_Allocated_Broad)) +
+  geom_stratum(width = 1/2.5, fill = "white", color = "black") +
+  geom_text(stat = "stratum", aes(label = after_stat(stratum)), size = 5) +
+  theme_minimal() +
+  labs(x= "Variables", y = "Frequency", fill = "Journal Category Allocated") +
+  theme_suppl()
+  
+figs8
+
+# ggsave(here("figures", "figs8.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "figs8.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+```
+
+## Figure s23
+Bar plot showing the percentage and total count of visualization methods used in meta-analyses investigating the impacts of organochlorine pesticides. Note that some meta-analyses may contribute to multiple sections if the study involved the use of multiple visualization methods.
+```{r, fig.width=16, fig.height=10}
+# Calculate the total count for each category
+visualization_count <- sd %>% 
+  separate_rows(visualization_method, sep = ",\\s+") %>% 
+  count(visualization_method) %>%
+  filter(visualization_method != "NA") %>%
+    group_by(visualization_method) %>%
+  summarise(n = sum(n))
+
+# Calculate proportion and percentage for each category
+visualization_pct <- visualization_count %>%
+  mutate(proportion = n / 83,
+         percentage = proportion * 100)
+
+# Create the count plot
+figs23 <- visualization_count %>%
+  ggplot(aes(x = n, y = reorder(visualization_method, n), fill = "#1b9e77")) +
+  geom_bar(stat = "identity", width = 0.8 , alpha = 0.7) +
+  geom_text(aes(label = n, x = n / 2, y = reorder(visualization_method, n)), hjust = 0.5, size = 6, color = "black") +
+  geom_text(data = visualization_pct, aes(label = paste0("(", round(percentage, 0), "%)"), x = n), 
+            hjust = -0.1, size = 6, color = "black", fontface = "bold") +
+  scale_fill_identity(guide = "none") +
+  scale_x_continuous(name = "Article Count", expand = c(0, 0), limits = c(0, max(visualization_count$n)*1.1)) +
+  labs(y = NULL) +
+  theme_suppl()
+
+figs23
+
+# ggsave(here("figures", "figs23.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "figs23.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+```
+
+## Figure s24
+Alluvial plot showing the relationship between the Journal Citation Report Category and visualization method. 
+```{r, fig.width=16, fig.height=10}
+# Data Transformation 
+vizualization_alluvial <- sd %>% 
+    separate_rows(visualization_method, sep = ",\\s+") %>%
+    filter(!is.na(visualization_method)) %>%
+    separate_rows(Journal_Category_Allocated_Broad, sep = "/\\s+") %>%
+    group_by(Journal_Category_Allocated_Broad, visualization_method) %>% 
+    count(visualization_method, Journal_Category_Allocated_Broad) %>% 
+    summarise(freq = n(), .groups = 'drop') %>% 
+    group_by(visualization_method) 
+
+
+# Create the Alluvial plot
+figs24 <- vizualization_alluvial %>% 
+ggplot(aes(y = freq ,axis1 = Journal_Category_Allocated_Broad, axis2 = visualization_method)) +
+  scale_x_discrete(limits = c("Journal Citation Report Category", "ROB Assessment Method"), expand = c(.05, .05)) +
+  xlab("Variables") +
+  geom_alluvium(aes(fill = Journal_Category_Allocated_Broad)) +
+  geom_stratum(width = 1/4, fill = "white", color = "black") +
+  geom_text(stat = "stratum", aes(label = after_stat(stratum)), size = 6) +
+  labs(x= "Variables", y = "Frequency", fill = "Journal Category Allocated") +
+  theme_suppl()
+
+figs24
+
+# ggsave(here("figures", "figs24.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "figs24.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+```
+
 
 ## Figure s11
-Bar plot showing the percentage and total count of heterogeneity assessment methods used in meta-analyses investigating the impacts of organochlorine pesticides. Note that some meta-analyses may contribute to multiple sections if the study involved multiple heterogeneity assessments.
+Bar plot showing the percentage and total count of heterogeneity assessment methods used in meta-analyses investigating the impacts of organochlorine pesticides. Note that some meta-analyses may contribute to multiple sections if the study involved multiple heterogeneity assessments. Percentage is showing the proportion of studies.
 ```{r, fig.width=16, fig.height=10}
 # Calculate the total count for each category
 heterogeneity_count <- sd %>% 
@@ -763,7 +857,7 @@ heterogeneity_count <- sd %>%
 
 # Calculate proportion and percentage for each category
 heterogeneity_pct <- heterogeneity_count %>%
-  mutate(proportion = n / sum(heterogeneity_count$n),
+  mutate(proportion = n / 83,
          percentage = proportion * 100)
 
 # Create the count plot
@@ -829,7 +923,7 @@ sensitivity_count <- sd %>%
 
 # Calculate proportion and percentage for each category
 sensitivity_pct <- sensitivity_count %>%
-  mutate(proportion = n / sum(sensitivity_count$n),
+  mutate(proportion = n / 83,
          percentage = proportion * 100)
 
 # Create the count plot
@@ -881,6 +975,74 @@ figs14
 # ggsave(here("figures", "figs14.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 
 ```
+
+## Figure s21 
+Bar plot showing the percentage and total count of risk of bias tests used in meta-analyses investigating the impacts of organochlorine pesticides. Note that some meta-analyses may contribute to multiple sections if the study involved the use of multiple risk of bias tests. 
+```{r, fig.width=16, fig.height=10}
+# Calculate the total count for each category
+rob_method_count <- sd %>% 
+  separate_rows(rob_assessment_method, sep = ",\\s+") %>% 
+  count(rob_assessment_method) %>%
+  filter(rob_assessment_method != "NA") %>%
+  group_by(rob_assessment_method) %>%
+  summarise(n = sum(n))
+
+# Calculate proportion and percentage for each category
+rob_method_pct <- rob_method_count %>%
+  mutate(proportion = n / 83,
+         percentage = proportion * 100)
+
+# Create the count plot
+figs21 <- rob_method_count %>%
+  ggplot(aes(x = n, y = reorder(rob_assessment_method, n), fill = "#1b9e77")) +
+  geom_bar(stat = "identity", width = 0.8 , alpha = 0.7) +
+  geom_text(aes(label = n, x = n / 2, y = reorder(rob_assessment_method, n)), hjust = 0.5, size = 6, color = "black") +
+  geom_text(data = rob_method_pct, aes(label = paste0("(", round(percentage, 0), "%)"), x = n), 
+            hjust = -0.1, size = 6, color = "black", fontface = "bold") +
+  scale_fill_identity(guide = "none") +
+  scale_x_continuous(name = "Article Count", expand = c(0, 0), limits = c(0, max(rob_method_count$n)*1.1)) +
+  labs(y = NULL) +
+  theme_suppl()
+
+figs21
+
+# ggsave(here("figures", "figs21.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "figs21.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+```
+
+## Figure s22
+Alluvial plot showing the relationship between the Journal Citation Report Category and risk of bias methodology. 
+```{r, fig.width=16, fig.height=10}
+# Data Transformation 
+robmethod_alluvial <- sd %>% 
+     separate_rows(rob_assessment_method, sep = ",\\s+") %>%
+    filter(!is.na(rob_assessment_method)) %>%
+    separate_rows(Journal_Category_Allocated_Broad, sep = "/\\s+") %>%
+    group_by(Journal_Category_Allocated_Broad, rob_assessment_method) %>% 
+    count(rob_assessment_method, Journal_Category_Allocated_Broad) %>% 
+    summarise(freq = n(), .groups = 'drop') %>% 
+    group_by(rob_assessment_method) 
+
+
+# Create the Alluvial plot
+figs22 <- robmethod_alluvial %>% 
+ggplot(aes(y = freq ,axis1 = Journal_Category_Allocated_Broad, axis2 = rob_assessment_method)) +
+  scale_x_discrete(limits = c("Journal Citation Report Category", "ROB Assessment Method"), expand = c(.05, .05)) +
+  xlab("Variables") +
+  geom_alluvium(aes(fill = Journal_Category_Allocated_Broad)) +
+  geom_stratum(width = 1/3, fill = "white", color = "black") +
+  geom_text(stat = "stratum", aes(label = after_stat(stratum)), size = 5) +
+  labs(x= "Variables", y = "Frequency", fill = "Journal Category Allocated") +
+  theme_suppl()
+
+figs22
+
+# ggsave(here("figures", "figs22.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "figs22.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+
+```
+
+
 
 ## Figure s15 
 Bar plot showing the percentage and total count of bias types assessed in meta-analyses investigating the impacts of organochlorine pesticides. Note that some meta-analyses may contribute to multiple sections if the study involved the assessment of multiple bias types. 
@@ -960,7 +1122,7 @@ bias_method_count <- sd %>%
 
 # Calculate proportion and percentage for each category
 bias_method_pct <- bias_method_count %>%
-  mutate(proportion = n / sum(bias_method_count$n),
+  mutate(proportion = n / 83,
          percentage = proportion * 100)
 
 # Create the count plot
@@ -1026,7 +1188,7 @@ bias_visualization_count <- sd %>%
 
 # Calculate proportion and percentage for each category
 bias_visualization_pct <- bias_visualization_count %>%
-  mutate(proportion = n / sum(bias_visualization_count$n),
+  mutate(proportion = n / 83,
          percentage = proportion * 100)
 
 # Create the count plot
@@ -1078,136 +1240,6 @@ figs20
 
 ```
 
-## Figure s21 
-Bar plot showing the percentage and total count of risk of bias tests used in meta-analyses investigating the impacts of organochlorine pesticides. Note that some meta-analyses may contribute to multiple sections if the study involved the use of multiple risk of bias tests. 
-```{r, fig.width=16, fig.height=10}
-# Calculate the total count for each category
-rob_method_count <- sd %>% 
-  separate_rows(rob_assessment_method, sep = ",\\s+") %>% 
-  count(rob_assessment_method) %>%
-  filter(rob_assessment_method != "NA") %>%
-  group_by(rob_assessment_method) %>%
-  summarise(n = sum(n))
-
-# Calculate proportion and percentage for each category
-rob_method_pct <- rob_method_count %>%
-  mutate(proportion = n / sum(rob_method_count$n),
-         percentage = proportion * 100)
-
-# Create the count plot
-figs21 <- rob_method_count %>%
-  ggplot(aes(x = n, y = reorder(rob_assessment_method, n), fill = "#1b9e77")) +
-  geom_bar(stat = "identity", width = 0.8 , alpha = 0.7) +
-  geom_text(aes(label = n, x = n / 2, y = reorder(rob_assessment_method, n)), hjust = 0.5, size = 6, color = "black") +
-  geom_text(data = rob_method_pct, aes(label = paste0("(", round(percentage, 0), "%)"), x = n), 
-            hjust = -0.1, size = 6, color = "black", fontface = "bold") +
-  scale_fill_identity(guide = "none") +
-  scale_x_continuous(name = "Article Count", expand = c(0, 0), limits = c(0, max(rob_method_count$n)*1.1)) +
-  labs(y = NULL) +
-  theme_suppl()
-
-figs21
-
-# ggsave(here("figures", "figs21.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
-# ggsave(here("figures", "figs21.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
-```
-
-## Figure s22
-Alluvial plot showing the relationship between the Journal Citation Report Category and risk of bias methodology. 
-```{r, fig.width=16, fig.height=10}
-# Data Transformation 
-robmethod_alluvial <- sd %>% 
-     separate_rows(rob_assessment_method, sep = ",\\s+") %>%
-    filter(!is.na(rob_assessment_method)) %>%
-    separate_rows(Journal_Category_Allocated_Broad, sep = "/\\s+") %>%
-    group_by(Journal_Category_Allocated_Broad, rob_assessment_method) %>% 
-    count(rob_assessment_method, Journal_Category_Allocated_Broad) %>% 
-    summarise(freq = n(), .groups = 'drop') %>% 
-    group_by(rob_assessment_method) 
-
-
-# Create the Alluvial plot
-figs22 <- robmethod_alluvial %>% 
-ggplot(aes(y = freq ,axis1 = Journal_Category_Allocated_Broad, axis2 = rob_assessment_method)) +
-  scale_x_discrete(limits = c("Journal Citation Report Category", "ROB Assessment Method"), expand = c(.05, .05)) +
-  xlab("Variables") +
-  geom_alluvium(aes(fill = Journal_Category_Allocated_Broad)) +
-  geom_stratum(width = 1/3, fill = "white", color = "black") +
-  geom_text(stat = "stratum", aes(label = after_stat(stratum)), size = 5) +
-  labs(x= "Variables", y = "Frequency", fill = "Journal Category Allocated") +
-  theme_suppl()
-
-figs22
-
-# ggsave(here("figures", "figs22.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
-# ggsave(here("figures", "figs22.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
-
-```
-
-## Figure s23
-Bar plot showing the percentage and total count of visualization methods used in meta-analyses investigating the impacts of organochlorine pesticides. Note that some meta-analyses may contribute to multiple sections if the study involved the use of multiple visualization methods.
-```{r, fig.width=16, fig.height=10}
-# Calculate the total count for each category
-visualization_count <- sd %>% 
-  separate_rows(visualization_method, sep = ",\\s+") %>% 
-  count(visualization_method) %>%
-  filter(visualization_method != "NA") %>%
-    group_by(visualization_method) %>%
-  summarise(n = sum(n))
-
-# Calculate proportion and percentage for each category
-visualization_pct <- visualization_count %>%
-  mutate(proportion = n / sum(visualization_count$n),
-         percentage = proportion * 100)
-
-# Create the count plot
-figs23 <- visualization_count %>%
-  ggplot(aes(x = n, y = reorder(visualization_method, n), fill = "#1b9e77")) +
-  geom_bar(stat = "identity", width = 0.8 , alpha = 0.7) +
-  geom_text(aes(label = n, x = n / 2, y = reorder(visualization_method, n)), hjust = 0.5, size = 6, color = "black") +
-  geom_text(data = visualization_pct, aes(label = paste0("(", round(percentage, 0), "%)"), x = n), 
-            hjust = -0.1, size = 6, color = "black", fontface = "bold") +
-  scale_fill_identity(guide = "none") +
-  scale_x_continuous(name = "Article Count", expand = c(0, 0), limits = c(0, max(visualization_count$n)*1.1)) +
-  labs(y = NULL) +
-  theme_suppl()
-
-figs23
-
-# ggsave(here("figures", "figs23.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
-# ggsave(here("figures", "figs23.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
-```
-
-## Figure s24
-Alluvial plot showing the relationship between the Journal Citation Report Category and visualization method. 
-```{r, fig.width=16, fig.height=10}
-# Data Transformation 
-vizualization_alluvial <- sd %>% 
-    separate_rows(visualization_method, sep = ",\\s+") %>%
-    filter(!is.na(visualization_method)) %>%
-    separate_rows(Journal_Category_Allocated_Broad, sep = "/\\s+") %>%
-    group_by(Journal_Category_Allocated_Broad, visualization_method) %>% 
-    count(visualization_method, Journal_Category_Allocated_Broad) %>% 
-    summarise(freq = n(), .groups = 'drop') %>% 
-    group_by(visualization_method) 
-
-
-# Create the Alluvial plot
-figs24 <- vizualization_alluvial %>% 
-ggplot(aes(y = freq ,axis1 = Journal_Category_Allocated_Broad, axis2 = visualization_method)) +
-  scale_x_discrete(limits = c("Journal Citation Report Category", "ROB Assessment Method"), expand = c(.05, .05)) +
-  xlab("Variables") +
-  geom_alluvium(aes(fill = Journal_Category_Allocated_Broad)) +
-  geom_stratum(width = 1/4, fill = "white", color = "black") +
-  geom_text(stat = "stratum", aes(label = after_stat(stratum)), size = 6) +
-  labs(x= "Variables", y = "Frequency", fill = "Journal Category Allocated") +
-  theme_suppl()
-
-figs24
-
-# ggsave(here("figures", "figs24.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
-# ggsave(here("figures", "figs24.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
-```
 
 ## Figure s25
 Bar plot showing the percentage and total count of reporting guidelines used in meta-analyses investigating the impacts of organochlorine pesticides. Note that some meta-analyses may contribute to multiple sections if the study involved the use of multiple reporting guidelines.
@@ -1222,7 +1254,7 @@ reporting_guide_count <- sd %>%
 
 # Calculate proportion and percentage for each category
 reporting_guide_pct <- reporting_guide_count %>%
-  mutate(proportion = n / sum(reporting_guide_count$n),
+  mutate(proportion = n / 83,
          percentage = proportion * 100)
 
 # Create the count plot
@@ -1239,7 +1271,7 @@ figs25 <- reporting_guide_count %>%
 
 figs25
 
-# ggsave(here("figures", "figs25.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+#  ggsave(here("figures", "figs25.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 # ggsave(here("figures", "figs25.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 ```
 
