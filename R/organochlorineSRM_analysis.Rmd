@@ -1490,7 +1490,7 @@ ocp_count <-
 
 # Calculate the proportion and percentage of each OCP
 ocp_pct <- ocp_count %>%
-  mutate(proportion = n/sum(ocp_count$n),
+  mutate(proportion = n/104,
          percentage = proportion*100)
 
 # Create the count plot for OCPs
@@ -1522,7 +1522,7 @@ subject_count <-
 
 # Calculate proportion and percentage for each category
 subject_pct <- subject_count %>%
-  mutate(proportion = n/sum(subject_count$n),
+  mutate(proportion = n/105,
          percentage = proportion*100)
 
 # Create the count plot for subjects
@@ -1611,7 +1611,7 @@ impact_count_broad <-
 
 # Calculate proportion and percentage for each category
 impact_pct_broad <- impact_count_broad %>%
-  mutate(proportion = n/sum(impact_count_broad$n),
+  mutate(proportion = n/105,
          percentage = proportion*100)
 
 
