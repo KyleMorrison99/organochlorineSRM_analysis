@@ -412,7 +412,7 @@ figs5
 ```
 
 
-## figsx
+## Figure s6
 Box and violin plot showing the distribution of CEESAT scores for studies cited in policy documents and studies not cited in policy documents
 ```{r}
 figs6 <- sd_bib_alt %>%
@@ -561,12 +561,12 @@ fig3a <- database_count %>%
 
 fig3a
 
- ggsave(here("figures", "fig3a.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
- ggsave(here("figures", "fig3a.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "fig3a.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "fig3a.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 
 ```
 
-## Figure s6
+## Figure s7
 Alluvial plot showing the relationship between the Journal Citation Report Category and the scientific literature database used. Filtered for scientific literature database counts greater than or equal to 3. 
 ```{r, fig.width=16, fig.height=10}
 # Rename Environmental Science
@@ -584,7 +584,7 @@ database_alluvial <- sd %>%
     filter(database_search != "NA")
 
 # Create the Alluvial plot
-figs6 <- database_alluvial %>% 
+figs7 <- database_alluvial %>% 
 ggplot(aes(y = freq ,axis1 = Journal_Category_Allocated_Broad, axis2 = database_search)) +
   scale_x_discrete(limits = c("Journal Citation Report Category", "Database Search"), expand = c(.05, .05)) +
   xlab("Variables") +
@@ -595,10 +595,10 @@ ggplot(aes(y = freq ,axis1 = Journal_Category_Allocated_Broad, axis2 = database_
   labs(x= "Variables", y = "Frequency", fill = "Journal Category Allocated") +
   theme_suppl()
 
-figs6
+figs7
 
-# ggsave(here("figures", "figs6.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
-# ggsave(here("figures", "figs6.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "figs7.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "figs7.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 ```
 
 ## Figure 3b
@@ -640,7 +640,7 @@ fig3b
 
 ```
 
-## Figure s10 
+## Figure s8 
 Alluvial plot showing the relationship between the Journal Citation Report Category and the software used for analysis.
 ```{r, fig.width=16, fig.height=10}
 # Data Transformation 
@@ -656,7 +656,7 @@ software_analysis_alluvial <- sd %>%
     group_by(software_analysis)
 
 # Create the Alluvial plot for Software Analysis
-figs10 <- software_analysis_alluvial %>% 
+figs8 <- software_analysis_alluvial %>% 
 ggplot(aes(y = freq ,axis1 = Journal_Category_Allocated_Broad, axis2 = software_analysis)) +
   scale_x_discrete(limits = c("Journal Category", "Software Analysis"), expand = c(.05, .05)) +
   xlab("Variables") +
@@ -666,10 +666,10 @@ ggplot(aes(y = freq ,axis1 = Journal_Category_Allocated_Broad, axis2 = software_
   labs(x= "Variables", y = "Frequency", fill = "Journal Category Allocated") +
   theme_suppl()
 
-figs10
+figs8
 
-# ggsave(here("figures", "figs10.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
-# ggsave(here("figures", "figs10.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "figs8.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "figs8.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 
 ```
 
@@ -700,7 +700,8 @@ fig3c <-  effectsize_count %>%
   scale_fill_identity(guide = "none") +
   scale_x_continuous(name = "Article Count", expand = c(0, 0), limits = c(0, max(effectsize_count$n)*1.1)) +
   labs(y = NULL) +
-  theme_suppl()
+  theme_suppl() +
+  labs(tag = "C")
 
 fig3c
 
@@ -708,7 +709,7 @@ fig3c
 # ggsave(here("figures", "fig3c.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 ```
 
-## Figure s8
+## Figure s9
 Alluvial plot showing the relationship between the Journal Citation Report Category and the effect size used. Filtered for scientific literature database counts greater than or equal to 3.
 ```{r, fig.width=16, fig.height=10}
 # Data Transformation 
@@ -724,7 +725,7 @@ effectsize_alluvial <- sd %>%
 
 
 # Create the Alluvial plot
-figs8 <- effectsize_alluvial %>% 
+figs9 <- effectsize_alluvial %>% 
 ggplot(aes(y = freq ,axis1 = Journal_Category_Allocated_Broad, axis2 = effect_size)) +
   scale_x_discrete(limits = c("Journal Category", "Effect Size"), expand = c(.05, .05)) +
   xlab("Variables") +
@@ -735,80 +736,13 @@ ggplot(aes(y = freq ,axis1 = Journal_Category_Allocated_Broad, axis2 = effect_si
   labs(x= "Variables", y = "Frequency", fill = "Journal Category Allocated") +
   theme_suppl()
   
-figs8
+figs9
 
-# ggsave(here("figures", "figs8.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
-# ggsave(here("figures", "figs8.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "figs9.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "figs9.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 ```
 
 ## Figure 3d
-Bar plot showing the percentage and total count of heterogeneity assessment methods used in meta-analyses investigating the impacts of organochlorine pesticides. Note that some meta-analyses may contribute to multiple sections if the study involved multiple heterogeneity assessments. Percentage is showing the proportion of studies.
-```{r, fig.width=16, fig.height=10}
-# Calculate the total count for each category
-heterogeneity_count <- sd %>% 
-  separate_rows(heterogeneity_assessment_method, sep = ",\\s+") %>% 
-  count(heterogeneity_assessment_method) %>%
-    mutate(heterogeneity_assessment_method = ifelse(grepl("not reported", heterogeneity_assessment_method), "no heterogeneity\nmeasure reported", heterogeneity_assessment_method))  %>% 
-  filter(heterogeneity_assessment_method != "NA") %>%
-    group_by(heterogeneity_assessment_method) %>%
-  summarise(n = sum(n))
-
-# Calculate proportion and percentage for each category
-heterogeneity_pct <- heterogeneity_count %>%
-  mutate(proportion = n / 83,
-         percentage = proportion * 100)
-
-# Create the count plot
-fig3d <- heterogeneity_count %>%
-  ggplot(aes(x = n, y = reorder(heterogeneity_assessment_method, n), fill = "#1b9e77")) +
-  geom_bar(stat = "identity", width = 0.8 , alpha = 0.7) +
-  geom_text(aes(label = n, x = n / 2, y = reorder(heterogeneity_assessment_method, n)), hjust = 0.5, size = 6, color = "black") +
-  geom_text(data = heterogeneity_pct, aes(label = paste0("(", round(percentage, 1), "%)"), x = n), 
-            hjust = -0.1, size = 6, color = "black", fontface = "bold") +
-  scale_fill_identity(guide = "none") +
-  scale_x_continuous(name = "Article Count", expand = c(0, 0), limits = c(0, max(heterogeneity_count$n)*1.1)) +
-  labs(y = NULL) +
-  theme_suppl()
-
-fig3d
-
-# ggsave(here("figures", "fig3d.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
-# ggsave(here("figures", "fig3d.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
-
-```
- 
-## Figure s12 
-Alluvial plot showing the relationship between the Journal Citation Report Category and heterogeneity assessment method.
-```{r, fig.width=16, fig.height=10}
-# Data Transformation 
-heterogeneity_alluvial <- sd %>% 
-    separate_rows(heterogeneity_assessment_method, sep = ",\\s+") %>%
-    separate_rows(Journal_Category_Allocated_Broad, sep = "/\\s+") %>% 
-  mutate(heterogeneity_assessment_method = ifelse(grepl("not reported", heterogeneity_assessment_method), "no heterogeneity\nmeasure reported", heterogeneity_assessment_method))  %>% 
-    filter(!is.na(heterogeneity_assessment_method)) %>%
-    group_by(Journal_Category_Allocated_Broad, heterogeneity_assessment_method) %>% 
-    count(heterogeneity_assessment_method, Journal_Category_Allocated_Broad) %>% 
-    summarise(freq = n(), .groups = 'drop') %>% 
-    group_by(heterogeneity_assessment_method) 
-
-# Create the Alluvial plot
-figs12 <- heterogeneity_alluvial %>% 
-ggplot(aes(y = freq ,axis1 = Journal_Category_Allocated_Broad, axis2 = heterogeneity_assessment_method)) +
-  scale_x_discrete(limits = c("Journal Citation Report Category", "Heterogeneity"), expand = c(.05, .05)) +
-  xlab("Variables") +
-  geom_alluvium(aes(fill = Journal_Category_Allocated_Broad)) +
-  geom_stratum(width = 1/4.5, fill = "white", color = "black") +
-  geom_text(stat = "stratum", aes(label = after_stat(stratum)), size = 6) +
-  labs(x= "Variables", y = "Frequency", fill = "Journal Category Allocated") +
-  theme_suppl()
-
-figs12
-
-# ggsave(here("figures", "figs12.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
-# ggsave(here("figures", "figs12.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
-```
- 
-## Figure s23
 Bar plot showing the percentage and total count of visualization methods used in meta-analyses investigating the impacts of organochlorine pesticides. Note that some meta-analyses may contribute to multiple sections if the study involved the use of multiple visualization methods.
 ```{r, fig.width=16, fig.height=10}
 # Calculate the total count for each category
@@ -825,7 +759,7 @@ visualization_pct <- visualization_count %>%
          percentage = proportion * 100)
 
 # Create the count plot
-figs23 <- visualization_count %>%
+fig3d <- visualization_count %>%
   ggplot(aes(x = n, y = reorder(visualization_method, n), fill = "#1b9e77")) +
   geom_bar(stat = "identity", width = 0.8 , alpha = 0.7) +
   geom_text(aes(label = n, x = n / 2, y = reorder(visualization_method, n)), hjust = 0.5, size = 6, color = "black") +
@@ -834,15 +768,16 @@ figs23 <- visualization_count %>%
   scale_fill_identity(guide = "none") +
   scale_x_continuous(name = "Article Count", expand = c(0, 0), limits = c(0, max(visualization_count$n)*1.1)) +
   labs(y = NULL) +
-  theme_suppl()
+  theme_suppl() +
+  labs(tag = "D")
 
-figs23
+fig3d
 
-# ggsave(here("figures", "figs23.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
-# ggsave(here("figures", "figs23.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "fig3d.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "fig3d.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 ```
 
-## Figure s24
+## Figure s10
 Alluvial plot showing the relationship between the Journal Citation Report Category and visualization method. 
 ```{r, fig.width=16, fig.height=10}
 # Data Transformation 
@@ -873,7 +808,75 @@ figs24
 # ggsave(here("figures", "figs24.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 ```
 
-## Figure s13
+## Figure 3e
+Bar plot showing the percentage and total count of heterogeneity assessment methods used in meta-analyses investigating the impacts of organochlorine pesticides. Note that some meta-analyses may contribute to multiple sections if the study involved multiple heterogeneity assessments. Percentage is showing the proportion of studies.
+```{r, fig.width=16, fig.height=10}
+# Calculate the total count for each category
+heterogeneity_count <- sd %>% 
+  separate_rows(heterogeneity_assessment_method, sep = ",\\s+") %>% 
+  count(heterogeneity_assessment_method) %>%
+    mutate(heterogeneity_assessment_method = ifelse(grepl("not reported", heterogeneity_assessment_method), "no heterogeneity\nmeasure reported", heterogeneity_assessment_method))  %>% 
+  filter(heterogeneity_assessment_method != "NA") %>%
+    group_by(heterogeneity_assessment_method) %>%
+  summarise(n = sum(n))
+
+# Calculate proportion and percentage for each category
+heterogeneity_pct <- heterogeneity_count %>%
+  mutate(proportion = n / 83,
+         percentage = proportion * 100)
+
+# Create the count plot
+fig3e <- heterogeneity_count %>%
+  ggplot(aes(x = n, y = reorder(heterogeneity_assessment_method, n), fill = "#1b9e77")) +
+  geom_bar(stat = "identity", width = 0.8 , alpha = 0.7) +
+  geom_text(aes(label = n, x = n / 2, y = reorder(heterogeneity_assessment_method, n)), hjust = 0.5, size = 6, color = "black") +
+  geom_text(data = heterogeneity_pct, aes(label = paste0("(", round(percentage, 1), "%)"), x = n), 
+            hjust = -0.1, size = 6, color = "black", fontface = "bold") +
+  scale_fill_identity(guide = "none") +
+  scale_x_continuous(name = "Article Count", expand = c(0, 0), limits = c(0, max(heterogeneity_count$n)*1.1)) +
+  labs(y = NULL) +
+  theme_suppl() +
+  labs(tag = "E")
+
+fig3e
+
+# ggsave(here("figures", "fig3e.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "fig3e.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+
+```
+ 
+## Figure s11 
+Alluvial plot showing the relationship between the Journal Citation Report Category and heterogeneity assessment method.
+```{r, fig.width=16, fig.height=10}
+# Data Transformation 
+heterogeneity_alluvial <- sd %>% 
+    separate_rows(heterogeneity_assessment_method, sep = ",\\s+") %>%
+    separate_rows(Journal_Category_Allocated_Broad, sep = "/\\s+") %>% 
+  mutate(heterogeneity_assessment_method = ifelse(grepl("not reported", heterogeneity_assessment_method), "no heterogeneity\nmeasure reported", heterogeneity_assessment_method))  %>% 
+    filter(!is.na(heterogeneity_assessment_method)) %>%
+    group_by(Journal_Category_Allocated_Broad, heterogeneity_assessment_method) %>% 
+    count(heterogeneity_assessment_method, Journal_Category_Allocated_Broad) %>% 
+    summarise(freq = n(), .groups = 'drop') %>% 
+    group_by(heterogeneity_assessment_method) 
+
+# Create the Alluvial plot
+figs12 <- heterogeneity_alluvial %>% 
+ggplot(aes(y = freq ,axis1 = Journal_Category_Allocated_Broad, axis2 = heterogeneity_assessment_method)) +
+  scale_x_discrete(limits = c("Journal Citation Report Category", "Heterogeneity"), expand = c(.05, .05)) +
+  xlab("Variables") +
+  geom_alluvium(aes(fill = Journal_Category_Allocated_Broad)) +
+  geom_stratum(width = 1/4.5, fill = "white", color = "black") +
+  geom_text(stat = "stratum", aes(label = after_stat(stratum)), size = 6) +
+  labs(x= "Variables", y = "Frequency", fill = "Journal Category Allocated") +
+  theme_suppl()
+
+figs11
+
+# ggsave(here("figures", "figs11.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "figs11.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+```
+ 
+## Figure 3f
 Bar plot showing the percentage and total count of sensitivity analyses conducted in meta-analyses investigating the impacts of organochlorine pesticides. Note that some meta-analyses may contribute to multiple sections if the study involved multiple sensitivity analyses.
 ```{r, fig.width=16, fig.height=10}
 # Calculate the total count for each category
@@ -890,7 +893,7 @@ sensitivity_pct <- sensitivity_count %>%
          percentage = proportion * 100)
 
 # Create the count plot
-figs13 <- sensitivity_count %>%
+fig3f <- sensitivity_count %>%
   ggplot(aes(x = n, y = reorder(sensitivity_analysis_method, n), fill = "#1b9e77")) +
   geom_bar(stat = "identity", width = 0.8 , alpha = 0.7) +
   geom_text(aes(label = n, x = n / 2, y = reorder(sensitivity_analysis_method, n)), hjust = 0.5, size = 6, color = "black") +
@@ -899,16 +902,17 @@ figs13 <- sensitivity_count %>%
   scale_fill_identity(guide = "none") +
   scale_x_continuous(name = "Article Count", expand = c(0, 0), limits = c(0, max(sensitivity_count$n)*1.1)) +
   labs(y = NULL) +
- theme_suppl()
+ theme_suppl() +
+ labs(tag = "F")
 
-figs13
+fig3f
 
-# ggsave(here("figures", "figs13.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
-# ggsave(here("figures", "figs13.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "fig3f.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "fig3f.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 
 ```
 
-## Figure s14
+## Figure s12
 Alluvial plot showing the relationship between the Journal Citation Report Category and sensitivity analysis.
 ```{r, fig.width=16, fig.height=10}
 # Data Transformation 
@@ -932,14 +936,14 @@ ggplot(aes(y = freq ,axis1 = Journal_Category_Allocated_Broad, axis2 = sensitivi
   labs(x= "Variables", y = "Frequency", fill = "Journal Category Allocated") +
   theme_suppl()
 
-figs14
+figs12
 
-# ggsave(here("figures", "figs14.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
-# ggsave(here("figures", "figs14.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "figs12.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "figs12.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 
 ```
 
-## Figure s21 
+## Figure 3g 
 Bar plot showing the percentage and total count of risk of bias tests used in meta-analyses investigating the impacts of organochlorine pesticides. Note that some meta-analyses may contribute to multiple sections if the study involved the use of multiple risk of bias tests. 
 ```{r, fig.width=16, fig.height=10}
 # Calculate the total count for each category
@@ -956,7 +960,7 @@ rob_method_pct <- rob_method_count %>%
          percentage = proportion * 100)
 
 # Create the count plot
-figs21 <- rob_method_count %>%
+fig3g <- rob_method_count %>%
   ggplot(aes(x = n, y = reorder(rob_assessment_method, n), fill = "#1b9e77")) +
   geom_bar(stat = "identity", width = 0.8 , alpha = 0.7) +
   geom_text(aes(label = n, x = n / 2, y = reorder(rob_assessment_method, n)), hjust = 0.5, size = 6, color = "black") +
@@ -965,15 +969,16 @@ figs21 <- rob_method_count %>%
   scale_fill_identity(guide = "none") +
   scale_x_continuous(name = "Article Count", expand = c(0, 0), limits = c(0, max(rob_method_count$n)*1.1)) +
   labs(y = NULL) +
-  theme_suppl()
+  theme_suppl() +
+  labs(tag = "G")
 
-figs21
+fig3g
 
-# ggsave(here("figures", "figs21.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
-# ggsave(here("figures", "figs21.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "fig3g.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "fig3g.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 ```
 
-## Figure s22
+## Figure s13
 Alluvial plot showing the relationship between the Journal Citation Report Category and risk of bias methodology. 
 ```{r, fig.width=16, fig.height=10}
 # Data Transformation 
@@ -988,7 +993,7 @@ robmethod_alluvial <- sd %>%
 
 
 # Create the Alluvial plot
-figs22 <- robmethod_alluvial %>% 
+figs13 <- robmethod_alluvial %>% 
 ggplot(aes(y = freq ,axis1 = Journal_Category_Allocated_Broad, axis2 = rob_assessment_method)) +
   scale_x_discrete(limits = c("Journal Citation Report Category", "ROB Assessment Method"), expand = c(.05, .05)) +
   xlab("Variables") +
@@ -998,81 +1003,14 @@ ggplot(aes(y = freq ,axis1 = Journal_Category_Allocated_Broad, axis2 = rob_asses
   labs(x= "Variables", y = "Frequency", fill = "Journal Category Allocated") +
   theme_suppl()
 
-figs22
+figs13
 
-# ggsave(here("figures", "figs22.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
-# ggsave(here("figures", "figs22.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
-
-```
-
-
-
-## Figure s15 
-Bar plot showing the percentage and total count of bias types assessed in meta-analyses investigating the impacts of organochlorine pesticides. Note that some meta-analyses may contribute to multiple sections if the study involved the assessment of multiple bias types. 
-```{r, fig.width=16, fig.height=10}
-# Calculate the total count for each category
-bias_type_count <- sd %>% 
-  separate_rows(bias_assessment_type, sep = ",\\s+") %>% 
-  count(bias_assessment_type) %>%
-   filter(bias_assessment_type != "NA") %>%
-  group_by(bias_assessment_type) %>%
-  summarise(n = sum(n))
-
-# Calculate proportion and percentage for each category
-bias_type_pct <- bias_type_count %>%
-  mutate(proportion = n / sum(bias_type_count$n),
-         percentage = proportion * 100)
-
-# Create the count plot
-figs15 <- bias_type_count %>%
-  ggplot(aes(x = n, y = reorder(bias_assessment_type, n), fill = "#1b9e77")) +
-  geom_bar(stat = "identity", width = 0.8 , alpha = 0.7) +
-  geom_text(aes(label = n, x = n / 2, y = reorder(bias_assessment_type, n)), hjust = 0.5, size = 6, color = "black") +
-  geom_text(data = bias_type_pct, aes(label = paste0("(", round(percentage, 1), "%)"), x = n), 
-            hjust = -0.1, size = 6, color = "black", fontface = "bold") +
-  scale_fill_identity(guide = "none") +
-  scale_x_continuous(name = "Article Count", expand = c(0, 0), limits = c(0, max(bias_type_count$n)*1.1)) +
-  labs(y = NULL) +
-  theme_suppl()
-
-figs15
-
-# ggsave(here("figures", "figs15.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
-# ggsave(here("figures", "figs15.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "figs13.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "figs13.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 
 ```
 
-## Figure s16
-Alluvial plot showing the relationship between the Journal Citation Report Category and bias assessment method
-```{r, fig.width=16, fig.height=10}
-# Data Transformation 
-bias_assessment_alluvial <- sd %>% 
-    separate_rows(bias_assessment_type, sep = ",\\s+") %>%
-    separate_rows(Journal_Category_Allocated_Broad, sep = "/\\s+") %>% 
-    filter(!is.na(bias_assessment_type)) %>%
-    group_by(Journal_Category_Allocated_Broad, bias_assessment_type) %>% 
-    count(bias_assessment_type, Journal_Category_Allocated_Broad) %>% 
-    summarise(freq = n(), .groups = 'drop') %>% 
-    group_by(bias_assessment_type)
-
-# Create the Alluvial plot
-figs16 <- bias_assessment_alluvial %>% 
-ggplot(aes(y = freq ,axis1 = Journal_Category_Allocated_Broad, axis2 = bias_assessment_type)) +
-  scale_x_discrete(limits = c("Journal Citation Report Category", "Bias Assessment Type"), expand = c(.05, .05)) +
-  xlab("Variables") +
-  geom_alluvium(aes(fill = Journal_Category_Allocated_Broad)) +
-  geom_stratum(width = 1/4, fill = "white", color = "black") +
-  geom_text(stat = "stratum", aes(label = after_stat(stratum)), size = 6) +
-  labs(x= "Variables", y = "Frequency", fill = "Journal Category Allocated") +
-  theme_suppl()
-
-figs16
-
-# ggsave(here("figures", "figs16.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
-# ggsave(here("figures", "figs16.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
-```
-
-## Figure s17 
+## Figure 3h 
 Bar plot showing the percentage and total count of bias methodologies used in meta-analyses investigating the impacts of organochlorine pesticides. Note that some meta-analyses may contribute to multiple sections if the study involved the use of multiple bias assessment methodologies. 
 ```{r, fig.width=16, fig.height=10}
 # Calculate the total count for each category
@@ -1089,7 +1027,7 @@ bias_method_pct <- bias_method_count %>%
          percentage = proportion * 100)
 
 # Create the count plot
-figs17 <- bias_method_count %>%
+fig3h <- bias_method_count %>%
   ggplot(aes(x = n, y = reorder(bias_assessment_method, n), fill = "#1b9e77")) +
   geom_bar(stat = "identity", width = 0.8 , alpha = 0.7) +
   geom_text(aes(label = n, x = n / 2, y = reorder(bias_assessment_method, n)), hjust = 0.5, size = 6, color = "black") +
@@ -1098,16 +1036,17 @@ figs17 <- bias_method_count %>%
   scale_fill_identity(guide = "none") +
   scale_x_continuous(name = "Article Count", expand = c(0, 0), limits = c(0, max(bias_method_count$n)*1.1)) +
   labs(y = NULL) +
-  theme_suppl()
+  theme_suppl() +
+  labs(tag = "H")
 
-figs17
+fig3h
 
-# ggsave(here("figures", "figs17.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
-# ggsave(here("figures", "figs17.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "fig3h.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "fig3h.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 ```
 
 
-## Figure s18
+## Figure s14
 Alluvial plot showing the relationship between the Journal Citation Report Category and bias assessment method.
 ```{r, fig.width=16, fig.height=10}
 # Data Transformation 
@@ -1121,7 +1060,7 @@ bias_assessment_alluvial <- sd %>%
     group_by(bias_assessment_method)
 
 # Create the Alluvial plot
-figs18 <- bias_assessment_alluvial %>% 
+figs14 <- bias_assessment_alluvial %>% 
   ggplot(aes(y = freq ,axis1 = Journal_Category_Allocated_Broad, axis2 = bias_assessment_method)) +
   scale_x_discrete(limits = c("Journal Citation Report Category", "Bias Assessment Method"), expand = c(.05, .05)) +
   xlab("Variables") +
@@ -1131,14 +1070,14 @@ figs18 <- bias_assessment_alluvial %>%
   labs(x= "Variables", y = "Frequency", fill = "Journal Category Allocated") +
   theme_suppl()
 
-figs18
+figs14
 
-# ggsave(here("figures", "figs18.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
-# ggsave(here("figures", "figs18.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "figs14.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "figs14.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 
 ```
 
-## Figure s19
+## Figure 3i
 Bar plot showing the percentage and total count of bias visualizations used in meta-analyses investigating the impacts of organochlorine pesticides. Note that some meta-analyses may contribute to multiple sections if the study involved the use of multiple bias visualizations. 
 ```{r, fig.width=16, fig.height=10}
 # Calculate the total count for each category
@@ -1155,7 +1094,7 @@ bias_visualization_pct <- bias_visualization_count %>%
          percentage = proportion * 100)
 
 # Create the count plot
-figs19 <- bias_visualization_count %>%
+fig3i <- bias_visualization_count %>%
   ggplot(aes(x = n, y = reorder(bias_assessment_visualization, n), fill = "#1b9e77")) +
   geom_bar(stat = "identity", width = 0.8 , alpha = 0.7) +
   geom_text(aes(label = n, x = n / 2, y = reorder(bias_assessment_visualization, n)), hjust = 0.5, size = 6, color = "black") +
@@ -1164,15 +1103,16 @@ figs19 <- bias_visualization_count %>%
   scale_fill_identity(guide = "none") +
   scale_x_continuous(name = "Article Count", expand = c(0, 0), limits = c(0, max(bias_visualization_count$n)*1.1)) +
   labs(y = NULL) +
- theme_suppl()
+  theme_suppl() +
+  labs(tag = "I")
 
-figs19
+fig3i
 
-# ggsave(here("figures", "figs19.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
-# ggsave(here("figures", "figs19.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "fig3i.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "fig3i.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 ```
 
-## Figure s20
+## Figure s15
 Alluvial plot showing the relationship between the Journal Citation Report Category and bias visualization method.
 ```{r, fig.width=16, fig.height=10}
 # Data Transformation 
@@ -1186,7 +1126,7 @@ bias_vizualisation_alluvial <- sd %>%
     group_by(bias_assessment_visualization)
 
 # Create the Alluvial plot
-figs20 <- bias_vizualisation_alluvial %>% 
+figs15 <- bias_vizualisation_alluvial %>% 
   ggplot(aes(y = freq ,axis1 = Journal_Category_Allocated_Broad, axis2 = bias_assessment_visualization)) +
   scale_x_discrete(limits = c("Journal Citation Report Category", "Bias Assessment Method"), expand = c(.05, .05)) +
   xlab("Variables") +
@@ -1196,15 +1136,15 @@ figs20 <- bias_vizualisation_alluvial %>%
   labs(x= "Variables", y = "Frequency", fill = "Journal Category Allocated") +
   theme_suppl()
 
-figs20
+figs15
 
-# ggsave(here("figures", "figs20.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
-# ggsave(here("figures", "figs20.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "figs15.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "figs15.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 
 ```
 
 
-## Figure s25
+## Figure 3j
 Bar plot showing the percentage and total count of reporting guidelines used in meta-analyses investigating the impacts of organochlorine pesticides. Note that some meta-analyses may contribute to multiple sections if the study involved the use of multiple reporting guidelines.
 ```{r, fig.width=16, fig.height=10}
 # Calculate the total count for each category
@@ -1221,7 +1161,7 @@ reporting_guide_pct <- reporting_guide_count %>%
          percentage = proportion * 100)
 
 # Create the count plot
-figs25 <- reporting_guide_count %>%
+fig3j <- reporting_guide_count %>%
   ggplot(aes(x = n, y = reorder(reporting_standards_type, n), fill = "#1b9e77")) +
   geom_bar(stat = "identity", width = 0.8 , alpha = 0.7) +
   geom_text(aes(label = n, x = n / 2, y = reorder(reporting_standards_type, n)), hjust = 0.5, size = 6, color = "black") +
@@ -1230,15 +1170,16 @@ figs25 <- reporting_guide_count %>%
   scale_fill_identity(guide = "none") +
   scale_x_continuous(name = "Article Count", expand = c(0, 0), limits = c(0, max(reporting_guide_count$n)*1.1)) +
   labs(y = NULL) +
-  theme_suppl()
+  theme_suppl() +
+  labs(tag = "J")
 
-figs25
+fig3j
 
-#  ggsave(here("figures", "figs25.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
-# ggsave(here("figures", "figs25.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "fig3j.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "fig3j.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 ```
 
-## Figure s26
+## Figure s16
 An alluvial plot showing the relationship between the Journal Citation Report Category and reporting guideline used 
 ```{r, fig.width=16, fig.height=10}
 # Data Transformation 
@@ -1253,7 +1194,7 @@ reporting_standards_alluvial <- sd %>%
     group_by(reporting_standards_type)
 
 # Create the Alluvial plot
-figs26 <- reporting_standards_alluvial %>% 
+figs16 <- reporting_standards_alluvial %>% 
 ggplot( aes(y = freq ,axis1 = Journal_Category_Allocated_Broad, axis2 = reporting_standards_type)) +
   scale_x_discrete(limits = c("Journal Citation Report Category", "Reporting Standards Type"), expand = c(.05, .05)) +
   xlab("Variables") +
@@ -1263,15 +1204,15 @@ ggplot( aes(y = freq ,axis1 = Journal_Category_Allocated_Broad, axis2 = reportin
   geom_text(stat = "stratum", aes(label = after_stat(stratum)), size = 6) +
   theme_suppl()
 
-figs26
+figs16
 
-# ggsave(here("figures", "figs26.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
-# ggsave(here("figures", "figs26.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "figs16.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "figs16.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 ```
 
 
-## Figure 2
-A circular treemap showing the counts of each methodological item in exisitng meta-analysis investigating the impacts of organochlorine pesticides
+## Figure 3k
+A circular treemap showing the counts of each methodological item in existing meta-analysis investigating the impacts of organochlorine pesticides
 ```{r, fig.width=21, fig.height=15}
 # Grouping "Medline" and "Pubmed" under "PubMed" and summing the counts
 database_count <- database_count %>%
@@ -1393,17 +1334,18 @@ mygraph <- graph_from_data_frame(edges, vertices = vertices)
 
 # Plotting the graph using a 'circlepack' layout, adding labels and adjusting aesthetics
 
-fig2 <- ggraph(mygraph, layout = 'circlepack', weight = size) + 
+fig3k <- ggraph(mygraph, layout = 'circlepack', weight = size) + 
     geom_node_circle(aes(fill = as.factor(depth)), color = NA) +
     scale_fill_manual(values = c("#1b9e77", "#88D1AD")) + 
     geom_node_text(aes(label = name, filter = leaf, size = 10), vjust = -0.3, fontface = "bold") +
     geom_node_text(aes(label = paste0("(", size, ")"), filter = leaf, size = 10), vjust = 1, fontface = "bold") +
     theme_void() +
-    theme(legend.position = "none") 
+    theme(legend.position = "none") +
+    labs(tag = "K")
 
-fig2
-# ggsave(here("figures", "fig2.pdf"), width = 18, height = 15, units = "cm", scale = 2, dpi = 800)
-# ggsave(here("figures", "fig2.jpg"), width = 18, height = 15, units = "cm", scale = 2, dpi = 800)
+fig3k
+# ggsave(here("figures", "fig3k.pdf"), width = 18, height = 15, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "fig3k.jpg"), width = 18, height = 15, units = "cm", scale = 2, dpi = 800)
 
 ```
 
