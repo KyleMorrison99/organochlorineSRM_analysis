@@ -532,14 +532,15 @@ database_pct <- database_count %>%
 theme_suppl <- function() {
   theme_minimal() +
   theme(
-    axis.text.y = element_text(size = 15),
-    axis.text.x = element_text(size = 15),
-    axis.line.x = element_line(color = "gray", size = 0.5),
+    title = element_text(size = 30),
+    axis.text.y = element_text(size = 30),
+    axis.text.x = element_text(size = 20),
+    axis.line.x = element_line(color = "gray", size = 3),
     axis.line.y = element_blank(),
     axis.ticks.x = element_blank(),
     axis.ticks.y = element_blank(),
-    axis.title.x = element_text(size = 20),
-    axis.title.y = element_text(size = 20),
+    axis.title.x = element_blank(),
+    axis.title.y = element_blank(),
     panel.grid.major.y = element_blank(),
     panel.grid.minor.y = element_blank(),
     legend.position = "none"
@@ -550,14 +551,13 @@ theme_suppl <- function() {
 fig3a <- database_count %>%
   ggplot(aes(x = n, y = reorder(database_search, n), fill = "#1b9e77")) +
   geom_bar(stat = "identity", width = 0.8 , alpha = 0.7) +
-  geom_text(aes(label = n, x = n / 2, y = reorder(database_search, n)), hjust = 0.5, size = 6, color = "black") +
+  geom_text(aes(label = n, x = n / 2, y = reorder(database_search, n)), hjust = 0.5, size = 12, color = "black") +
   geom_text(data = database_pct, aes(label = paste0("(", round(percentage, 1), "%)"), x = n), 
-            hjust = -0.1, size = 6, color = "black", fontface = "bold") +
+            hjust = -0.1, size = 12, color = "black", fontface = "bold") +
   scale_fill_identity(guide = "none") +
-  scale_x_continuous(name = "Article Count", expand = c(0, 0), limits = c(0, max(database_count$n)*1.1)) +
-  labs(y = NULL) +
-  theme_suppl() +
-  labs(tag = "A")
+  scale_x_continuous(expand = c(0, 0), limits = c(0, max(database_count$n)*1.3)) +
+  labs(title = "Database Search Count", x = NULL, y = NULL, tag = "A", size = 30) +
+  theme_suppl() 
 
 fig3a
 
@@ -608,11 +608,13 @@ Bar plot showing the percentage and total count of software for analysis used in
 software_count <- sd %>%
   separate_rows(software_analysis, sep = ",\\s+") %>%
   mutate(software_analysis = ifelse(grepl("comprehensive meta-analysis", software_analysis), "CMAS", software_analysis)) %>%
-  mutate(software_analysis = ifelse(grepl("not reported", software_analysis), "no software reported", software_analysis))  %>% 
   count(software_analysis) %>%
   filter(software_analysis != "NA") %>%
+  arrange(desc(n)) %>%
+  mutate(software_analysis = ifelse(n < 2, "Other Software", as.character(software_analysis))) %>%
   group_by(software_analysis) %>%
   summarise(n = sum(n))
+
 
 
 # Calculate proportion and percentage for each category
@@ -624,14 +626,13 @@ software_pct <- software_count %>%
 fig3b <- software_count %>%
   ggplot(aes(x = n, y = reorder(software_analysis, n), fill = "#1b9e77")) +
   geom_bar(stat = "identity", width = 0.8 , alpha = 0.7) +
-  geom_text(aes(label = n, x = n / 2, y = reorder(software_analysis, n)), hjust = 0.5, size = 6, color = "black") +
+  geom_text(aes(label = n, x = n / 2, y = reorder(software_analysis, n)), hjust = 0.5, size = 12, color = "black") +
   geom_text(data = software_pct, aes(label = paste0("(", round(percentage, 1), "%)"), x = n), 
-            hjust = -0.1, size = 6, color = "black", fontface = "bold") +
+            hjust = -0.1, size = 12, color = "black", fontface = "bold") +
   scale_fill_identity(guide = "none") +
-  scale_x_continuous(name = "Article Count", expand = c(0, 0), limits = c(0, max(software_count$n)*1.1)) +
-  labs(y = NULL) +
-  theme_suppl() +
-  labs(tag = "B")
+  scale_x_continuous(expand = c(0, 0), limits = c(0, max(software_count$n)*1.3)) +
+  labs(title = "Analysis Software Count", x = NULL, y = NULL, tag = "B", size = 30) +
+  theme_suppl() 
 
 fig3b
 
@@ -681,7 +682,7 @@ effectsize_count <- sd %>%
   separate_rows(effect_size, sep = ",\\s+") %>% 
   count(effect_size) %>%
   filter(effect_size != "NA") %>%
-  mutate(effect_size = ifelse(n<= 2, "other effect sizes", as.character(effect_size))) %>% 
+  mutate(effect_size = ifelse(n<= 2, "Other effect size", as.character(effect_size))) %>% 
   group_by(effect_size) %>%
   summarise(n = sum(n))
 
@@ -694,14 +695,13 @@ effectsize_pct <- effectsize_count %>%
 fig3c <-  effectsize_count %>%
   ggplot(aes(x = n, y = reorder(effect_size, n), fill = "#1b9e77")) +
   geom_bar(stat = "identity", width = 0.8 , alpha = 0.7) +
-  geom_text(aes(label = n, x = n / 2, y = reorder(effect_size, n)), hjust = 0.5, size = 6, color = "black") +
+  geom_text(aes(label = n, x = n / 2, y = reorder(effect_size, n)), hjust = 0.5, size = 12, color = "black") +
   geom_text(data = effectsize_pct, aes(label = paste0("(", round(percentage, 1), "%)"), x = n), 
-            hjust = -0.1, size = 6, color = "black", fontface = "bold") +
+            hjust = -0.1, size = 12, color = "black", fontface = "bold") +
   scale_fill_identity(guide = "none") +
-  scale_x_continuous(name = "Article Count", expand = c(0, 0), limits = c(0, max(effectsize_count$n)*1.1)) +
-  labs(y = NULL) +
-  theme_suppl() +
-  labs(tag = "C")
+  scale_x_continuous(expand = c(0, 0), limits = c(0, max(effectsize_count$n)*1.3)) +
+  labs(title = "Effect Size Count", x = NULL, y = NULL, tag = "C", size = 30) +
+  theme_suppl()
 
 fig3c
 
@@ -762,14 +762,13 @@ visualization_pct <- visualization_count %>%
 fig3d <- visualization_count %>%
   ggplot(aes(x = n, y = reorder(visualization_method, n), fill = "#1b9e77")) +
   geom_bar(stat = "identity", width = 0.8 , alpha = 0.7) +
-  geom_text(aes(label = n, x = n / 2, y = reorder(visualization_method, n)), hjust = 0.5, size = 6, color = "black") +
+  geom_text(aes(label = n, x = n / 2, y = reorder(visualization_method, n)), hjust = 0.5, size = 12, color = "black") +
   geom_text(data = visualization_pct, aes(label = paste0("(", round(percentage, 0), "%)"), x = n), 
-            hjust = -0.1, size = 6, color = "black", fontface = "bold") +
+            hjust = -0.1, size = 12, color = "black", fontface = "bold") +
   scale_fill_identity(guide = "none") +
-  scale_x_continuous(name = "Article Count", expand = c(0, 0), limits = c(0, max(visualization_count$n)*1.1)) +
-  labs(y = NULL) +
-  theme_suppl() +
-  labs(tag = "D")
+  scale_x_continuous(expand = c(0, 0), limits = c(0, max(visualization_count$n)*1.3)) +
+  labs(title = "Visualization Count", x = NULL, y = NULL, tag = "D", size = 30) +
+  theme_suppl()
 
 fig3d
 
@@ -829,14 +828,13 @@ heterogeneity_pct <- heterogeneity_count %>%
 fig3e <- heterogeneity_count %>%
   ggplot(aes(x = n, y = reorder(heterogeneity_assessment_method, n), fill = "#1b9e77")) +
   geom_bar(stat = "identity", width = 0.8 , alpha = 0.7) +
-  geom_text(aes(label = n, x = n / 2, y = reorder(heterogeneity_assessment_method, n)), hjust = 0.5, size = 6, color = "black") +
+  geom_text(aes(label = n, x = n / 2, y = reorder(heterogeneity_assessment_method, n)), hjust = 0.5, size = 12, color = "black") +
   geom_text(data = heterogeneity_pct, aes(label = paste0("(", round(percentage, 1), "%)"), x = n), 
-            hjust = -0.1, size = 6, color = "black", fontface = "bold") +
+            hjust = -0.1, size = 12, color = "black", fontface = "bold") +
   scale_fill_identity(guide = "none") +
-  scale_x_continuous(name = "Article Count", expand = c(0, 0), limits = c(0, max(heterogeneity_count$n)*1.1)) +
-  labs(y = NULL) +
-  theme_suppl() +
-  labs(tag = "E")
+  scale_x_continuous(expand = c(0, 0), limits = c(0, max(heterogeneity_count$n)*1.3)) +
+  labs(title = "Heterogeneity Count", x = NULL, y = NULL, tag = "E", size = 30) +
+  theme_suppl()
 
 fig3e
 
@@ -860,7 +858,7 @@ heterogeneity_alluvial <- sd %>%
     group_by(heterogeneity_assessment_method) 
 
 # Create the Alluvial plot
-figs12 <- heterogeneity_alluvial %>% 
+figs11 <- heterogeneity_alluvial %>% 
 ggplot(aes(y = freq ,axis1 = Journal_Category_Allocated_Broad, axis2 = heterogeneity_assessment_method)) +
   scale_x_discrete(limits = c("Journal Citation Report Category", "Heterogeneity"), expand = c(.05, .05)) +
   xlab("Variables") +
@@ -896,14 +894,13 @@ sensitivity_pct <- sensitivity_count %>%
 fig3f <- sensitivity_count %>%
   ggplot(aes(x = n, y = reorder(sensitivity_analysis_method, n), fill = "#1b9e77")) +
   geom_bar(stat = "identity", width = 0.8 , alpha = 0.7) +
-  geom_text(aes(label = n, x = n / 2, y = reorder(sensitivity_analysis_method, n)), hjust = 0.5, size = 6, color = "black") +
+  geom_text(aes(label = n, x = n / 2, y = reorder(sensitivity_analysis_method, n)), hjust = 0.5, size = 12, color = "black") +
   geom_text(data = sensitivity_pct, aes(label = paste0("(", round(percentage, 1), "%)"), x = n), 
-            hjust = -0.1, size = 6, color = "black", fontface = "bold") +
+            hjust = -0.1, size = 12, color = "black", fontface = "bold") +
   scale_fill_identity(guide = "none") +
-  scale_x_continuous(name = "Article Count", expand = c(0, 0), limits = c(0, max(sensitivity_count$n)*1.1)) +
-  labs(y = NULL) +
- theme_suppl() +
- labs(tag = "F")
+  scale_x_continuous(expand = c(0, 0), limits = c(0, max(visualization_count$n)*1.3)) +
+  labs(title = "Sensitivity Analysis Count", x = NULL, y = NULL, tag = "F", size = 30) +
+  theme_suppl()
 
 fig3f
 
@@ -926,7 +923,7 @@ sensitivity_analysis_alluvial <- sd %>%
     group_by(sensitivity_analysis_method)
 
 # Create the Alluvial plot
-figs14 <- sensitivity_analysis_alluvial %>% 
+figs12 <- sensitivity_analysis_alluvial %>% 
 ggplot(aes(y = freq ,axis1 = Journal_Category_Allocated_Broad, axis2 = sensitivity_analysis_method)) +
   scale_x_discrete(limits = c("Journal Citation Report Category", "Sensitivity Analysis Method"), expand = c(.05, .05)) +
   xlab("Variables") +
@@ -951,6 +948,8 @@ rob_method_count <- sd %>%
   separate_rows(rob_assessment_method, sep = ",\\s+") %>% 
   count(rob_assessment_method) %>%
   filter(rob_assessment_method != "NA") %>%
+  mutate(rob_assessment_method = ifelse(n<= 2, "Other ROB tool", as.character(rob_assessment_method))) %>% 
+  mutate(rob_assessment_method = ifelse(grepl("Newcastle Ottawa scale", rob_assessment_method), "Newcastle Ottawa\nscale", rob_assessment_method)) %>%
   group_by(rob_assessment_method) %>%
   summarise(n = sum(n))
 
@@ -963,15 +962,13 @@ rob_method_pct <- rob_method_count %>%
 fig3g <- rob_method_count %>%
   ggplot(aes(x = n, y = reorder(rob_assessment_method, n), fill = "#1b9e77")) +
   geom_bar(stat = "identity", width = 0.8 , alpha = 0.7) +
-  geom_text(aes(label = n, x = n / 2, y = reorder(rob_assessment_method, n)), hjust = 0.5, size = 6, color = "black") +
+  geom_text(aes(label = n, x = n / 2, y = reorder(rob_assessment_method, n)), hjust = 0.5, size = 12, color = "black") +
   geom_text(data = rob_method_pct, aes(label = paste0("(", round(percentage, 0), "%)"), x = n), 
-            hjust = -0.1, size = 6, color = "black", fontface = "bold") +
+            hjust = -0.1, size = 12, color = "black", fontface = "bold") +
   scale_fill_identity(guide = "none") +
-  scale_x_continuous(name = "Article Count", expand = c(0, 0), limits = c(0, max(rob_method_count$n)*1.1)) +
-  labs(y = NULL) +
-  theme_suppl() +
-  labs(tag = "G")
-
+  scale_x_continuous(expand = c(0, 0), limits = c(0, max(rob_method_count$n)*1.3)) +
+  labs(title = "Risk of Bias Count", x = NULL, y = NULL, tag = "G", size = 30) +
+  theme_suppl() 
 fig3g
 
 # ggsave(here("figures", "fig3g.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
@@ -1030,14 +1027,13 @@ bias_method_pct <- bias_method_count %>%
 fig3h <- bias_method_count %>%
   ggplot(aes(x = n, y = reorder(bias_assessment_method, n), fill = "#1b9e77")) +
   geom_bar(stat = "identity", width = 0.8 , alpha = 0.7) +
-  geom_text(aes(label = n, x = n / 2, y = reorder(bias_assessment_method, n)), hjust = 0.5, size = 6, color = "black") +
+  geom_text(aes(label = n, x = n / 2, y = reorder(bias_assessment_method, n)), hjust = 0.5, size = 12, color = "black") +
   geom_text(data = bias_method_pct, aes(label = paste0("(", round(percentage, 1), "%)"), x = n), 
-            hjust = -0.1, size = 6, color = "black", fontface = "bold") +
+            hjust = -0.1, size = 12, color = "black", fontface = "bold") +
   scale_fill_identity(guide = "none") +
-  scale_x_continuous(name = "Article Count", expand = c(0, 0), limits = c(0, max(bias_method_count$n)*1.1)) +
-  labs(y = NULL) +
-  theme_suppl() +
-  labs(tag = "H")
+  scale_x_continuous(expand = c(0, 0), limits = c(0, max(bias_method_count$n)*1.3)) +
+  labs(title = "Publication Bias Count", x = NULL, y = NULL, tag = "H", size = 30) +
+  theme_suppl()
 
 fig3h
 
@@ -1097,14 +1093,13 @@ bias_visualization_pct <- bias_visualization_count %>%
 fig3i <- bias_visualization_count %>%
   ggplot(aes(x = n, y = reorder(bias_assessment_visualization, n), fill = "#1b9e77")) +
   geom_bar(stat = "identity", width = 0.8 , alpha = 0.7) +
-  geom_text(aes(label = n, x = n / 2, y = reorder(bias_assessment_visualization, n)), hjust = 0.5, size = 6, color = "black") +
+  geom_text(aes(label = n, x = n / 2, y = reorder(bias_assessment_visualization, n)), hjust = 0.5, size = 12, color = "black") +
   geom_text(data = bias_visualization_pct, aes(label = paste0("(", round(percentage, 1), "%)"), x = n), 
-            hjust = -0.1, size = 6, color = "black", fontface = "bold") +
+            hjust = -0.1, size = 12, color = "black", fontface = "bold") +
   scale_fill_identity(guide = "none") +
-  scale_x_continuous(name = "Article Count", expand = c(0, 0), limits = c(0, max(bias_visualization_count$n)*1.1)) +
-  labs(y = NULL) +
-  theme_suppl() +
-  labs(tag = "I")
+  scale_x_continuous(expand = c(0, 0), limits = c(0, max(bias_visualization_count$n)*1.3)) +
+  labs(title = "Bias vizualisation Count", x = NULL, y = NULL, tag = "I", size = 30) +
+  theme_suppl()
 
 fig3i
 
@@ -1152,7 +1147,8 @@ reporting_guide_count <- sd %>%
   separate_rows(reporting_standards_type, sep = ",\\s+") %>% 
   count(reporting_standards_type) %>%
   filter(reporting_standards_type != "NA") %>%
-    group_by(reporting_standards_type) %>%
+  mutate(reporting_standards_type = ifelse(n < 3, "Other Guidelines", as.character(reporting_standards_type))) %>%
+  group_by(reporting_standards_type) %>%
   summarise(n = sum(n))
 
 # Calculate proportion and percentage for each category
@@ -1164,14 +1160,13 @@ reporting_guide_pct <- reporting_guide_count %>%
 fig3j <- reporting_guide_count %>%
   ggplot(aes(x = n, y = reorder(reporting_standards_type, n), fill = "#1b9e77")) +
   geom_bar(stat = "identity", width = 0.8 , alpha = 0.7) +
-  geom_text(aes(label = n, x = n / 2, y = reorder(reporting_standards_type, n)), hjust = 0.5, size = 6, color = "black") +
+  geom_text(aes(label = n, x = n / 2, y = reorder(reporting_standards_type, n)), hjust = 0.5, size = 12, color = "black") +
   geom_text(data = reporting_guide_pct, aes(label = paste0("(", round(percentage, 0), "%)"), x = n), 
-            hjust = -0.1, size = 6, color = "black", fontface = "bold") +
+            hjust = -0.1, size = 12, color = "black", fontface = "bold") +
   scale_fill_identity(guide = "none") +
-  scale_x_continuous(name = "Article Count", expand = c(0, 0), limits = c(0, max(reporting_guide_count$n)*1.1)) +
-  labs(y = NULL) +
-  theme_suppl() +
-  labs(tag = "J")
+ scale_x_continuous(expand = c(0, 0), limits = c(0, max(bias_visualization_count$n)*1.3)) +
+  labs(title = "Reporting Guideline Count", x = NULL, y = NULL, tag = "J", size = 30) +
+  theme_suppl()
 
 fig3j
 
@@ -1210,6 +1205,17 @@ figs16
 # ggsave(here("figures", "figs16.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 ```
 
+## Figure 3
+```{r}
+fig3 <- fig3a + fig3b + fig3c + fig3d + fig3e + 
+        fig3f + fig3g + fig3h + fig3i + fig3j +
+        plot_layout(ncol = 2, nrow = 5)
+fig3
+
+ ggsave(here("figures", "fig3.pdf"), width = 36 , height = 50 , units = "cm", scale = 1, dpi = 400)
+ ggsave(here("figures", "fig3.jpg"), width = 36 , height = 50, units = "cm", scale = 2, dpi = 400)
+
+```
 
 ## Figure 3k
 A circular treemap showing the counts of each methodological item in existing meta-analysis investigating the impacts of organochlorine pesticides
@@ -1229,7 +1235,7 @@ effectsize_count <- sd %>%
   summarise(n = sum(n))
 
 effectsize_count <- effectsize_count %>% 
-  mutate(effect_size = if_else(effect_size %in% c("Beta regression coefficient", "correlation coefficient"), "Correlation", effect_size)) %>% 
+  mutate(effect_size = if_else(effect_size %in% c("Beta regression ", "correlation coefficient"), "Correlation", effect_size)) %>% 
   mutate(effect_size = if_else(effect_size %in% c("odds ratio", "response ratio", "SMD (standardized mean difference)", "lnPR (log partitioning ratio)", "lnOR (log odds ratio)", "ratio of means", "InRR (log response ratio)"), "Mean diff", effect_size)) %>% 
   mutate(effect_size = if_else(effect_size %in% c("risk ratio"), "2x2", effect_size)) %>% 
   mutate(effect_size = if_else(effect_size %in% c("raw weight", "transfer rate", "geometric mean", "maternal transfer ratio", "standardized mortality rate", "Transfer rate", "z-score", "lnCVR (log coefficient variation ratio)"), "Other ES", effect_size)) %>% 
