@@ -1,0 +1,65 @@
+"question","score","n","percent"
+"1.1 Are the elements of the review question clear?","Amber",70,5.2710843373494
+"1.1 Are the elements of the review question clear?","Gold",4,0.301204819277108
+"1.1 Are the elements of the review question clear?","Green",7,0.52710843373494
+"1.1 Are the elements of the review question clear?","Red",2,0.150602409638554
+"2.1 Is there an a-priori method protocol document?","Amber",1,0.0753012048192771
+"2.1 Is there an a-priori method protocol document?","Gold",12,0.903614457831325
+"2.1 Is there an a-priori method protocol document?","Red",70,5.2710843373494
+"3.1. Is the approach to searching clearly defined systematic and
+transparent?","Amber",49,3.68975903614458
+"3.1. Is the approach to searching clearly defined systematic and
+transparent?","Green",26,1.9578313253012
+"3.1. Is the approach to searching clearly defined systematic and
+transparent?","Red",8,0.602409638554217
+"3.2. Is the search comprehensive?","Amber",76,5.72289156626506
+"3.2. Is the search comprehensive?","Green",4,0.301204819277108
+"3.2. Is the search comprehensive?","Red",3,0.225903614457831
+"4.1. Are eligibility criteria clearly defined?","Amber",61,4.5933734939759
+"4.1. Are eligibility criteria clearly defined?","Gold",4,0.301204819277108
+"4.1. Are eligibility criteria clearly defined?","Green",9,0.677710843373494
+"4.1. Are eligibility criteria clearly defined?","Red",9,0.677710843373494
+"4.2. Are eligibility criteria consistently applied to all potentially relevant
+articles and studies found during the search?","Amber",2,0.150602409638554
+"4.2. Are eligibility criteria consistently applied to all potentially relevant
+articles and studies found during the search?","Red",81,6.09939759036145
+"4.3. Are eligibility decisions transparently reported?","Amber",57,4.29216867469879
+"4.3. Are eligibility decisions transparently reported?","Gold",3,0.225903614457831
+"4.3. Are eligibility decisions transparently reported?","Red",23,1.73192771084337
+"5.1. Does the review critically appraise each study?","Amber",3,0.225903614457831
+"5.1. Does the review critically appraise each study?","Gold",7,0.52710843373494
+"5.1. Does the review critically appraise each study?","Green",30,2.25903614457831
+"5.1. Does the review critically appraise each study?","Red",43,3.23795180722892
+"5.2. During critical appraisal was an effort made to minimise
+subjectivity?","Amber",12,0.903614457831325
+"5.2. During critical appraisal was an effort made to minimise
+subjectivity?","Gold",10,0.753012048192771
+"5.2. During critical appraisal was an effort made to minimise
+subjectivity?","Green",2,0.150602409638554
+"5.2. During critical appraisal was an effort made to minimise
+subjectivity?","Red",59,4.44277108433735
+"6.1. Is the method of data extraction fully documented?","Amber",54,4.06626506024096
+"6.1. Is the method of data extraction fully documented?","Gold",1,0.0753012048192771
+"6.1. Is the method of data extraction fully documented?","Green",5,0.376506024096386
+"6.1. Is the method of data extraction fully documented?","Red",23,1.73192771084337
+"6.2. Are the extracted data reported for each study?","Amber",58,4.36746987951807
+"6.2. Are the extracted data reported for each study?","Green",3,0.225903614457831
+"6.2. Are the extracted data reported for each study?","Red",22,1.6566265060241
+"6.3. Were extracted data cross checked by more than one reviewer?","Amber",3,0.225903614457831
+"6.3. Were extracted data cross checked by more than one reviewer?","Gold",30,2.25903614457831
+"6.3. Were extracted data cross checked by more than one reviewer?","Green",13,0.978915662650602
+"6.3. Were extracted data cross checked by more than one reviewer?","Red",37,2.78614457831325
+"7.1. Is the choice of synthesis approach appropriate?","Amber",83,6.25
+"7.2. Is a statistical estimate of pooled effect provided together with
+measure of variance and heterogeneity among studies?","Amber",38,2.86144578313253
+"7.2. Is a statistical estimate of pooled effect provided together with
+measure of variance and heterogeneity among studies?","Gold",7,0.52710843373494
+"7.2. Is a statistical estimate of pooled effect provided together with
+measure of variance and heterogeneity among studies?","Green",27,2.03313253012048
+"7.2. Is a statistical estimate of pooled effect provided together with
+measure of variance and heterogeneity among studies?","Red",11,0.828313253012048
+"7.3 Is variability in the study findings investigated and discussed?","Amber",71,5.34638554216867
+"7.3 Is variability in the study findings investigated and discussed?","Red",12,0.903614457831325
+"8.1 Have the authors considered limitations in the synthesis?","Amber",33,2.48493975903614
+"8.1 Have the authors considered limitations in the synthesis?","Green",16,1.20481927710843
+"8.1 Have the authors considered limitations in the synthesis?","Red",34,2.56024096385542

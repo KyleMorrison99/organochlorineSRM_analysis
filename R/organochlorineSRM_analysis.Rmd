@@ -268,10 +268,52 @@ percentages <- tibble(
   gold_percentage = sum(percent_ceesat_score$n[percent_ceesat_score$score == "Gold"]) / total_n * 100
 )
 
-# percentages
+ percentages
 
 # ggsave(here("figures", "fig2a.pdf"), width = 25, height = 15, units = "cm", scale = 2, dpi = 800)
 # ggsave(here("figures", "fig2a.jpg"), width = 25, height = 15, units = "cm", scale = 2, dpi = 800)
+ 
+
+
+
+```
+
+## 
+Making the CEESAT question groups for result reporting
+```{r}
+# Create new categories for specified questions in numerical order
+percent_ceesat_score$combined_category <- ifelse(
+  grepl("^1\\.1", percent_ceesat_score$question) | grepl("^2\\.1", percent_ceesat_score$question),
+  "Study Question",
+  ifelse(grepl("^3\\.1", percent_ceesat_score$question) | grepl("^3\\.2", percent_ceesat_score$question),
+    "Literature Searching",
+    ifelse(grepl("^4\\.1", percent_ceesat_score$question) | grepl("^4\\.2", percent_ceesat_score$question) | grepl("^4\\.3", percent_ceesat_score$question),
+      "Literature Screening",
+      ifelse(grepl("^5\\.1", percent_ceesat_score$question) | grepl("^5\\.2", percent_ceesat_score$question) | 
+             grepl("^6\\.1", percent_ceesat_score$question) | grepl("^6\\.2", percent_ceesat_score$question) | grepl("^6\\.3", percent_ceesat_score$question),
+        "Data Extraction", 
+        ifelse(grepl("^7", percent_ceesat_score$question), "Data Analysis", 
+          ifelse(grepl("^8", percent_ceesat_score$question), "Study Limitations", "Other"))))))
+
+# Group by combined_category and score, then summarize
+percent_ceesat_score_grouped <- percent_ceesat_score %>%
+  group_by(combined_category, score) %>%
+  summarise(total_n = sum(n))
+
+# Calculate the total count for each special category
+total_counts <- percent_ceesat_score_grouped %>%
+  group_by(combined_category) %>%
+  summarise(total_count = sum(total_n))
+
+# Join total counts with grouped data
+percent_ceesat_score_grouped <- left_join(percent_ceesat_score_grouped, total_counts, by = "combined_category")
+
+# Add a column for relative percent
+percent_ceesat_score_grouped <- percent_ceesat_score_grouped %>%
+  mutate(relative_percent = (total_n / total_count) * 100)
+
+print(percent_ceesat_score_grouped)
+# view(percent_ceesat_score_grouped)
 ```
 
 ## 
@@ -382,13 +424,12 @@ sd_bib_alt <- sd %>%
   left_join(bib_alt, by = "DOI")
 
 # Converting policy to binary and dropping NAs
-sd_bib_alt <- sd_bib_alt %>%
+sd_bib_alt_policy <- sd_bib_alt %>%
   mutate(binary_policy = if_else(policy != 0, "Cited in Policy", "Not Cited in Policy")) %>%
   drop_na(binary_policy, total_points)
 
-
 # Create the plot 
-figs5 <- sd_bib_alt %>%
+figs5 <- sd_bib_alt_policy %>%
  # filter(total_points != 0, policy != 0) %>% 
   ggplot(aes(x = total_points, y = policy)) +
   geom_point(color = "#1b9e77", alpha = 0.8, size = 4) +
@@ -414,7 +455,7 @@ figs5
 ## Figure s6
 Box and violin plot showing the distribution of CEESAT scores for studies cited in policy documents and studies not cited in policy documents
 ```{r}
-figs6 <- sd_bib_alt %>%
+figs6 <- sd_bib_alt_policy %>%
   ggplot(aes(x = binary_policy, y = total_points)) +
   geom_violin(fill = "#1b9e77", alpha =0.2, color = NA, trim = FALSE) +
   geom_boxplot(width = 0.05, fill = "white", color = "#1b9e77", outlier.shape = NA) +
@@ -442,7 +483,7 @@ figs6
 The average reporting quality and rigour of meta-analysis according to CEESAT 2.1 (Woodcock et al., 2014). Gold is regard as the highest score, green is second highest score, amber is second-lowest score, and red is the lowest score. All CEESAT 2.1 items along with our interpretation are provided in the Supplementary File 2. Split for studies cited in policy documents and those not cited in policy decisions. 
 
 ```{r}
-percent_ceesat_score1 <- sd_bib_alt %>%
+percent_ceesat_score1 <- sd_bib_alt_policy %>%
   filter(!is.na(author_year)) %>%
   select(studies = author_year, binary_policy, starts_with("CEE")) %>%
   na.omit() %>%
@@ -494,26 +535,102 @@ fig2b <- ggplot(data = percent_ceesat_score1, aes(x = question, y = percent, fil
   facet_wrap(~binary_policy) +
   labs(tag = "B")
 
+fig2b
 # ggsave(here("figures", "fig2b.pdf"), width = 25, height = 15, units = "cm", scale = 2, dpi = 800)
 # ggsave(here("figures", "fig2b.jpg"), width = 25, height = 15, units = "cm", scale = 2, dpi = 800)
 
 
 
-group1 <- sd_bib_alt$total_points[sd_bib_alt$binary_policy == "Cited in Policy"]
-group2 <- sd_bib_alt$total_points[sd_bib_alt$binary_policy == "Not Cited in Policy"]
+policy <- sd_bib_alt_policy$total_points[sd_bib_alt_policy$binary_policy == "Cited in Policy"]
+not_policy <- sd_bib_alt_policy$total_points[sd_bib_alt_policy$binary_policy == "Not Cited in Policy"]
 
 # QQ Plot
-qqnorm(group1)
-qqline(group1, col = "red")
+qqnorm(policy)
+qqline(policy, col = "red")
 
 # QQ Plot
-qqnorm(group2)
-qqline(group2, col = "red")
+qqnorm(not_policy)
+qqline(not_policy, col = "red")
 
-t.test(group1,group2)
+t.test(policy,not_policy)
 
 ```
 
+
+```{r}
+sd_bib_alt_guideline <- sd_bib_alt %>% 
+  mutate(binary_guideline = if_else(reporting_standards_type == "Not reported", "Not reported", "Reported")) %>% 
+    drop_na(binary_guideline, total_points)
+
+percent_ceesat_score2 <- sd_bib_alt_guideline %>%
+  filter(!is.na(author_year)) %>%
+  select(studies = author_year, binary_guideline, starts_with("CEE")) %>%
+  na.omit() %>%
+  pivot_longer(cols = -c(studies, binary_guideline), names_to = "question", values_to = "score") %>%
+  group_by(binary_guideline, question, score) %>%
+  summarise(n = n(), .groups = 'drop') %>%
+  mutate(percent = (n/sum(n))*100, 
+         across(c(question, score), as.factor),
+         question = fct_recode(question, 
+           `1.1` = "CEESAT2_1.1",
+           `2.1` = "CEESAT2_2.1",
+           `3.1` = "CEESAT2_3.1",
+           `3.2` = "CEESAT2_3.2",
+           `4.1` = "CEESAT2_4.1",
+           `4.2` = "CEESAT2_4.2",
+           `4.3` = "CEESAT2_4.3",
+           `5.1` = "CEESAT2_5.1",
+           `5.2` = "CEESAT2_5.2",
+           `6.1` = "CEESAT2_6.1",
+           `6.2` = "CEESAT2_6.2",
+           `6.3` = "CEESAT2_6.3",
+           `7.1` = "CEESAT2_7.1",
+           `7.2` = "CEESAT2_7.2",
+           `7.3` = "CEESAT2_7.3",
+           `8.1` = "CEESAT2_8.1"),
+         question = factor(question, levels = rev(levels(question))),
+         score = factor(score, levels = levels(score)[c(4,1,3,2)]))
+
+
+figsx <- ggplot(data = percent_ceesat_score2, aes(x = question, y = percent, fill = score)) +
+  geom_col(width = 0.7, position = "fill", color = "black") +
+  geom_text(aes(label = n), position = position_fill(vjust = 0.5), size = 7, fontface = "bold") +
+  coord_flip() +
+  guides(fill = guide_legend(reverse = TRUE)) +
+  scale_fill_manual(values = c("#FF0000","#FFD700","#008000", "#DAA520"), name = "Score:") +
+  scale_y_continuous(labels = scales::percent) +
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(), 
+        panel.background = element_blank(),
+        axis.text.y = element_text(size = 20),
+        axis.text.x = element_text(size = 20),
+        axis.title.x = element_text(size = 25),
+        axis.title.y = element_text(size = 25), 
+        legend.position = "none",
+        strip.text = element_text(size = 20),
+        strip.background = element_blank()) +  
+  ylab("Percentage") + 
+  xlab("CEESAT Question") +
+  facet_wrap(~binary_guideline) +
+  labs(tag = "B")
+
+figsx
+
+guidline <- sd_bib_alt_guideline$total_points[sd_bib_alt_guideline$binary_guideline == "Reported"]
+no_guideline <- sd_bib_alt_guideline$total_points[sd_bib_alt_guideline$binary_guideline == "Not reported"]
+
+# QQ Plot
+qqnorm(guidline)
+qqline(guidline, col = "red")
+
+# QQ Plot
+qqnorm(no_guideline)
+qqline(no_guideline, col = "red")
+
+t.test(guidline,no_guideline)
+
+
+```
 
 
 ## Figure 3a 
@@ -536,7 +653,7 @@ database_pct <- database_count %>%
          percentage = proportion * 100)
 
 # Create a standard theme for the supplement plots
-theme_suppl <- function() {
+organochlorTHEME <- function() {
   theme_minimal() +
   theme(
     title = element_text(size = 30),
@@ -564,7 +681,7 @@ fig3a <- database_count %>%
   scale_fill_identity(guide = "none") +
   scale_x_continuous(expand = c(0, 0), limits = c(0, max(database_count$n)*1.3)) +
   labs(title = "Database Search Count", x = NULL, y = NULL, tag = "A", size = 30) +
-  theme_suppl() 
+  organochlorTHEME() 
 
 fig3a
 
@@ -600,7 +717,7 @@ ggplot(aes(y = freq ,axis1 = Journal_Category_Allocated_Broad, axis2 = database_
   geom_stratum(width = 1/4.5, fill = "white", color = "black") +
   geom_text(stat = "stratum", aes(label = after_stat(stratum)), size = 6) +
   labs(x= "Variables", y = "Frequency", fill = "Journal Category Allocated") +
-  theme_suppl()
+  organochlorTHEME() 
 
 figs7
 
@@ -639,7 +756,7 @@ fig3b <- software_count %>%
   scale_fill_identity(guide = "none") +
   scale_x_continuous(expand = c(0, 0), limits = c(0, max(software_count$n)*1.3)) +
   labs(title = "Analysis Software Count", x = NULL, y = NULL, tag = "B", size = 30) +
-  theme_suppl() 
+  organochlorTHEME() 
 
 fig3b
 
@@ -672,7 +789,7 @@ ggplot(aes(y = freq ,axis1 = Journal_Category_Allocated_Broad, axis2 = software_
   geom_stratum(width = 1/4, fill = "white", color = "black") +
   geom_text(stat = "stratum", aes(label = after_stat(stratum)), size = 6) +
   labs(x= "Variables", y = "Frequency", fill = "Journal Category Allocated") +
-  theme_suppl()
+  organochlorTHEME() 
 
 figs8
 
@@ -708,7 +825,7 @@ fig3c <-  effectsize_count %>%
   scale_fill_identity(guide = "none") +
   scale_x_continuous(expand = c(0, 0), limits = c(0, max(effectsize_count$n)*1.3)) +
   labs(title = "Effect Size Count", x = NULL, y = NULL, tag = "C", size = 30) +
-  theme_suppl()
+  organochlorTHEME() 
 
 fig3c
 
@@ -741,7 +858,7 @@ ggplot(aes(y = freq ,axis1 = Journal_Category_Allocated_Broad, axis2 = effect_si
   geom_text(stat = "stratum", aes(label = after_stat(stratum)), size = 5) +
   theme_minimal() +
   labs(x= "Variables", y = "Frequency", fill = "Journal Category Allocated") +
-  theme_suppl()
+  organochlorTHEME() 
   
 figs9
 
@@ -775,7 +892,7 @@ fig3d <- visualization_count %>%
   scale_fill_identity(guide = "none") +
   scale_x_continuous(expand = c(0, 0), limits = c(0, max(visualization_count$n)*1.3)) +
   labs(title = "Visualization Count", x = NULL, y = NULL, tag = "D", size = 30) +
-  theme_suppl()
+  organochlorTHEME() 
 
 fig3d
 
@@ -806,7 +923,7 @@ ggplot(aes(y = freq ,axis1 = Journal_Category_Allocated_Broad, axis2 = visualiza
   geom_stratum(width = 1/4, fill = "white", color = "black") +
   geom_text(stat = "stratum", aes(label = after_stat(stratum)), size = 6) +
   labs(x= "Variables", y = "Frequency", fill = "Journal Category Allocated") +
-  theme_suppl()
+  organochlorTHEME() 
 
 figs24
 
@@ -814,7 +931,7 @@ figs24
 # ggsave(here("figures", "figs24.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 ```
 
-## Figure 3e
+## Figure 3b
 Bar plot showing the percentage and total count of heterogeneity assessment methods used in meta-analyses investigating the impacts of organochlorine pesticides. Note that some meta-analyses may contribute to multiple sections if the study involved multiple heterogeneity assessments. Percentage is showing the proportion of studies.
 ```{r, fig.width=16, fig.height=10}
 # Calculate the total count for each category
@@ -831,7 +948,7 @@ heterogeneity_pct <- heterogeneity_count %>%
          percentage = proportion * 100)
 
 # Create the count plot
-fig3e <- heterogeneity_count %>%
+fig3b <- heterogeneity_count %>%
   ggplot(aes(x = n, y = reorder(heterogeneity_assessment_method, n), fill = ifelse(grepl("Not reported", heterogeneity_assessment_method), "#7370b3", "#1b9e77"))) +
   geom_bar(stat = "identity", width = 0.8 , alpha = 0.7) +
   geom_text(aes(label = n, x = n / 2, y = reorder(heterogeneity_assessment_method, n)), hjust = 0.5, size = 12, color = "black") +
@@ -839,10 +956,10 @@ fig3e <- heterogeneity_count %>%
             hjust = -0.1, size = 12, color = "black", fontface = "bold") +
   scale_fill_identity(guide = "none") +
   scale_x_continuous(expand = c(0, 0), limits = c(0, max(heterogeneity_count$n)*1.3)) +
-  labs(title = "Heterogeneity Count", x = NULL, y = NULL, tag = "A", size = 30) +
-  theme_suppl()
+  labs(title = "Heterogeneity Count", x = NULL, y = NULL, tag = "B", size = 30) +
+  organochlorTHEME() 
 
-fig3e
+fig3b
 
 # ggsave(here("figures", "fig3e.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 # ggsave(here("figures", "fig3e.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
@@ -871,7 +988,7 @@ ggplot(aes(y = freq ,axis1 = Journal_Category_Allocated_Broad, axis2 = heterogen
   geom_stratum(width = 1/4.5, fill = "white", color = "black") +
   geom_text(stat = "stratum", aes(label = after_stat(stratum)), size = 6) +
   labs(x= "Variables", y = "Frequency", fill = "Journal Category Allocated") +
-  theme_suppl()
+  organochlorTHEME() 
 
 figs11
 
@@ -896,7 +1013,7 @@ sensitivity_pct <- sensitivity_count %>%
          percentage = proportion * 100)
 
 # Create the count plot
-fig3f <- sensitivity_count %>%
+fig3c <- sensitivity_count %>%
   ggplot(aes(x = n, y = reorder(sensitivity_analysis_method, n), fill = ifelse(grepl("Not reported", sensitivity_analysis_method), "#7370b3", "#1b9e77"))) +
   geom_bar(stat = "identity", width = 0.8 , alpha = 0.7) +
   geom_text(aes(label = n, x = n / 2, y = reorder(sensitivity_analysis_method, n)), hjust = 0.5, size = 12, color = "black") +
@@ -904,10 +1021,10 @@ fig3f <- sensitivity_count %>%
             hjust = -0.1, size = 12, color = "black", fontface = "bold") +
   scale_fill_identity(guide = "none") +
   scale_x_continuous(expand = c(0, 0), limits = c(0, max(visualization_count$n)*1.3)) +
-  labs(title = "Sensitivity Analysis Count", x = NULL, y = NULL, tag = "B", size = 30) +
-  theme_suppl()
+  labs(title = "Sensitivity Analysis Count", x = NULL, y = NULL, tag = "C", size = 30) +
+  organochlorTHEME() 
 
-fig3f
+fig3c
 
 # ggsave(here("figures", "fig3f.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 # ggsave(here("figures", "fig3f.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
@@ -936,7 +1053,7 @@ ggplot(aes(y = freq ,axis1 = Journal_Category_Allocated_Broad, axis2 = sensitivi
   geom_stratum(width = 1/4, fill = "white", color = "black") +
   geom_text(stat = "stratum", aes(label = after_stat(stratum)), size = 5) +
   labs(x= "Variables", y = "Frequency", fill = "Journal Category Allocated") +
-  theme_suppl()
+  organochlorTHEME() 
 
 figs12
 
@@ -973,7 +1090,8 @@ fig3g <- rob_method_count %>%
   scale_fill_identity(guide = "none") +
   scale_x_continuous(expand = c(0, 0), limits = c(0, max(rob_method_count$n)*1.3)) +
   labs(title = "Risk of Bias Count", x = NULL, y = NULL, tag = "C", size = 30) +
-  theme_suppl() 
+  organochlorTHEME() 
+
 fig3g
 
 # ggsave(here("figures", "fig3g.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
@@ -1003,7 +1121,7 @@ ggplot(aes(y = freq ,axis1 = Journal_Category_Allocated_Broad, axis2 = rob_asses
   geom_stratum(width = 1/3, fill = "white", color = "black") +
   geom_text(stat = "stratum", aes(label = after_stat(stratum)), size = 5) +
   labs(x= "Variables", y = "Frequency", fill = "Journal Category Allocated") +
-  theme_suppl()
+  organochlorTHEME() 
 
 figs13
 
@@ -1012,7 +1130,7 @@ figs13
 
 ```
 
-## Figure 3h 
+## Figure 3a
 Bar plot showing the percentage and total count of bias methodologies used in meta-analyses investigating the impacts of organochlorine pesticides. Note that some meta-analyses may contribute to multiple sections if the study involved the use of multiple bias assessment methodologies. 
 ```{r, fig.width=16, fig.height=10}
 # Calculate the total count for each category
@@ -1029,7 +1147,7 @@ bias_method_pct <- bias_method_count %>%
          percentage = proportion * 100)
 
 # Create the count plot
-fig3h <- bias_method_count %>%
+fig3a <- bias_method_count %>%
   ggplot(aes(x = n, y = reorder(bias_assessment_method, n), fill = ifelse(grepl("Not reported", bias_assessment_method), "#7370b3", "#1b9e77"))) +
   geom_bar(stat = "identity", width = 0.8 , alpha = 0.7) +
   geom_text(aes(label = n, x = n / 2, y = reorder(bias_assessment_method, n)), hjust = 0.5, size = 12, color = "black") +
@@ -1037,10 +1155,10 @@ fig3h <- bias_method_count %>%
             hjust = -0.1, size = 12, color = "black", fontface = "bold") +
   scale_fill_identity(guide = "none") +
   scale_x_continuous(expand = c(0, 0), limits = c(0, max(bias_method_count$n)*1.3)) +
-  labs(title = "Publication Bias Count", x = NULL, y = NULL, tag = "D", size = 30) +
-  theme_suppl()
+  labs(title = "Publication Bias Count", x = NULL, y = NULL, tag = "A", size = 30) +
+  organochlorTHEME() 
 
-fig3h
+fig3a
 
 # ggsave(here("figures", "fig3h.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 # ggsave(here("figures", "fig3h.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
@@ -1069,7 +1187,7 @@ figs14 <- bias_assessment_alluvial %>%
   geom_stratum(width = 1/3.5, fill = "white", color = "black") +
   geom_text(stat = "stratum", aes(label = after_stat(stratum)), size = 6) +
   labs(x= "Variables", y = "Frequency", fill = "Journal Category Allocated") +
-  theme_suppl()
+  organochlorTHEME() 
 
 figs14
 
@@ -1104,7 +1222,7 @@ fig3i <- bias_visualization_count %>%
   scale_fill_identity(guide = "none") +
   scale_x_continuous(expand = c(0, 0), limits = c(0, max(bias_visualization_count$n)*1.3)) +
   labs(title = "Bias vizualisation Count", x = NULL, y = NULL, tag = "E", size = 30) +
-  theme_suppl()
+  organochlorTHEME() 
 
 fig3i
 
@@ -1134,7 +1252,7 @@ figs15 <- bias_vizualisation_alluvial %>%
   geom_stratum(width = 1/4, fill = "white", color = "black") +
   geom_text(stat = "stratum", aes(label = after_stat(stratum)), size = 6) +
   labs(x= "Variables", y = "Frequency", fill = "Journal Category Allocated") +
-  theme_suppl()
+  organochlorTHEME() 
 
 figs15
 
@@ -1144,7 +1262,7 @@ figs15
 ```
 
 
-## Figure 3j
+## Figure 3d
 Bar plot showing the percentage and total count of reporting guidelines used in meta-analyses investigating the impacts of organochlorine pesticides. Note that some meta-analyses may contribute to multiple sections if the study involved the use of multiple reporting guidelines.
 ```{r, fig.width=16, fig.height=10}
 # Calculate the total count for each category
@@ -1162,7 +1280,7 @@ reporting_guide_pct <- reporting_guide_count %>%
          percentage = proportion * 100)
 
 # Create the count plot
-fig3j <- reporting_guide_count %>%
+fig3d <- reporting_guide_count %>%
   ggplot(aes(x = n, y = reorder(reporting_standards_type, n), fill = ifelse(grepl("Not reported", reporting_standards_type), "#7370b3", "#1b9e77"))) +
   geom_bar(stat = "identity", width = 0.8 , alpha = 0.7) +
   geom_text(aes(label = n, x = n / 2, y = reorder(reporting_standards_type, n)), hjust = 0.5, size = 12, color = "black") +
@@ -1170,10 +1288,10 @@ fig3j <- reporting_guide_count %>%
             hjust = -0.1, size = 12, color = "black", fontface = "bold") +
   scale_fill_identity(guide = "none") +
  scale_x_continuous(expand = c(0, 0), limits = c(0, max(bias_visualization_count$n)*1.3)) +
-  labs(title = "Reporting Guideline Count", x = NULL, y = NULL, tag = "F", size = 30) +
-  theme_suppl()
+  labs(title = "Reporting Guideline Count", x = NULL, y = NULL, tag = "D", size = 30) +
+  organochlorTHEME() 
 
-fig3j
+fig3d
 
 # ggsave(here("figures", "fig3j.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 # ggsave(here("figures", "fig3j.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
@@ -1202,7 +1320,7 @@ ggplot( aes(y = freq ,axis1 = Journal_Category_Allocated_Broad, axis2 = reportin
   geom_stratum(width = 1/3.5, fill = "white", color = "black") +
   labs(x= "Variables", y = "Frequency", fill = "Journal Category Allocated") +
   geom_text(stat = "stratum", aes(label = after_stat(stratum)), size = 6) +
-  theme_suppl()
+  organochlorTHEME() 
 
 figs16
 
@@ -1212,13 +1330,13 @@ figs16
 
 ## Figure 3
 ```{r}
-fig3 <- fig3e + fig3f + fig3g + fig3h + fig3i + fig3j +
-        plot_layout(ncol = 2, nrow = 3)
+fig3 <- fig3a + fig3b + fig3c + fig3d +
+        plot_layout(ncol = 2, nrow = 2)
 fig3
 
 
- ggsave(here("figures", "fig3.pdf"), width = 36 , height = 30 , units = "cm", scale = 2, dpi = 400)
- ggsave(here("figures", "fig3.jpg"), width = 36 , height = 30, units = "cm", scale = 2, dpi = 400)
+ ggsave(here("figures", "fig3.pdf"), width = 36 , height = 20 , units = "cm", scale = 2, dpi = 400)
+ ggsave(here("figures", "fig3.jpg"), width = 36 , height = 20, units = "cm", scale = 2, dpi = 400)
 
 ```
 
@@ -1427,7 +1545,7 @@ figs27 <- ocp_count %>%
   scale_fill_identity(guide = "none") +
   scale_x_continuous(name = "Article Count", expand = c(0, 0), limits = c(0, max(ocp_count$n)*1.2)) +
   labs(y = NULL) +
-  theme_suppl()
+  organochlorTHEME() 
 
 figs27
 
@@ -1459,7 +1577,7 @@ figs28 <- subject_count %>%
   scale_fill_identity(guide = "none") +
   scale_x_continuous(name = "Article Count", expand = c(0, 0), limits = c(0, max(subject_count$n)*1.1)) +
   labs(y = NULL) +
-  theme_suppl()
+  organochlorTHEME() 
 
 figs28
 
@@ -1495,7 +1613,7 @@ figs29 <- impact_count %>%
   scale_fill_identity(guide = "none") +
   scale_x_continuous(name = "Article Count", expand = c(0, 0), limits = c(0, max(impact_count$n)*1.1)) +
   labs(y = NULL) +
-  theme_suppl()
+  organochlorTHEME() 
 
 figs29
 
@@ -1682,9 +1800,6 @@ ocp_im_summary_filtered <- ocp_im_summary %>%
 
 
 # Define your custom color order based on the Dark2 palette
-# Assuming you want to start with the green and purple from the Dark2 palette
-dark2_colors <- brewer.pal(8, "Dark2")
-custom_colors <- c(dark2_colors[4], dark2_colors[3], dark2_colors[-c(3, 4)])  # Green and Purple first
 
 fig4 <- ocp_im_summary_filtered %>% 
   ggplot(aes(x = fct_rev(fct_reorder(impact_broad, count, .fun = 'sum')),
@@ -1693,7 +1808,6 @@ fig4 <- ocp_im_summary_filtered %>%
              fill = impact_broad)) +
   geom_point(shape = 21, color = "white") +
   geom_text(aes(label = count), size = 8, fontface = "bold") +
-  scale_fill_manual(values = custom_colors) +  # Use custom color order
   labs(x = "Impact",
        y = "Organochlorine Pesticide",
        fill = "Impact") +  # Update legend title
