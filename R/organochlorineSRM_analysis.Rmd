@@ -1,5 +1,5 @@
 ---
-title: "Sixty  years since Silent Spring: Sixty years since Silent Spring: a map of meta-analyses on organochlorine pesticides reveals urgent needs for improving methodological quality"
+title: "Sixty years since Silent Spring: a map of meta-analyses on organochlorine pesticides reveals urgent needs for improving methodological quality"
 author: "Kyle Morrison, Coralie Williams, Lorenzo Ricolfi, Yefeng Yang,  Malgorazata Lagisz, Shinichi Nakagawa" 
 date: "2023-03-09"
 output: 
@@ -18,6 +18,7 @@ knitr::opts_chunk$set(
   message = FALSE,
   warning = FALSE, 
   cache = TRUE,
+  error = TRUE, 
   echo=TRUE
 )
 ```
@@ -154,11 +155,11 @@ fig1
 
 
 # Total number of included primary literature
-total_sum_primary <- sd %>%
+ total_sum_primary <- sd %>%
   summarise(total_sum = sum(total_included_studies, na.rm = TRUE)) %>%
   pull(total_sum)
 
-total_sum_primary # 3911
+ total_sum_primary # 3911
 
 ```
 
@@ -296,11 +297,7 @@ fig2a <- ggplot(data = percent_ceesat_score, aes(x = question, y = percent, fill
   xlab("CEESAT Question") +  
   labs(tag = "A")
 
-
-
-
 fig2a
-
 
 total_n <- sum(percent_ceesat_score$n)
 percentages <- tibble(
@@ -617,12 +614,12 @@ guidline <- sd_bib_alt_guideline$total_points[sd_bib_alt_guideline$binary_guidel
 no_guideline <- sd_bib_alt_guideline$total_points[sd_bib_alt_guideline$binary_guideline == "Not reported"]
 
 # QQ Plot
-qqnorm(guidline)
-qqline(guidline, col = "red")
+ qqnorm(guidline)
+ qqline(guidline, col = "red")
 
 # QQ Plot
-qqnorm(no_guideline)
-qqline(no_guideline, col = "red")
+ qqnorm(no_guideline)
+ qqline(no_guideline, col = "red")
 
 t.test(guidline,no_guideline)
 
@@ -1518,7 +1515,7 @@ figs24
 ```
 
 
-# Objective 2 
+# Section 2 
 To explore the various characteristics of the organochlorine pesticides literature such as the pesticides used, the impacts elicited in response and the subjects that were investigated.
 
 ## Figure s22
@@ -1869,7 +1866,7 @@ fig4
   
 ```
 
-# Objective 3
+# Section 3
 To investigate global research output and collaboration networks
 
 ## Figure s32, s33, s34, s35 & s36
