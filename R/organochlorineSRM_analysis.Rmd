@@ -1,6 +1,6 @@
 ---
 title: "Sixty years since Silent Spring: a map of meta-analyses on organochlorine pesticides reveals urgent needs for improving methodological quality"
-author: "Kyle Morrison, Coralie Williams, Lorenzo Ricolfi, Yefeng Yang,  Malgorazata Lagisz, Shinichi Nakagawa" 
+author: "Kyle Morrison, Coralie Williams, Lorenzo Ricolfi, Yefeng Yang, Malgorzata Lagisz, Shinichi Nakagawa" 
 date: "2023-03-09"
 output: 
   rmdformats::downcute:
@@ -1948,7 +1948,8 @@ fig5 <- fullmap %>%
     legend.margin = margin(t = 10, unit = "pt"),  
     legend.text = element_text(size = 20),  
     legend.title = element_text(size = 20, face = "bold"),  
-    legend.key.width = unit(30, "mm")  
+    legend.key.width = unit(30, "mm"), 
+    panel.background = element_rect(fill = "white")
   ) +
   scale_fill_gradient(
     low = "#98FB98", high = "#006400",
@@ -1965,8 +1966,8 @@ fig5 <- fullmap %>%
 
 fig5
 
-# ggsave(here("figures", "fig5.pdf"), width = 21, height = 12, units = "cm", scale = 2, dpi = 800)
-# ggsave(here("figures", "fig5.jpg"), width = 21, height = 12, units = "cm", scale = 2, dpi = 800)
+ # ggsave(here("figures", "fig5.pdf"), width = 21, height = 12, units = "cm", scale = 2, dpi = 800)
+ # ggsave(here("figures", "fig5.jpg"), width = 21, height = 12, units = "cm", scale = 2, dpi = 800)
 
 ```
 
@@ -1986,7 +1987,9 @@ theme(
     legend.text = element_text(size = 16),  
     legend.title = element_text(size = 18, face = "bold"),  
     legend.key.width = unit(30, "mm"),
-    legend.position = "bottom") +
+    legend.position = "bottom",
+    panel.background = element_rect(fill = "white")
+) +
 scale_fill_gradient(low = "#98FB98", high = "#006400",
     name = "First Author Count", na.value = "gray70",
     limits = c(1, 10), breaks = seq(0, 10, length.out = 6)) 
