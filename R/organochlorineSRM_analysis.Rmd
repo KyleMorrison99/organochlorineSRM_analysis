@@ -901,7 +901,7 @@ fig3d <- reporting_guide_count %>%
   geom_text(data = reporting_guide_pct, aes(label = paste0("(", round(percentage, 0), "%)"), x = n), 
             hjust = -0.1, size = 12, color = "black", fontface = "bold") +
   scale_fill_identity(guide = "none") +
- scale_x_continuous(expand = c(0, 0), limits = c(0, max(bias_visualization_count$n)*1.3)) +
+ scale_x_continuous(expand = c(0, 0), limits = c(0, max(reporting_guide_count$n)*1.3)) +
   labs(title = "Reporting Guideline Count", x = NULL, y = NULL, size = 30) +
   organochlorTHEME() 
 
@@ -1385,10 +1385,10 @@ effectsize_count <- sd %>%
   summarise(n = sum(n))
 
 effectsize_count <- effectsize_count %>% 
-  mutate(effect_size = if_else(effect_size %in% c("Beta regression ", "correlation coefficient"), "Correlation", effect_size)) %>% 
-  mutate(effect_size = if_else(effect_size %in% c("odds ratio", "response ratio", "SMD (standardized mean difference)", "lnPR (log partitioning ratio)", "lnOR (log odds ratio)", "ratio of means", "InRR (log response ratio)"), "Mean diff", effect_size)) %>% 
-  mutate(effect_size = if_else(effect_size %in% c("risk ratio"), "2x2", effect_size)) %>% 
-  mutate(effect_size = if_else(effect_size %in% c("raw weight", "transfer rate", "geometric mean", "maternal transfer ratio", "standardized mortality rate", "Transfer rate", "z-score", "lnCVR (log coefficient variation ratio)"), "Other ES", effect_size)) %>% 
+  mutate(effect_size = if_else(effect_size %in% c("Beta regression", "Correlation coefficient"), "Correlation", effect_size)) %>% 
+  mutate(effect_size = if_else(effect_size %in% c("Odds ratio", "Response ratio", "Standardized mean difference", "Log partitioning ratio", "Log odds ratio", "Ratio of means", "Log response ratio"), "Mean difference", effect_size)) %>% 
+  mutate(effect_size = if_else(effect_size %in% c("Risk ratio"), "2x2", effect_size)) %>% 
+  mutate(effect_size = if_else(effect_size %in% c("Raw weight", "Geometric mean", "Maternal transfer ratio", "Standardized mortality rate", "Transfer rate","Transfer ratio", "Z-score", "Log coefficient variation ratio"), "Other ES", effect_size)) %>% 
   group_by(effect_size) %>%
   summarise(n = sum(n))
 
@@ -1508,8 +1508,8 @@ figs24 <- ggraph(mygraph, layout = 'circlepack', weight = size) +
 
 figs24
 
-# ggsave(here("figures", "figs24.pdf"), width = 18, height = 15, units = "cm", scale = 2, dpi = 800)
-# ggsave(here("figures", "figs24.jpg"), width = 18, height = 15, units = "cm", scale = 2, dpi = 800)
+ggsave(here("figures", "figs24.pdf"), width = 18, height = 15, units = "cm", scale = 2, dpi = 800)
+ggsave(here("figures", "figs24.jpg"), width = 18, height = 15, units = "cm", scale = 2, dpi = 800)
 ```
 
 
