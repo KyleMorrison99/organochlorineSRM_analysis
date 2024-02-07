@@ -455,17 +455,14 @@ sd <- sd %>%
 CEESAT scores for meta-analyses cited in policy documents (left panel) and those not cited in policy documents (right panel). 
 ```{r, fig.width=25, fig.height=15}
 sd_bib_alt <- sd %>%
-  left_join(bib_alt, by = "DOI")
+  left_join(bib_alt, by = "DOI") %>% 
+  filter(!is.na(CEESAT2_1.1))
 
 # Converting policy to binary and dropping NAs
 sd_bib_alt_policy <- sd_bib_alt %>%
   mutate(binary_policy = if_else(policy != 0, "Cited in Policy", "Not Cited in Policy")) %>%
   drop_na(binary_policy, total_points)
 
-# Converting policy to binary and dropping NAs
-sd_bib_alt_policy <- sd_bib_alt %>%
-  mutate(binary_policy = if_else(policy != 0, "Cited in Policy", "Not Cited in Policy")) %>%
-  drop_na(binary_policy, total_points)
 percent_ceesat_score1 <- sd_bib_alt_policy %>%
   filter(!is.na(author_year)) %>%
   select(studies = author_year, binary_policy, starts_with("CEE")) %>%
@@ -527,6 +524,25 @@ fig2b
 policy <- sd_bib_alt_policy$total_points[sd_bib_alt_policy$binary_policy == "Cited in Policy"]
 not_policy <- sd_bib_alt_policy$total_points[sd_bib_alt_policy$binary_policy == "Not Cited in Policy"]
 
+
+# Create a tibble for policy values
+policy_df <- tibble(
+  values = policy,
+  category = "Cited in Policy"
+)
+
+# Create a tibble for not_policy values
+not_policy_df <- tibble(
+  values = not_policy,
+  category = "Not Cited in Policy"
+)
+
+# Combine both tibbles into one
+policy_combined <- bind_rows(policy_df, not_policy_df)
+
+# View the combined tibble
+print(policy_combined)
+
 # QQ Plot
 qqnorm(policy)
 qqline(policy, col = "red")
@@ -535,7 +551,14 @@ qqline(policy, col = "red")
 qqnorm(not_policy)
 qqline(not_policy, col = "red")
 
-t.test(policy,not_policy)
+t.test(policy,not_policy) # Can you explain why a t-test does not fit this data 
+
+
+glm(values~category,
+                 family = "poisson", data=policy_combined)
+
+
+glm.nb(values~category, data=policy_combined)
 
 ```
 
@@ -1394,8 +1417,8 @@ effectsize_count <- effectsize_count %>%
 
 # Categorizing software as either "Code-based software" or "GUI" and summing the counts
 software_count <- software_count %>%
-  mutate(software_analysis = if_else(software_analysis %in% c("Stata", "R"), "Code-based", software_analysis)) %>%
-  mutate(software_analysis = if_else(software_analysis %in% c("CMAS", "Excel", "RevMan", "SAS", "XLSTAT"), "GUI", software_analysis)) %>% 
+  mutate(software_analysis = if_else(software_analysis %in% c("Stata", "R", "SAS"), "Code-based", software_analysis)) %>%
+  mutate(software_analysis = if_else(software_analysis %in% c("CMAS", "Excel", "RevMan", "XLSTAT"), "GUI", software_analysis)) %>% 
   mutate(software_analysis = if_else(software_analysis %in% c("Not reported"), "No software reported", software_analysis)) %>%
   group_by(software_analysis) %>%
   summarise(n = sum(n))
