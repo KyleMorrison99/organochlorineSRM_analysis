@@ -20,3 +20,5 @@ stringdist
 circlize
 ggalluvial
 ggraph
+ordinal
+ComplexUpset
