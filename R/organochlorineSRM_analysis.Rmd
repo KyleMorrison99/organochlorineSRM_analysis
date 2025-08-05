@@ -939,7 +939,7 @@ fig3d
 # ggsave(here("figures", "fig3d.svg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 ```
 
-## CEESAT reporitng guideline
+## CEESAT reporting guideline
 CEESAT scores for meta-analyses referencing a reporting guideline (right panel) and those not referencing a reporting guideline (left panel).
 ```{r, fig.width=25, fig.height=15}
 sd_bib_alt_guideline <- sd %>% 
