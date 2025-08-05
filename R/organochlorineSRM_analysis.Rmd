@@ -101,13 +101,16 @@ theme_count <- function() {
     theme(
       panel.grid.major.y = element_line(color = "gray", linetype = "dashed"),
       panel.grid.minor.y = element_blank(),
-      axis.line.x = element_line(size = 1.2),
-      axis.line.y = element_line(size = 1.2),
-      axis.title.x = element_text(size = 20, face = "bold"),
-      axis.title.y = element_text(size = 20, face = "bold"),
-      axis.text.x = element_text(angle = 45, hjust = 1, size = 15, color = "#666666"),
-      axis.text.y = element_text(size = 20, color = "#666666"),
-      legend.position = "none"  # Hide legend by default
+      axis.line.x      = element_line(size = 1.2),
+      axis.line.y      = element_line(size = 1.2),
+      axis.title.x     = element_text(size = 20),
+      axis.title.y     = element_text(size = 20),
+      axis.text.x      = element_text(angle = 45, hjust = 1,
+                                      size = 15, color = "#666666"),
+      axis.text.y      = element_text(size = 20, color = "#666666"),
+      legend.position  = "none",
+      # ⇩ Tag styling added here
+      plot.tag         = element_text(size = 20, face = "bold")
     )
 }
 
@@ -140,7 +143,7 @@ fig1a <- sd_sub %>%
   labs(
     title = expression(bold(underline("Articles"))),
     y = "Article Count", 
-    tag = "A", 
+    tag = "a)", 
     fill = "Subjects"
   ) +
   theme_count() +
@@ -176,7 +179,7 @@ fig1b <- sd_sub %>%
     breaks = seq(min(sd_sub$publication_year), max(sd_sub$publication_year), by = 1), 
     expand = expansion(0,0)
   ) +  
-  labs(x = "Year", y = "Cumulative Article Count", tag = "B") +
+  labs(x = "Year", y = "Cumulative Article Count", tag = "b)") +
   theme_count() +
   scale_fill_brewer(palette = "Dark2") +
   theme(
@@ -225,7 +228,7 @@ fig1c <- ggplot(
     title = expression(bold(underline("Policy"))),
     x = "Year",
     y = "Annual Policy Citations", 
-    tag = "C", 
+    tag = "c)", 
     fill = "Policy Topics"
   ) +
   theme_count() +
@@ -281,7 +284,7 @@ fig1d <- pol %>%
   labs(
     x = "Year",
     y = "Cumulative Policy Citations", 
-    tag = "D"
+    tag = "d)"
   ) +
   theme_count() +
   scale_fill_brewer(palette = "Dark2") +
@@ -289,7 +292,7 @@ fig1d <- pol %>%
     legend.position = "none"
   )
 
-# Combine plots, ensuring the legend only appears in fig1a and fig1c
+# Combine plots.
 fig1 <- fig1a / fig1b / fig1c / fig1d
 
 # Display the final combined plot
@@ -311,7 +314,7 @@ fig1
 
 # Save the final figure
 # ggsave(here("figures", "fig1.pdf"), width = 16, height = 24, units = "cm", scale = 2, dpi = 800)
-# ggsave(here("figures", "fig1.jpg"), width = 16, height = 24, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "fig1.svg"), width = 16, height = 24, units = "cm", scale = 2, dpi = 800)
 
 ```
 
@@ -378,8 +381,14 @@ policy_country <- ggplot(
     )
   )
 
+df_distinct_count <- pol %>%
+  distinct(policy_title, policy_year) %>%
+  nrow()
+
+df_distinct_count
+
 # ggsave(here("figures", "policy_country.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
-# ggsave(here("figures", "policy_country.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "policy_country.svg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 
 ```
 
@@ -400,6 +409,7 @@ organochlorTHEME <- function() {
     axis.title.y = element_blank(),
     panel.grid.major.y = element_blank(),
     panel.grid.minor.y = element_blank(),
+    plot.tag = element_text(face = "bold"),
     legend.position = "none")    
 }
 
@@ -418,7 +428,7 @@ annual_article_count <- sd1 %>%
     scale_x_continuous(breaks = seq(min(sd1$publication_year), max(sd1$publication_year), by = 1), 
                        expand = expansion(0,1)) +
     scale_y_continuous("Annual Article Count", limits = c(0,15)) +
-    labs(x = "Year", tag = "A") +
+    labs(x = "Year", tag = "a)") +
     theme_count() +
     theme(axis.title.x = element_blank())
 
@@ -432,7 +442,7 @@ cum_article_count <- sd1 %>%
     scale_x_continuous(breaks = seq(min(sd1$publication_year), max(sd1$publication_year), by = 1), 
                        expand = expansion(0,1)) +
     scale_y_continuous("Cumulative Article Count", limits = c(0,120)) +
-    labs(x = "Year", tag = "B") +
+    labs(x = "Year", tag = "b)") +
     theme_count()
 
 # Combine the two plots
@@ -441,7 +451,7 @@ alt_article_count <- annual_article_count / cum_article_count
 alt_article_count
 
 # ggsave(here("figures", "alt_article_count.pdf"), width = 16, height = 12, units = "cm", scale = 2, dpi = 800)
-# ggsave(here("figures", "alt_article_count.jpg"), width = 16, height = 12, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "alt_article_count.svg"), width = 16, height = 12, units = "cm", scale = 2, dpi = 800)
 
 ```
 
@@ -513,7 +523,7 @@ fig2a <- ggplot(data = percent_ceesat_score, aes(x = question, y = percent, fill
         plot.tag = element_text(size = 25)) + 
   ylab("Percentage") + 
   xlab("CEESAT Question") +  
-  labs(tag = "A")
+  labs(tag = "a)")
 
 fig2a
 
@@ -528,7 +538,7 @@ percentages <- tibble(
  percentages
 
 # ggsave(here("figures", "fig2a.pdf"), width = 25, height = 15, units = "cm", scale = 2, dpi = 800)
-# ggsave(here("figures", "fig2a.jpg"), width = 25, height = 15, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "fig2a.svg"), width = 25, height = 15, units = "cm", scale = 2, dpi = 800)
 ```
 
 ## 
@@ -741,11 +751,11 @@ fig2b <- ggplot(data = percent_ceesat_score1, aes(x = question, y = percent, fil
   ylab("Percentage") + 
   xlab("CEESAT Question") +
   facet_wrap(~policy_status) +
-  labs(tag = "B")
+  labs(tag = "b)")
 
 fig2b
 # ggsave(here("figures", "fig2b.pdf"), width = 25, height = 15, units = "cm", scale = 2, dpi = 800)
-# ggsave(here("figures", "fig2b.jpg"), width = 25, height = 15, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "fig2b.svg"), width = 25, height = 15, units = "cm", scale = 2, dpi = 800)
 
 
 policy <- sd_bib_alt_policy$total_points[sd_bib_alt_policy$policy_status == "Policy"]
@@ -788,7 +798,7 @@ policy_model_sensitivity <- t.test(policy,not_policy)
 policy_model_sensitivity
 ```
 
-## Figure 2c
+## Figure 3a
 Bar plot showing the percentage and total count of bias methodologies used in meta-analyses investigating the impacts of organochlorine pesticides. Note that some meta-analyses may contribute to multiple sections if the study involved the use of multiple bias assessment methodologies. 
 ```{r, fig.width=16, fig.height=10}
 # Calculate the total count for each category
@@ -805,7 +815,7 @@ bias_method_pct <- bias_method_count %>%
          percentage = proportion * 100)
 
 # Create the bar plot
-fig2c <- bias_method_count %>%
+fig3a <- bias_method_count %>%
   ggplot(aes(x = n, y = reorder(bias_assessment_method, n), 
              fill = ifelse(grepl("Not reported", bias_assessment_method), "#7370b3", "#1b9e77"))) +
   geom_bar(stat = "identity", width = 0.8, alpha = 0.7) +
@@ -815,16 +825,16 @@ fig2c <- bias_method_count %>%
             hjust = -0.1, size = 12, color = "black", fontface = "bold") +
   scale_fill_identity(guide = "none") +
   scale_x_continuous(expand = c(0, 0), limits = c(0, max(bias_method_count$n) * 1.3)) +
-  labs(title = "Publication Bias Count", x = NULL, y = NULL, tag = "C", size = 30) +
+  labs(title = "Publication Bias Count", x = NULL, y = NULL, tag = "a)", size = 30) +
   organochlorTHEME()
 
-fig2c
+fig3a
 
-# ggsave(here("figures", "fig2c.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
-# ggsave(here("figures", "fig2c.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "fig3a.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "fig3a.svg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 ```
 
-## Figure 2d
+## Figure 3b
 Bar plot showing the percentage and total count of heterogeneity assessment methods used in meta-analyses investigating the impacts of organochlorine pesticides. Note that some meta-analyses may contribute to multiple sections if the study involved multiple heterogeneity assessments. Percentage is showing the proportion of studies.
 ```{r, fig.width=16, fig.height=10}
 # Figure 3b: Heterogeneity Assessment Methods
@@ -839,7 +849,7 @@ heterogeneity_pct <- heterogeneity_count %>%
   mutate(proportion = n / 83,
          percentage = proportion * 100)
 
-fig2d <- heterogeneity_count %>%
+fig3b <- heterogeneity_count %>%
   ggplot(aes(x = n, y = reorder(heterogeneity_assessment_method, n), 
              fill = ifelse(grepl("Not reported", heterogeneity_assessment_method), "#7370b3", "#1b9e77"))) +
   geom_bar(stat = "identity", width = 0.8, alpha = 0.7) +
@@ -849,17 +859,17 @@ fig2d <- heterogeneity_count %>%
             hjust = -0.1, size = 12, color = "black", fontface = "bold") +
   scale_fill_identity(guide = "none") +
   scale_x_continuous(expand = c(0, 0), limits = c(0, max(heterogeneity_count$n) * 1.3)) +
-  labs(title = "Heterogeneity Count", x = NULL, y = NULL, tag = "D", size = 30) +
+  labs(title = "Heterogeneity Count", x = NULL, y = NULL, tag = "b)", size = 30) +
   organochlorTHEME()
 
-fig2d
+fig3b
 
-# ggsave(here("figures", "fig2d.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
-# ggsave(here("figures", "fig2d.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "fig3b.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "fig3b.svg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 
 ```
  
-## Figure 2e
+## Figure 3c
 Bar plot showing the percentage and total count of sensitivity analyses conducted in meta-analyses investigating the impacts of organochlorine pesticides. Note that some meta-analyses may contribute to multiple sections if the study involved multiple sensitivity analyses.
 ```{r, fig.width=16, fig.height=10}
 # Figure 3c: Sensitivity Analysis Methods
@@ -874,7 +884,7 @@ sensitivity_pct <- sensitivity_count %>%
   mutate(proportion = n / 83,
          percentage = proportion * 100)
 
-fig2e <- sensitivity_count %>%
+fig3c <- sensitivity_count %>%
   ggplot(aes(x = n, y = reorder(sensitivity_analysis_method, n), 
              fill = ifelse(grepl("Not reported", sensitivity_analysis_method), "#7370b3", "#1b9e77"))) +
   geom_bar(stat = "identity", width = 0.8, alpha = 0.7) +
@@ -884,17 +894,17 @@ fig2e <- sensitivity_count %>%
             hjust = -0.1, size = 12, color = "black", fontface = "bold") +
   scale_fill_identity(guide = "none") +
   scale_x_continuous(expand = c(0, 0), limits = c(0, max(sensitivity_count$n) * 1.3)) +
-  labs(title = "Sensitivity Analysis Count", x = NULL, y = NULL, tag = "E", size = 30) +
+  labs(title = "Sensitivity Analysis Count", x = NULL, y = NULL, tag = "c)", size = 30) +
   organochlorTHEME()
 
-fig2e
+fig3c
 
-# ggsave(here("figures", "fig2e.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
-# ggsave(here("figures", "fig2e.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "fig3c.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "fig3c.svg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 
 ```
 
-## Figure 2f
+## Figure 3d
 Bar plot showing the percentage and total count of reporting guidelines used in meta-analyses investigating the impacts of organochlorine pesticides. Note that some meta-analyses may contribute to multiple sections if the study involved the use of multiple reporting guidelines.
 ```{r, fig.width=16, fig.height=10}
 # Figure 3d: Reporting Guidelines
@@ -910,7 +920,7 @@ reporting_guide_pct <- reporting_guide_count %>%
   mutate(proportion = n / 83,
          percentage = proportion * 100)
 
-fig2f <- reporting_guide_count %>%
+fig3d <- reporting_guide_count %>%
   ggplot(aes(x = n, y = reorder(reporting_standards_type, n), 
              fill = ifelse(grepl("Not reported", reporting_standards_type), "#7370b3", "#1b9e77"))) +
   geom_bar(stat = "identity", width = 0.8, alpha = 0.7) +
@@ -920,14 +930,13 @@ fig2f <- reporting_guide_count %>%
             hjust = -0.1, size = 12, color = "black", fontface = "bold") +
   scale_fill_identity(guide = "none") +
   scale_x_continuous(expand = c(0, 0), limits = c(0, max(reporting_guide_count$n) * 1.3)) +
-  labs(title = "Reporting Guideline Count", x = NULL, y = NULL, tag = "F", size = 30) +
-  
+  labs(title = "Reporting Guideline Count", x = "Count", y = NULL, tag = "d)", size = 30) +
   organochlorTHEME()
 
-fig2f
+fig3d
 
-# ggsave(here("figures", "fig2f.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
-# ggsave(here("figures", "fig2f.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "fig3d.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "fig3d.svg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 ```
 
 ## CEESAT reporitng guideline
@@ -997,7 +1006,7 @@ ceesat_report <- ggplot(data = percent_ceesat_score2, aes(x = question, y = perc
 
 ceesat_report
 # ggsave(here("figures", "ceesat_report.pdf"), width = 25, height = 15, units = "cm", scale = 2, dpi = 800)
-# ggsave(here("figures", "ceesat_report.jpg"), width = 25, height = 15, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "ceesat_report.svg"), width = 25, height = 15, units = "cm", scale = 2, dpi = 800)
 
 guideline <- sd_bib_alt_guideline$total_points[sd_bib_alt_guideline$binary_guideline == "Reported"]
 no_guideline <- sd_bib_alt_guideline$total_points[sd_bib_alt_guideline$binary_guideline == "Not reported"]
@@ -1034,33 +1043,6 @@ t.test(guideline,no_guideline)
 
 ```
 
-## Scatter plot policy & quality
-Scatter plot showing the relationship between the quantity of times cited in a policy document and total CEESAT score 
-```{r, fig.width=16, fig.height=12}
-# Create the plot 
-policy_quality <- sd_bib_alt_policy %>%
- # filter(total_points != 0, policy != 0) %>% 
-  ggplot(aes(x = total_points, y = policy)) +
-  geom_point(color = "#1b9e77", alpha = 0.8, size = 8) +
-  geom_smooth(method = lm, se = TRUE, color = "red") +
-  labs(x = "Total CEESAT score", y = "Policy Count") +
-  theme_minimal() +
-  theme(panel.grid.major.y = element_blank(),
-        axis.line.y = element_blank(),
-        axis.ticks.y = element_blank(),
-        axis.text.x = element_text(size = 25),
-        axis.text.y = element_text(size = 25),
-        axis.title.x = element_text(size = 30),
-        axis.title.y = element_text(size = 30),
-        plot.title = element_blank())
-
-policy_quality
-
-# ggsave(here("figures", "policy_quality.pdf"), width = 25, height = 15, units = "cm", scale = 2, dpi = 800)
-# ggsave(here("figures", "policy_quality.jpg"), width = 25, height = 15, units = "cm", scale = 2, dpi = 800)
-```
-
-
 ## Box ceesat scores
 Box and violin plot showing the distribution of CEESAT scores for studies cited in policy documents and studies not cited in policy documents
 ```{r, fig.width=25, fig.height=15}
@@ -1084,7 +1066,7 @@ box_ceesat <- policy_combined %>%
 box_ceesat
 
 # ggsave(here("figures", "box_ceesat.pdf"), width = 25, height = 15, units = "cm", scale = 2, dpi = 800)
-# ggsave(here("figures", "box_ceesat.jpg"), width = 25, height = 15, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "box_ceesat.svg"), width = 25, height = 15, units = "cm", scale = 2, dpi = 800)
 ```
 
 
@@ -1249,7 +1231,7 @@ database_bar <- database_count %>%
 database_bar
 
 # ggsave(here("figures", "database_bar.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
-# ggsave(here("figures", "database_bar.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "database_bar.svg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 ```
 
 ## Alluvial plot for literature database
@@ -1323,7 +1305,7 @@ software_bar <- software_count %>%
 software_bar
 
 # ggsave(here("figures", "software_bar.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
-# ggsave(here("figures", "software_bar.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "software_bar.svg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 
 ```
 
@@ -1392,7 +1374,7 @@ effect_bar <-  effectsize_count %>%
 effect_bar
 
 # ggsave(here("figures", "effect_bar.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
-# ggsave(here("figures", "effect_bar.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "effect_bar.svg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 ```
 
 ## Alluvial plot for effect size estimates
@@ -1460,7 +1442,7 @@ bar_vis <- visualization_count %>%
 bar_vis
 
 # ggsave(here("figures", "bar_vis.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
-# ggsave(here("figures", "bar_vis.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "bar_vis.svg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 ```
 
 ## Alluvial plot for visualisation method
@@ -1531,7 +1513,7 @@ bar_risk_of_bias <- rob_method_count %>%
 bar_risk_of_bias
 
 # ggsave(here("figures", "bar_plot_risk_of_bias.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
-# ggsave(here("figures", "bar_plot_risk_of_bias.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "bar_plot_risk_of_bias.svg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 
 ```
 
@@ -1601,7 +1583,7 @@ bar_bias_visualization <- bias_visualization_count %>%
 bar_bias_visualization
 
 # ggsave(here("figures", "bar_plot_bias_visualization.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
-# ggsave(here("figures", "bar_plot_bias_visualization.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "bar_plot_bias_visualization.svg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 ```
 
 ## Alluvial plot for bias visualization method
@@ -1632,7 +1614,7 @@ alluvial_bias_visualization <- bias_vizualisation_alluvial %>%
 alluvial_bias_visualization
 
 # ggsave(here("figures", "alluvial_plot_bias_visualization.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
-# ggsave(here("figures", "alluvial_plot_bias_visualization.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "alluvial_plot_bias_visualization.svg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 ```
 
 
@@ -1811,7 +1793,7 @@ donut_plot <- ggplot(confound_data, aes(x = 2, y = percentage, fill = confound_a
 
 # Save figures
 # ggsave(here("figures", "donut_confound.pdf"), plot = donut_plot, width = 8, height = 8, units = "cm", dpi = 800)
-# ggsave(here("figures", "donut_confound.jpg"), plot = donut_plot, width = 8, height = 8, units = "cm", dpi = 800)
+# ggsave(here("figures", "donut_confound.svg"), plot = donut_plot, width = 8, height = 8, units = "cm", dpi = 800)
 
 ```
 
@@ -1883,7 +1865,7 @@ bar_plot_ocp
 
 # ggsave(here("figures", "bar_plot_pesticide_investigation.pdf"), 
 #        plot = bar_plot_ocp, width = 25, height = 15, units = "cm", scale = 2, dpi = 800)
-# ggsave(here("figures", "bar_plot_pesticide_investigation.jpg"), 
+# ggsave(here("figures", "bar_plot_pesticide_investigation.svg"), 
 #        plot = bar_plot_ocp, width = 25, height = 15, units = "cm", scale = 2, dpi = 800)
 
 ```
@@ -1921,7 +1903,7 @@ bar_plot_subject
 
 # ggsave(here("figures", "bar_plot_subject_investigation.pdf"), 
 #        plot = bar_plot_subject, width = 25, height = 15, units = "cm", scale = 2, dpi = 800)
-# ggsave(here("figures", "bar_plot_subject_investigation.jpg"), 
+# ggsave(here("figures", "bar_plot_subject_investigation.svg"), 
 #        plot = bar_plot_subject, width = 25, height = 15, units = "cm", scale = 2, dpi = 800)
 
 ```
@@ -2020,7 +2002,7 @@ bar_plot_impact_broad
 
 # ggsave(here("figures", "bar_plot_broad_impact_category.pdf"),
 #        plot = bar_plot_impact_broad, width = 25, height = 15, units = "cm", scale = 2, dpi = 800)
-# ggsave(here("figures", "bar_plot_broad_impact_category.jpg"),
+# ggsave(here("figures", "bar_plot_broad_impact_category.svg"),
 #        plot = bar_plot_impact_broad, width = 25, height = 15, units = "cm", scale = 2, dpi = 800)
 
 
@@ -2106,7 +2088,7 @@ alluvial_plot_exposure
 # ggsave(here("figures", "figs29.jpg"), width = 18, height = 12, units = "cm", scale = 2, dpi = 800)
 ```
 
-## Figure 3
+## Figure 4
 A bubble plot showing the counts of each pesticide per impact included in current meta-analysis on the impacts of organochlorine pesticides 
 ```{r,fig.width=25, fig.height=15}
 
@@ -2138,7 +2120,7 @@ top_pesticides <- ocp_im_summary %>%
 ocp_im_summary_filtered <- ocp_im_summary %>%
   filter(ocp %in% top_pesticides)
 
-fig3 <- ocp_im_summary_filtered %>% 
+fig4 <- ocp_im_summary_filtered %>% 
   ggplot(aes(x = fct_rev(fct_reorder(impact_broad, count, .fun = 'sum')),
              y = fct_reorder(ocp, count, .fun = 'sum'),
              size = count,
@@ -2153,10 +2135,10 @@ fig3 <- ocp_im_summary_filtered %>%
     legend.position = "none") +
   scale_size_continuous(range = c(30, 80))
 
-fig3
+fig4
 
-# ggsave(here("figures", "fig3.pdf"), width = 40, height = 25, units = "cm", scale = 2, dpi = 800)
-# ggsave(here("figures", "fig3.jpg"), width = 40, height = 25, units = "cm", scale = 2, dpi = 800)
+ ggsave(here("figures", "fig4.pdf"), width = 40, height = 25, units = "cm", scale = 2, dpi = 800)
+ ggsave(here("figures", "fig4.svg "), width = 40, height = 25, units = "cm", scale = 2, dpi = 800)
   
 ```
 
@@ -2210,7 +2192,7 @@ bar_plot_countries <- ggplot(country_tibble_long_filtered, aes(fill = Country_Co
 bar_plot_countries
 
 # ggsave(here("figures", "bar_plot_countries.pdf"), width = 25, height = 15, units = "cm", scale = 2, dpi = 800)
-# ggsave(here("figures", "bar_plot_countries.jpg"), width = 25, height = 15, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "bar_plot_countries.svg"), width = 25, height = 15, units = "cm", scale = 2, dpi = 800)
 
 
 ```
@@ -2234,12 +2216,11 @@ bar_plot_authors <- ggplot(authors_tibble_filtered, aes(y = n, x = reorder(AU, n
 bar_plot_authors
 
 # ggsave(here("figures", "bar_plot_top_authors.pdf"), width = 25, height = 15, units = "cm", scale = 2, dpi = 800)
-# ggsave(here("figures", "bar_plot_top_authors.jpg"), width = 25, height = 15, units = "cm", scale = 2, dpi = 800)
-
+# ggsave(here("figures", "bar_plot_top_authors.svg"), width = 25, height = 15, units = "cm", scale = 2, dpi = 800)
 
 ```
 
-## Figure 4
+## Figure 5
 Heat map of world showing the country-level counts for first authors’ country of affiliation of meta-analysis investigating the impacts of organochlorine pesticides. Grey indicates no publications affiliated with a given country in our data set. 
 ```{r,fig.width= 21, fig.height=12}
 # Extract country information from the "AU1_CO" and "AU_CO" fields of the "bib_sco" dataset
@@ -2268,40 +2249,74 @@ fullmap <- left_join(emptymap, firstcountrycounts, by = "region")
 fullmap$n <- fullmap$n.x + fullmap$n.y
 fullmap$n[is.na(fullmap$n)] <- 0
 
-fig4 <- fullmap %>%
-  ggplot(aes(fill = n, map_id = region)) +
-  geom_map(map = world_map, color = "gray50") +
+library(tidyverse)
+library(RColorBrewer)
+
+# 1. Create 4 count bands that will map cleanly to Dark2’s first 4 colours
+fullmap <- fullmap %>% 
+  mutate(n_cat = cut(
+    n,
+    breaks  = c(0, 5, 10, 15, Inf),          # adjust if you prefer other cut‑points
+    labels  = c("1–5", "6–10", "11–15", "16–20"),
+    right   = TRUE, include.lowest = TRUE
+  ))
+
+# 1. recode counts into 5 tidy factor levels (0, 1–5, 6–10, 11–15, 16–20+)
+fullmap <- fullmap %>% 
+  mutate(
+    n_cat = case_when(
+      is.na(n) ~ NA_character_,      # keep missing separate
+      n == 0  ~ "0",
+      n <= 5  ~ "1–5",
+      n <= 10 ~ "6–10",
+      n <= 15 ~ "11–15",
+      TRUE    ~ "16–20"
+    ) %>% 
+    factor(levels = c("0", "1–5", "6–10", "11–15", "16–20"))  # lock legend order
+  )
+
+# 2. define colours: grey for 0, first four Dark2 hues for the rest
+fill_cols <- c(
+  "0"        = "grey80",
+  setNames(brewer.pal(4, "Dark2"), c("1–5", "6–10", "11–15", "16–20"))
+)
+
+# 3. build the map
+fig5 <- fullmap %>% 
+  ggplot(aes(fill = n_cat, map_id = region)) +
+  geom_map(map = world_map, colour = "gray50", linewidth = 0.2) +
   expand_limits(x = world_map$long, y = world_map$lat) +
-  coord_map("mercator", xlim = c(-180, 180), ylim = c(-50, 90)) +  
-  theme(
-    axis.text = element_blank(),  
-    axis.title = element_blank(),  
-    legend.position = "bottom",
-    legend.box = "horizontal",  
-    legend.box.just = "center",  
-    legend.margin = margin(t = 10, unit = "pt"),  
-    legend.text = element_text(size = 20),  
-    legend.title = element_text(size = 20, face = "bold"),  
-    legend.key.width = unit(30, "mm"), 
-    panel.background = element_rect(fill = "white")
+  coord_map("mercator", xlim = c(-180, 180), ylim = c(-50, 90)) +
+  scale_fill_manual(
+    values   = fill_cols,
+    name     = "First‑author count",
+    na.value = "white",              # countries not in the data
+    drop     = FALSE
   ) +
-  scale_fill_gradient(
-    low = "#98FB98", high = "#006400",
-    name = "First Author Count",  
-    na.value = "gray70",
-    limits = c(1, 20)
+  theme_void() +
+  theme(
+    panel.background = element_rect(fill = "white", colour = NA),
+    legend.position  = "bottom",
+    legend.direction = "horizontal",
+    legend.title     = element_text(size = 20, face = "bold"),
+    legend.text      = element_text(size = 18),
+    legend.key.width = unit(32, "mm"),
+    legend.margin    = margin(t = 8)
   ) +
   guides(
-    fill = guide_colourbar(
-      barwidth = unit(210, units = "mm"),
-      barheight = unit(5, units = "mm")
+    fill = guide_legend(
+      title.position = "top",
+      title.hjust    = 0.5,
+      label.position = "bottom",
+      nrow           = 1
     )
   )
 
-fig4
+fig5
 
- # ggsave(here("figures", "fig4.pdf"), width = 21, height = 12, units = "cm", scale = 2, dpi = 800)
- # ggsave(here("figures", "fig4.jpg"), width = 21, height = 12, units = "cm", scale = 2, dpi = 800)
+
+# ggsave(here("figures", "fig5.pdf"), width = 21, height = 12, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "fig5.svg"), width = 21, height = 12, units = "cm", scale = 2, dpi = 800)
 
 ```
 
@@ -2333,7 +2348,7 @@ heat_map_europe <- fullmap %>%
 heat_map_europe
 
 # ggsave(here("figures", "heat_map_europe_authors.pdf"), width = 25, height = 15, units = "cm", scale = 2, dpi = 800)
-# ggsave(here("figures", "heat_map_europe_authors.jpg"), width = 25, height = 15, units = "cm", scale = 2, dpi = 800)
+# ggsave(here("figures", "heat_map_europe_authors.svg"), width = 25, height = 15, units = "cm", scale = 2, dpi = 800)
 
 ```
 
@@ -2341,120 +2356,251 @@ heat_map_europe
 ## Chord diagram of country collaborations
 Chord diagram of collaborations across countries. Countries represent the location of the primary authors’ affiliated institution. 
 ```{r,fig.width= 12, fig.height=12}
-jpeg(filename = here("figures", "chord_diagram_country_collaborations.jpg"), width = 800, height = 800)
+svg(filename = here("figures", "chord_diagram_country_collaborations.svg"),
+    width = 8, height = 8)   # inches are easier to reason about than pixels
 
-# Extract countries from the affiliations
+# ── 1. Build collaboration matrix ────────────────────────────────────────────
 bib_sco2 <- metaTagExtraction(bib_sco, Field = "AU_CO", sep = ";")
+NetMatrix_country <- biblioNetwork(bib_sco2,
+                                   analysis = "collaboration",
+                                   network  = "countries",
+                                   sep      = ";") |>
+                     as.matrix()
 
-# Create a network matrix of collaborations between countries
-NetMatrix_country <- biblioNetwork(bib_sco2, analysis = "collaboration", network = "countries", sep = ";")
-NetMatrix_country <- as.matrix(NetMatrix_country)
+# keep only upper‑triangle to avoid double counts
+NetMatrix_country[lower.tri(NetMatrix_country)] <- 0  
 
-# Remove lower triangle duplication
-NetMatrix_country[lower.tri(NetMatrix_country)] <- 0 
+# ── 2. Standardise country names ─────────────────────────────────────────────
+# (add more replacements if you spot variants)
+clean_names <- function(x) {
+  x <- str_to_title(x)
+  x[x == "Usa"]             <- "USA"
+  x[x == "United Kingdom"]   <- "UK"
+  x
+}
+colnames(NetMatrix_country) <- clean_names(colnames(NetMatrix_country))
+rownames(NetMatrix_country) <- clean_names(rownames(NetMatrix_country))
 
-# Standardize some country names
-colnames(NetMatrix_country) <- str_to_title(colnames(NetMatrix_country))
-rownames(NetMatrix_country) <- str_to_title(rownames(NetMatrix_country))
-colnames(NetMatrix_country)[colnames(NetMatrix_country) == "Usa"] <- "USA"
-rownames(NetMatrix_country)[rownames(NetMatrix_country) == "Usa"] <- "USA"
-colnames(NetMatrix_country)[colnames(NetMatrix_country) == "United Kingdom"] <- "UK"
-rownames(NetMatrix_country)[rownames(NetMatrix_country) == "United Kingdom"] <- "UK"
+# ── 3. Plot ──────────────────────────────────────────────────────────────────
+circos.clear()  # start fresh in case we’re re‑running
 
-# Set up circos parameters
-circos.par(cell.padding = c(0, 0, 0, 0), track.margin = c(0, 0))
+circos.par(
+  start.degree   = 90,                 # top‑centre
+  gap.degree     = 4,                  # more space between sectors
+  cell.padding   = c(0, 0, 0, 0),
+  track.margin   = c(0, 0),
+  canvas.xlim    = c(-1.15, 1.15),     # nudge out a touch for labels
+  canvas.ylim    = c(-1.15, 1.15)
+)
 
-# Create chord diagram
-chordDiagram(NetMatrix_country, annotationTrack = "grid", preAllocateTracks = 1)
+# pre‑allocate a label track a little wider than default
+chordDiagram(
+  NetMatrix_country,
+  annotationTrack = "grid",
+  preAllocateTracks = list(track.height = mm_h(5))
+)
 
-# Label each sector with its name
-circos.trackPlotRegion(track.index = 1, bg.border = NA, panel.fun = function(x, y) {
-  xlim       = get.cell.meta.data("xlim")
-  ylim       = get.cell.meta.data("ylim")
-  sector.name= get.cell.meta.data("sector.index")
-  circos.text(mean(xlim), ylim[1] + 0.2, sector.name, 
-              facing = "clockwise", niceFacing = TRUE, adj = c(0, 0))
-  circos.axis(h = "top", labels.cex = 0.5, major.tick.length = 0.2, 
-              sector.index = sector.name, track.index = 2)
-})
+# add country labels
+circos.trackPlotRegion(
+  track.index = 1, bg.border = NA,
+  panel.fun = function(x, y) {
+    sector.name <- get.cell.meta.data("sector.index")
+    xlim        <- get.cell.meta.data("xlim")
+    ylim        <- get.cell.meta.data("ylim")
+    # put text just outside the grid line
+    circos.text(
+      x         = mean(xlim),
+      y         = ylim[2] + mm_y(1.5),
+      labels    = sector.name,
+      facing    = "clockwise",
+      niceFacing= TRUE,
+      adj       = c(0, 0),
+      cex       = 0.55               # shrink a little so every name fits
+    )
+    # optional axis ticks (comment out if you don’t need them)
+    circos.axis(
+      h                 = "top",
+      sector.index      = sector.name,
+      track.index       = 2,
+      major.tick.length = 0.15,
+      labels.cex        = 0.4
+    )
+  }
+)
 
 dev.off()
-
 ```
 
 ## Chord diagram (no within-country collaborations)
 Chord diagram illustration of collaborations across countries. Countries represent the location of the primary authors’ affiliated institution. Collaborations within countries are not shown.
 ```{r,fig.width= 12, fig.height=12}
-jpeg(filename = here("figures", "chord_diagram_no_within_country.jpg"), width = 800, height = 800)
+# ── 1. Build (or re‑use) the collaboration matrix ───────────────────────────
+bib_sco2 <- metaTagExtraction(bib_sco, Field = "AU_CO", sep = ";")
+NetMatrix_country <- biblioNetwork(bib_sco2,
+                                   analysis = "collaboration",
+                                   network  = "countries",
+                                   sep      = ";") |>
+                     as.matrix()
 
-# Remove diagonal (within-country) collaborations
+# keep only upper‑triangle to avoid double counts
+NetMatrix_country[lower.tri(NetMatrix_country)] <- 0  
+
+# drop within‑country ties
 diag(NetMatrix_country) <- 0
 
-# Create chord diagram
-chordDiagram(NetMatrix_country, annotationTrack = "grid", preAllocateTracks = 1)
+# ── 2. Standardise country names (add more if you need) ──────────────────────
+clean_names <- function(x) {
+  x <- str_to_title(x)
+  x[x == "Usa"]             <- "USA"
+  x[x == "United Kingdom"]   <- "UK"
+  x
+}
+colnames(NetMatrix_country) <- clean_names(colnames(NetMatrix_country))
+rownames(NetMatrix_country) <- clean_names(rownames(NetMatrix_country))
 
-# Label each sector
-circos.trackPlotRegion(track.index = 1, panel.fun = function(x, y) {
-  xlim       = get.cell.meta.data("xlim")
-  ylim       = get.cell.meta.data("ylim")
-  sector.name= get.cell.meta.data("sector.index")
-  circos.text(mean(xlim), ylim[1] + 0.2, sector.name, 
-              facing = "clockwise", niceFacing = TRUE, adj = c(0, 0.5))
-  circos.axis(h = "top", labels.cex = 0.5, major.tick.length = 0.2, 
-              sector.index = sector.name, track.index = 2)
-}, bg.border = NA)
+# ── 3. SVG output ────────────────────────────────────────────────────────────
+svg(filename = here("figures", "chord_diagram_no_within_country.svg"),
+    width = 8, height = 8)          # inches
+
+circos.clear()
+
+circos.par(
+  start.degree   = 90,
+  gap.degree     = 4,
+  cell.padding   = c(0, 0, 0, 0),
+  track.margin   = c(0, 0),
+  canvas.xlim    = c(-1.15, 1.15),
+  canvas.ylim    = c(-1.15, 1.15)
+)
+
+chordDiagram(
+  NetMatrix_country,
+  annotationTrack = "grid",
+  preAllocateTracks = list(track.height = mm_h(5))
+)
+
+circos.trackPlotRegion(
+  track.index = 1, bg.border = NA,
+  panel.fun = function(x, y) {
+    sn   <- get.cell.meta.data("sector.index")
+    xl   <- get.cell.meta.data("xlim")
+    yl   <- get.cell.meta.data("ylim")
+    circos.text(
+      mean(xl),
+      yl[2] + mm_y(1.5),            # nudge outside ring
+      sn,
+      facing     = "clockwise",
+      niceFacing = TRUE,
+      adj        = c(0, 0),
+      cex        = 0.55
+    )
+    circos.axis(
+      h                 = "top",
+      sector.index      = sn,
+      track.index       = 2,
+      major.tick.length = 0.15,
+      labels.cex        = 0.4
+    )
+  }
+)
 
 dev.off()
+
+# ── 4. OPTIONAL
 
 ```
 
-## Figure 4b
+## Figure 5b
 Chord diagram illustration of collaborations across continents. Continents represent the location of the primary authors’ affiliated institution. Collaborations within countries are not shown.
 ```{r,fig.width= 12, fig.height=12}
-# Copy the country matrix into a “continent” matrix
+# ── libraries ────────────────────────────────────────────────────────────────
+library(circlize)
+library(dplyr)
+
+# ── 1. country → continent recode  (same as before) ─────────────────────────
+continent_key <- c(
+  # North America
+  "USA" = "North America", "Canada" = "North America", "Costa Rica" = "North America",
+  # Europe
+  "Spain" = "Europe", "France" = "Europe", "Denmark" = "Europe", "Netherlands" = "Europe",
+  "Belgium" = "Europe", "UK" = "Europe", "Germany" = "Europe", "Finland" = "Europe",
+  "Greece" = "Europe", "Norway" = "Europe", "Sweden" = "Europe", "Italy" = "Europe",
+  "Portugal" = "Europe", "Switzerland" = "Europe", "Czech Republic" = "Europe",
+  "Iceland" = "Europe", "Ireland" = "Europe", "Romania" = "Europe",
+  "Slovakia" = "Europe", "Ukraine" = "Europe",
+  # Asia
+  "China" = "Asia", "Korea" = "Asia", "Japan" = "Asia", "Hong Kong" = "Asia",
+  "Turkey" = "Asia", "India" = "Asia", "Iran" = "Asia", "Kazakhstan" = "Asia",
+  # Other
+  "Australia" = "Other", "Brazil" = "Other", "Egypt" = "Other"
+)
+
 NetMatrix_continent <- NetMatrix_country
+colnames(NetMatrix_continent) <- recode(colnames(NetMatrix_continent),
+                                        !!!continent_key,
+                                        .default = colnames(NetMatrix_continent))
+rownames(NetMatrix_continent) <- recode(rownames(NetMatrix_continent),
+                                        !!!continent_key,
+                                        .default = rownames(NetMatrix_continent))
 
-# Rename countries to continents
-colnames(NetMatrix_continent)[colnames(NetMatrix_continent) == "Usa"] <- "North America"
-rownames(NetMatrix_continent)[rownames(NetMatrix_continent) == "Usa"] <- "North America"
+# ── 2. collapse duplicates & tidy ────────────────────────────────────────────
+merge_matrix  <- t(rowsum(t(NetMatrix_continent),
+                          group = colnames(NetMatrix_continent), na.rm = TRUE))
+merge_matrix2 <- rowsum(merge_matrix, group = rownames(merge_matrix))
+diag(merge_matrix2) <- 0  # no self‑links
 
-colnames(NetMatrix_continent)[colnames(NetMatrix_continent) == "Spain"] <- "Europe"
-rownames(NetMatrix_continent)[rownames(NetMatrix_continent) == "Spain"] <- "Europe"
+continent_order <- c("North America", "Europe", "Asia", "Other")
+merge_matrix2   <- merge_matrix2[continent_order, continent_order]
 
-# ... (remainder of your renaming for each country → continent) ...
+# ── 3. palette ───────────────────────────────────────────────────────────────
+continent_cols <- c("Asia"          = "#1B9E77",
+                    "Europe"        = "#D95F02",
+                    "North America" = "#7570B3",
+                    "Other"         = "#E6AB02")
 
-# Collapse into summed continents matrix
-merge_matrix   <- t(rowsum(t(NetMatrix_continent), group = colnames(NetMatrix_continent), na.rm = TRUE))
-merge_matrix2  <- rowsum(merge_matrix, group = rownames(merge_matrix))
-diag(merge_matrix2) <- 0  # remove diagonal if you do not want within-continent collaborations
+# ── 4. helper: totals per continent ─────────────────────────────────────────
+totals <- rowSums(merge_matrix2) + colSums(merge_matrix2)
 
-# Create the chord diagram
-chordDiagramFromMatrix(merge_matrix2)
+# ── 5. plotting parameters ──────────────────────────────────────────────────
+show_link_labels   <- TRUE          # set FALSE if you don’t want flow labels
+link_label_cutoff  <- 0.10          # fraction of max to label (e.g. top 10 %)
 
-# Optionally define color palette
-my_colors <- c("#1B9E77", "#D95F02", "#7570B3", "#E6AB02")
-my_colors <- rep(my_colors, length.out = ncol(merge_matrix2))
+# ── 5. plotting ─────────────────────────────────────────────────────────────
+pdf("figures/fig5b.pdf", width = 15, height = 15)
 
-jpeg("figures/continent_chord_diagram.jpg", width = 25, height = 25, units = "cm", res = 300)
+circos.clear()
+circos.par(start.degree = 90,
+           gap.after    = c(4, 4, 4, 10),
+           track.margin = c(0.01, 0.01))
 
-# Draw chord diagram with some styling
-chordDiagram(merge_matrix2, 
-             annotationTrack = "grid", 
-             annotationTrackHeight = mm_h(7), 
-             preAllocateTracks = 1,
-             grid.col = my_colors)
+# allocate a single, thicker outer track for the ring
+chordDiagram(
+  merge_matrix2,
+  grid.col          = continent_cols,
+  transparency      = 0.25,
+  annotationTrack   = "grid",
+  preAllocateTracks = list(track.height = uh(12, "mm"))  # just one track now
+)
 
-# Add track to label each sector
+## continent names — closer & larger ----------------------------------------
 circos.trackPlotRegion(track.index = 1, panel.fun = function(x, y) {
-  xlim       = get.cell.meta.data("xlim")
-  ylim       = get.cell.meta.data("ylim")
-  sector.name= get.cell.meta.data("sector.index")
-  circos.text(mean(xlim), ylim[1], sector.name, 
-              facing = "bending.inside", niceFacing = TRUE, 
-              adj = c(0.5, 1.75), col = "white", cex = 1.2)
+  sector <- get.cell.meta.data("sector.index")
+  circos.text(
+    x      = get.cell.meta.data("xcenter"),
+    y      = get.cell.meta.data("ylim")[2] + mm_y(0),  # ← closer (was + mm_y(2))
+    labels = sector,
+    facing = "bending.outside", niceFacing = TRUE,
+    cex    = 3,   # ← larger (was 1.4)
+    font   = 2,
+    col    = "black"
+  )
 }, bg.border = NA)
 
+
 dev.off()
+circos.clear()
+
+
 
 
 ```
