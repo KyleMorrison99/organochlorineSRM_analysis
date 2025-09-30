@@ -11,17 +11,7 @@ editor_options:
   chunk_output_type: console
   
 ---
-```{r, include = FALSE}
-rm(list = ls())
-# knitr setting
-knitr::opts_chunk$set(
-  message = FALSE,
-  warning = FALSE, 
-  cache = TRUE,
-  error = TRUE, 
-  echo=TRUE
-)
-```
+
 
 
 # Reference: Morrison, K., Yang, Y., Williams, C. et al. Mapping meta-analyses on organochlorine pesticides reveals low methodological quality. Nat Sustain (2025). https://doi.org/10.1038/s41893-025-01634-5
@@ -39,7 +29,8 @@ In this Rmarkdown document we provide the following workflow:
 
 # Load packages and data
 ## Load packages 
-```{r, results="hide"}
+
+```r
 rm(list = ls())
 pacman::p_load(tidyverse,
 hrbrthemes, 
@@ -60,14 +51,14 @@ ggalluvial,
 ggraph,
 ComplexUpset)
 knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
-
 ```
 
 
 ## Load data
 Manually extracted pilot data is stored in five separate **.csv** files representing different aspects of the data (extracted via structured predefined Google Forms - one per table). 
 Bibliographic data records are exported from Scopus (including cited references field) in .bib format and locally saved as **bib_sco.bib**. 
-```{r,  results="hide"}
+
+```r
 # Load CSV datasets
 sd <- read_csv(here("data", "ocp_srm_study_details.csv"))
 ocp <- read_csv(here("data", "ocp_srm_ocp_details.csv"))
@@ -77,7 +68,6 @@ sp <- read_csv(here("data", "ocp_srm_species_details.csv"))
 pol <- read_csv(here("data", "ocp_srm_policy.csv"))
 # Load BibTeX dataset
 bib_sco <- convert2df(here("data", "bib_sco.bib"), dbsource = "scopus", format = "bibtex")
-
 ```
 
 # Section 0 
@@ -88,7 +78,8 @@ A) Bar chart showing the annual number of meta-analyses synthesising research on
 B) Area graph showing the cumulative time trends of meta-analyses synthesising research on the impacts of organochlorine pesticides, categorised by different subjects of exposure.
 C) Bar chart showing the annual number of policy citations on the included meta-analysis analyses synthesising research on the impacts of organochlorine pesticides, categorised by policy topics
 D) Area graph showing the cumulative time trends of policy citations on the included meta-analysis analyses synthesising research on the impacts of organochlorine pesticides, categorised by policy topics
-```{r, fig.width=16, fig.height=12}
+
+```r
 # Join the study and subject datasets
 sd_sub <- left_join(sd, sub, by = "study_id")
 
@@ -299,8 +290,11 @@ fig1 <- fig1a / fig1b / fig1c / fig1d
 
 # Display the final combined plot
 fig1
+```
 
+<img src="organochlorineSRM_analysis_files/figure-html/unnamed-chunk-4-1.png" width="1536" />
 
+```r
 # Save the final figure
 ggsave(
   here("figures", "fig1.pdf"), 
@@ -313,16 +307,20 @@ fig1 <- fig1a / fig1b / fig1c / fig1d
 
 # Display the final combined plot
 fig1
+```
 
+<img src="organochlorineSRM_analysis_files/figure-html/unnamed-chunk-4-2.png" width="1536" />
+
+```r
 # Save the final figure
 # ggsave(here("figures", "fig1.pdf"), width = 16, height = 24, units = "cm", scale = 2, dpi = 800)
 # ggsave(here("figures", "fig1.svg"), width = 16, height = 24, units = "cm", scale = 2, dpi = 800)
-
 ```
 
 ## Policy country bar plot
 Bar chart showing the annual number of policy citations on the included meta-analysis analyses synthesising research on the impacts of organochlorine pesticides, categorised by country
-```{r}
+
+```r
 policy_country <- ggplot(
   pol %>%
     # 1) Remove rows with NA policy_title
@@ -388,15 +386,21 @@ df_distinct_count <- pol %>%
   nrow()
 
 df_distinct_count
+```
 
+```
+## [1] 173
+```
+
+```r
 # ggsave(here("figures", "policy_country.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 # ggsave(here("figures", "policy_country.svg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
-
 ```
 
 ## 
 Create a standard theme for the supplementary plots
-```{r}
+
+```r
 organochlorTHEME <- function() {
   theme_minimal() +
   theme(
@@ -414,13 +418,13 @@ organochlorTHEME <- function() {
     plot.tag = element_text(face = "bold"),
     legend.position = "none")    
 }
-
 ```
 
 ## Alternative time trends
 A) Bar chart showing the annual number of published meta-analyses synthesising research on the impacts of organochlorine pesticides.  
 B) Line graph showing the cumulative time trends of meta-analyses synthesising research on the impacts of organochlorine pesticides.
-```{r, fig.width=16, fig.height=12}
+
+```r
 # Create the annual Count Plot
 annual_article_count <- sd1 %>%
   ggplot(aes(x = publication_year, y = n)) +
@@ -451,10 +455,13 @@ cum_article_count <- sd1 %>%
 alt_article_count <- annual_article_count / cum_article_count
 
 alt_article_count
+```
 
+<img src="organochlorineSRM_analysis_files/figure-html/unnamed-chunk-7-1.png" width="1536" />
+
+```r
 # ggsave(here("figures", "alt_article_count.pdf"), width = 16, height = 12, units = "cm", scale = 2, dpi = 800)
 # ggsave(here("figures", "alt_article_count.svg"), width = 16, height = 12, units = "cm", scale = 2, dpi = 800)
-
 ```
 
 # Section 1
@@ -465,7 +472,8 @@ The methodological and reporting quality of meta-analyses according to CEESAT v.
 
 ## Figure 2a
 CEESAT scores for 83 assessed meta-analyses 
-```{r, fig.width=25, fig.height=15}
+
+```r
 # Start the data manipulation
 percent_ceesat_score <- sd %>%
   filter(!is.na(author_year)) %>%
@@ -528,7 +536,11 @@ fig2a <- ggplot(data = percent_ceesat_score, aes(x = question, y = percent, fill
   labs(tag = "a)")
 
 fig2a
+```
 
+<img src="organochlorineSRM_analysis_files/figure-html/unnamed-chunk-8-1.png" width="2400" />
+
+```r
 total_n <- sum(percent_ceesat_score$n)
 percentages <- tibble(
   red_percentage = sum(percent_ceesat_score$n[percent_ceesat_score$score == "Red"]) / total_n * 100,
@@ -538,14 +550,24 @@ percentages <- tibble(
 )
 
  percentages
+```
 
+```
+## # A tibble: 1 × 4
+##   red_percentage amber_percentage green_percentage gold_percentage
+##            <dbl>            <dbl>            <dbl>           <dbl>
+## 1           32.9             50.5             10.7            5.87
+```
+
+```r
 # ggsave(here("figures", "fig2a.pdf"), width = 25, height = 15, units = "cm", scale = 2, dpi = 800)
 # ggsave(here("figures", "fig2a.svg"), width = 25, height = 15, units = "cm", scale = 2, dpi = 800)
 ```
 
 ## 
 Making the CEESAT question groups for result reporting
-```{r}
+
+```r
 # Create new categories for specified questions in numerical order
 percent_ceesat_score$combined_category <- ifelse(
   grepl("^1\\.1", percent_ceesat_score$question) | grepl("^2\\.1", percent_ceesat_score$question),
@@ -578,12 +600,34 @@ percent_ceesat_score_grouped <- percent_ceesat_score_grouped %>%
   mutate(relative_percent = (total_n / total_count) * 100)
 
 print(percent_ceesat_score_grouped)
+```
+
+```
+## # A tibble: 22 × 5
+## # Groups:   combined_category [6]
+##    combined_category    score total_n total_count relative_percent
+##    <chr>                <fct>   <int>       <int>            <dbl>
+##  1 Data Analysis        Red        23         249             9.24
+##  2 Data Analysis        Amber     192         249            77.1 
+##  3 Data Analysis        Green      27         249            10.8 
+##  4 Data Analysis        Gold        7         249             2.81
+##  5 Data Extraction      Red       184         415            44.3 
+##  6 Data Extraction      Amber     130         415            31.3 
+##  7 Data Extraction      Green      53         415            12.8 
+##  8 Data Extraction      Gold       48         415            11.6 
+##  9 Literature Screening Red       113         249            45.4 
+## 10 Literature Screening Amber     120         249            48.2 
+## # ℹ 12 more rows
+```
+
+```r
 # view(percent_ceesat_score_grouped)
 ```
 
 ## 
 Calculating altmetric for each study 
-```{r}
+
+```r
 # load data
 bib_alt <- read_csv(here("data","scopus.csv")) 
 
@@ -646,6 +690,67 @@ vals   <- c(x$title,  x$altmetric_id, x$journal)
   # crawl
  # altmetric.crawler[[n]] <- try(list(summary.altmetric(getAltmetrics(doi = DOIs[n]))))
 }
+```
+
+```
+## Error : lexical error: invalid char in json text.
+##                                        Not Found
+##                      (right here) ------^
+## 
+## Error : lexical error: invalid char in json text.
+##                                        Not Found
+##                      (right here) ------^
+## 
+## Error : lexical error: invalid char in json text.
+##                                        Not Found
+##                      (right here) ------^
+## 
+## Error : lexical error: invalid char in json text.
+##                                        Not Found
+##                      (right here) ------^
+## 
+## Error : lexical error: invalid char in json text.
+##                                        Not Found
+##                      (right here) ------^
+## 
+## Error : lexical error: invalid char in json text.
+##                                        Not Found
+##                      (right here) ------^
+## 
+## Error : lexical error: invalid char in json text.
+##                                        Not Found
+##                      (right here) ------^
+## 
+## Error : lexical error: invalid char in json text.
+##                                        Not Found
+##                      (right here) ------^
+## 
+## Error : lexical error: invalid char in json text.
+##                                        Not Found
+##                      (right here) ------^
+## 
+## Error : lexical error: invalid char in json text.
+##                                        Not Found
+##                      (right here) ------^
+## 
+## Error : lexical error: invalid char in json text.
+##                                        Not Found
+##                      (right here) ------^
+## 
+## Error : lexical error: invalid char in json text.
+##                                        Not Found
+##                      (right here) ------^
+## 
+## Error : lexical error: invalid char in json text.
+##                                        Not Found
+##                      (right here) ------^
+## 
+## Error : lexical error: invalid char in json text.
+##                                        Not Found
+##                      (right here) ------^
+```
+
+```r
 # save results from altmetric.crawler and retrieve lists within lists
 altmetric.crawler2 <- sapply(altmetric.crawler, function(x) {x})
 # retrieve stats
@@ -679,13 +784,12 @@ sd <- sd %>%
 # Sum all the points columns to create a 'total_points' column
 sd <- sd %>%
   mutate(total_points = rowSums(select(., starts_with("points_")), na.rm = TRUE))
-
 ```
 
 ## Figure 2b
 CEESAT scores for meta-analyses cited in policy documents (left panel) and those not cited in policy documents (right panel). 
-```{r, fig.width=25, fig.height=15}
 
+```r
 # Converting policy to binary and dropping NAs
 sd_bib_alt_policy <- left_join(sd, pol, join_by("author_year"), multiple = "all")
 
@@ -756,6 +860,11 @@ fig2b <- ggplot(data = percent_ceesat_score1, aes(x = question, y = percent, fil
   labs(tag = "b)")
 
 fig2b
+```
+
+<img src="organochlorineSRM_analysis_files/figure-html/unnamed-chunk-11-1.png" width="2400" />
+
+```r
 # ggsave(here("figures", "fig2b.pdf"), width = 25, height = 15, units = "cm", scale = 2, dpi = 800)
 # ggsave(here("figures", "fig2b.svg"), width = 25, height = 15, units = "cm", scale = 2, dpi = 800)
 
@@ -781,28 +890,118 @@ policy_combined <- bind_rows(policy_df, not_policy_df)
 
 # View the combined tibble
 print(policy_combined)
+```
 
+```
+## # A tibble: 104 × 2
+##    values category
+##     <dbl> <chr>   
+##  1     13 Policy  
+##  2     21 Policy  
+##  3     21 Policy  
+##  4      0 Policy  
+##  5     15 Policy  
+##  6     17 Policy  
+##  7      3 Policy  
+##  8     16 Policy  
+##  9     17 Policy  
+## 10     14 Policy  
+## # ℹ 94 more rows
+```
+
+```r
 # QQ Plot
 qqnorm(policy)
 qqline(policy, col = "red")
+```
 
+<img src="organochlorineSRM_analysis_files/figure-html/unnamed-chunk-11-2.png" width="2400" />
+
+```r
 # QQ Plot
 qqnorm(not_policy)
 qqline(not_policy, col = "red") 
+```
 
+<img src="organochlorineSRM_analysis_files/figure-html/unnamed-chunk-11-3.png" width="2400" />
 
+```r
 policy_model <- clm(factor(values) ~ category, data=policy_combined)
 
 summary(policy_model)
+```
 
+```
+## formula: factor(values) ~ category
+## data:    policy_combined
+## 
+##  link  threshold nobs logLik  AIC    niter max.grad cond.H 
+##  logit flexible  104  -319.95 705.89 9(3)  1.88e-13 3.6e+03
+## 
+## Coefficients:
+##                Estimate Std. Error z value Pr(>|z|)
+## categoryPolicy  0.04169    0.34233   0.122    0.903
+## 
+## Threshold coefficients:
+##       Estimate Std. Error z value
+## 0|3   -1.35344    0.29825  -4.538
+## 3|4   -1.18322    0.28830  -4.104
+## 4|5   -1.12985    0.28550  -3.957
+## 5|6   -1.07791    0.28302  -3.809
+## 6|7   -1.02728    0.28072  -3.659
+## 7|8   -0.88221    0.27484  -3.210
+## 8|9   -0.70142    0.26939  -2.604
+## 9|10  -0.53123    0.26588  -1.998
+## 10|11 -0.44908    0.26478  -1.696
+## 11|12 -0.32855    0.26402  -1.244
+## 12|13 -0.21044    0.26409  -0.797
+## 13|14 -0.13264    0.26434  -0.502
+## 14|15  0.02161    0.26450   0.082
+## 15|16  0.13709    0.26458   0.518
+## 16|17  0.33177    0.26631   1.246
+## 17|18  0.61558    0.27217   2.262
+## 18|19  0.78808    0.27719   2.843
+## 19|20  0.87844    0.28036   3.133
+## 20|21  1.07018    0.28876   3.706
+## 21|22  1.65535    0.32417   5.106
+## 22|23  1.80323    0.33560   5.373
+## 23|24  2.05957    0.35928   5.732
+## 24|25  2.15742    0.36963   5.837
+## 25|26  2.26341    0.38154   5.932
+## 26|27  2.37935    0.39567   6.013
+## 27|29  2.50760    0.41270   6.076
+## 29|30  2.65143    0.43346   6.117
+## 30|31  3.00805    0.49400   6.089
+## 31|32  3.24108    0.54172   5.983
+## 32|37  3.53860    0.61348   5.768
+## 37|38  3.95391    0.73682   5.366
+## 38|39  4.65680    1.02117   4.560
+```
+
+```r
 policy_model_sensitivity <- t.test(policy,not_policy) 
 
 policy_model_sensitivity
 ```
 
+```
+## 
+## 	Welch Two Sample t-test
+## 
+## data:  policy and not_policy
+## t = -0.13057, df = 100.22, p-value = 0.8964
+## alternative hypothesis: true difference in means is not equal to 0
+## 95 percent confidence interval:
+##  -4.114662  3.606514
+## sample estimates:
+## mean of x mean of y 
+##  13.42593  13.68000
+```
+
 ## Figure 3a
 Bar plot showing the percentage and total count of bias methodologies used in meta-analyses investigating the impacts of organochlorine pesticides. Note that some meta-analyses may contribute to multiple sections if the study involved the use of multiple bias assessment methodologies. 
-```{r, fig.width=16, fig.height=10}
+
+```r
 # Calculate the total count for each category
 bias_method_count <- sd %>% 
   separate_rows(bias_assessment_method, sep = ",\\s+") %>% 
@@ -831,14 +1030,19 @@ fig3a <- bias_method_count %>%
   organochlorTHEME()
 
 fig3a
+```
 
+<img src="organochlorineSRM_analysis_files/figure-html/unnamed-chunk-12-1.png" width="1536" />
+
+```r
 # ggsave(here("figures", "fig3a.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 # ggsave(here("figures", "fig3a.svg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 ```
 
 ## Figure 3b
 Bar plot showing the percentage and total count of heterogeneity assessment methods used in meta-analyses investigating the impacts of organochlorine pesticides. Note that some meta-analyses may contribute to multiple sections if the study involved multiple heterogeneity assessments. Percentage is showing the proportion of studies.
-```{r, fig.width=16, fig.height=10}
+
+```r
 # Figure 3b: Heterogeneity Assessment Methods
 heterogeneity_count <- sd %>% 
   separate_rows(heterogeneity_assessment_method, sep = ",\\s+") %>% 
@@ -865,15 +1069,19 @@ fig3b <- heterogeneity_count %>%
   organochlorTHEME()
 
 fig3b
+```
 
+<img src="organochlorineSRM_analysis_files/figure-html/unnamed-chunk-13-1.png" width="1536" />
+
+```r
 # ggsave(here("figures", "fig3b.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 # ggsave(here("figures", "fig3b.svg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
-
 ```
  
 ## Figure 3c
 Bar plot showing the percentage and total count of sensitivity analyses conducted in meta-analyses investigating the impacts of organochlorine pesticides. Note that some meta-analyses may contribute to multiple sections if the study involved multiple sensitivity analyses.
-```{r, fig.width=16, fig.height=10}
+
+```r
 # Figure 3c: Sensitivity Analysis Methods
 sensitivity_count <- sd %>% 
   separate_rows(sensitivity_analysis_method, sep = ",\\s+") %>% 
@@ -900,15 +1108,19 @@ fig3c <- sensitivity_count %>%
   organochlorTHEME()
 
 fig3c
+```
 
+<img src="organochlorineSRM_analysis_files/figure-html/unnamed-chunk-14-1.png" width="1536" />
+
+```r
 # ggsave(here("figures", "fig3c.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 # ggsave(here("figures", "fig3c.svg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
-
 ```
 
 ## Figure 3d
 Bar plot showing the percentage and total count of reporting guidelines used in meta-analyses investigating the impacts of organochlorine pesticides. Note that some meta-analyses may contribute to multiple sections if the study involved the use of multiple reporting guidelines.
-```{r, fig.width=16, fig.height=10}
+
+```r
 # Figure 3d: Reporting Guidelines
 reporting_guide_count <- sd %>% 
   separate_rows(reporting_standards_type, sep = ",\\s+") %>% 
@@ -936,14 +1148,19 @@ fig3d <- reporting_guide_count %>%
   organochlorTHEME()
 
 fig3d
+```
 
+<img src="organochlorineSRM_analysis_files/figure-html/unnamed-chunk-15-1.png" width="1536" />
+
+```r
 # ggsave(here("figures", "fig3d.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 # ggsave(here("figures", "fig3d.svg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 ```
 
 ## CEESAT reporting guideline
 CEESAT scores for meta-analyses referencing a reporting guideline (right panel) and those not referencing a reporting guideline (left panel).
-```{r, fig.width=25, fig.height=15}
+
+```r
 sd_bib_alt_guideline <- sd %>% 
   mutate(binary_guideline = if_else(reporting_standards_type == "Not reported", "Not reported", "Reported")) %>% 
     drop_na(binary_guideline, total_points)
@@ -1007,6 +1224,11 @@ ceesat_report <- ggplot(data = percent_ceesat_score2, aes(x = question, y = perc
   facet_wrap(~binary_guideline) 
 
 ceesat_report
+```
+
+<img src="organochlorineSRM_analysis_files/figure-html/unnamed-chunk-16-1.png" width="2400" />
+
+```r
 # ggsave(here("figures", "ceesat_report.pdf"), width = 25, height = 15, units = "cm", scale = 2, dpi = 800)
 # ggsave(here("figures", "ceesat_report.svg"), width = 25, height = 15, units = "cm", scale = 2, dpi = 800)
 
@@ -1031,23 +1253,101 @@ guideline_combined <- bind_rows(guideline_df, no_guideline_df)
 
 # View the combined tibble
 print(guideline_combined)
+```
 
+```
+## # A tibble: 79 × 2
+##    values category       
+##     <dbl> <chr>          
+##  1      7 Cited Guideline
+##  2     11 Cited Guideline
+##  3     17 Cited Guideline
+##  4     21 Cited Guideline
+##  5     20 Cited Guideline
+##  6     16 Cited Guideline
+##  7     31 Cited Guideline
+##  8     15 Cited Guideline
+##  9     37 Cited Guideline
+## 10     16 Cited Guideline
+## # ℹ 69 more rows
+```
 
-
+```r
 guideline_model <- clm(factor(values) ~ category, data=guideline_combined)
 
 summary(guideline_model)
+```
 
- 
+```
+## formula: factor(values) ~ category
+## data:    guideline_combined
+## 
+##  link  threshold nobs logLik  AIC    niter max.grad cond.H 
+##  logit flexible  79   -239.91 543.82 7(0)  1.32e-10 1.1e+03
+## 
+## Coefficients:
+##                      Estimate Std. Error z value Pr(>|z|)    
+## categoryNo Guideline  -2.4120     0.4656   -5.18 2.22e-07 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Threshold coefficients:
+##       Estimate Std. Error z value
+## 3|4    -5.4661     0.8159  -6.699
+## 4|5    -5.0368     0.7056  -7.138
+## 5|6    -4.7247     0.6429  -7.348
+## 6|7    -4.4765     0.6018  -7.439
+## 7|8    -3.9375     0.5328  -7.391
+## 8|9    -3.5474     0.4963  -7.148
+## 9|10   -3.1240     0.4646  -6.724
+## 10|11  -2.9399     0.4524  -6.498
+## 11|12  -2.6925     0.4375  -6.154
+## 12|13  -2.4601     0.4241  -5.801
+## 13|14  -2.3063     0.4149  -5.559
+## 14|15  -2.0034     0.3959  -5.060
+## 15|16  -1.7814     0.3818  -4.666
+## 16|17  -1.4169     0.3588  -3.949
+## 17|18  -0.9985     0.3371  -2.963
+## 18|19  -0.7251     0.3270  -2.218
+## 19|20  -0.5890     0.3235  -1.820
+## 20|21  -0.3875     0.3212  -1.206
+## 21|22   0.4028     0.3269   1.232
+## 22|23   0.5959     0.3335   1.787
+## 23|24   0.9087     0.3520   2.582
+## 24|25   1.0256     0.3608   2.842
+## 25|26   1.1529     0.3712   3.106
+## 26|27   1.2894     0.3842   3.356
+## 27|29   1.4373     0.4003   3.591
+## 29|30   1.6001     0.4206   3.804
+## 30|31   1.9927     0.4816   4.138
+## 31|32   2.2427     0.5301   4.231
+## 32|37   2.5566     0.6028   4.241
+## 37|38   2.9876     0.7275   4.107
+## 38|39   3.7056     1.0141   3.654
+```
 
+```r
 t.test(guideline,no_guideline)
+```
 
-
+```
+## 
+## 	Welch Two Sample t-test
+## 
+## data:  guideline and no_guideline
+## t = 6.1128, df = 68.538, p-value = 5.269e-08
+## alternative hypothesis: true difference in means is not equal to 0
+## 95 percent confidence interval:
+##   6.091412 11.994595
+## sample estimates:
+## mean of x mean of y 
+##  21.92105  12.87805
 ```
 
 ## Box ceesat scores
 Box and violin plot showing the distribution of CEESAT scores for studies cited in policy documents and studies not cited in policy documents
-```{r, fig.width=25, fig.height=15}
+
+```r
 box_ceesat <- policy_combined %>%
   ggplot(aes(x = category, y = values)) +
   geom_violin(fill = "#1b9e77", alpha =0.2, color = NA, trim = FALSE) +
@@ -1066,7 +1366,11 @@ box_ceesat <- policy_combined %>%
         plot.title = element_blank())
 
 box_ceesat
+```
 
+<img src="organochlorineSRM_analysis_files/figure-html/unnamed-chunk-17-1.png" width="2400" />
+
+```r
 # ggsave(here("figures", "box_ceesat.pdf"), width = 25, height = 15, units = "cm", scale = 2, dpi = 800)
 # ggsave(here("figures", "box_ceesat.svg"), width = 25, height = 15, units = "cm", scale = 2, dpi = 800)
 ```
@@ -1074,7 +1378,8 @@ box_ceesat
 
 ## Alluvial plot for bias assessment
 Alluvial plot showing the relationship between the Journal Citation Report Category and bias assessment method.
-```{r, fig.width=16, fig.height=10}
+
+```r
 # Data Transformation 
 bias_assessment_alluvial <- sd %>% 
     separate_rows(bias_assessment_method, sep = ",\\s+") %>%
@@ -1098,15 +1403,19 @@ alluvial_bias <- bias_assessment_alluvial %>%
   organochlorTHEME() 
 
 alluvial_bias
+```
 
+<img src="organochlorineSRM_analysis_files/figure-html/unnamed-chunk-18-1.png" width="1536" />
+
+```r
 # ggsave(here("figures", "alluvial_bias.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 # ggsave(here("figures", "alluvial_bias.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
-
 ```
 
 ## Alluvial plot for Heterogeneity
 Alluvial plot showing the relationship between the Journal Citation Report Category and heterogeneity assessment method.
-```{r, fig.width=16, fig.height=10}
+
+```r
 # Data Transformation 
 heterogeneity_alluvial <- sd %>% 
     separate_rows(heterogeneity_assessment_method, sep = ",\\s+") %>%
@@ -1130,14 +1439,19 @@ ggplot(aes(y = freq ,axis1 = Journal_Category_Allocated_Broad, axis2 = heterogen
   organochlorTHEME() 
 
 alluvial_het
+```
 
+<img src="organochlorineSRM_analysis_files/figure-html/unnamed-chunk-19-1.png" width="1536" />
+
+```r
 # ggsave(here("figures", "alluvial_het.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 # ggsave(here("figures", "alluvial_het.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 ```
  
 ## Figure s10
 Alluvial plot showing the relationship between the Journal Citation Report Category and sensitivity analysis.
-```{r, fig.width=16, fig.height=10}
+
+```r
 # Data Transformation 
 sensitivity_analysis_alluvial <- sd %>% 
     separate_rows(sensitivity_analysis_method, sep = ",\\s+") %>%
@@ -1161,15 +1475,19 @@ ggplot(aes(y = freq ,axis1 = Journal_Category_Allocated_Broad, axis2 = sensitivi
   organochlorTHEME() 
 
 alluvial_sens
+```
 
+<img src="organochlorineSRM_analysis_files/figure-html/unnamed-chunk-20-1.png" width="1536" />
+
+```r
 # ggsave(here("figures", "alluvial_sens.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 # ggsave(here("figures", "alluvial_sens.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
-
 ```
 
 ## Alluvial plot for reporting guideline
 An alluvial plot showing the relationship between the Journal Citation Report Category and reporting guideline used 
-```{r, fig.width=16, fig.height=10}
+
+```r
 # Data Transformation 
 reporting_standards_alluvial <- sd %>% 
     separate_rows(reporting_standards_type, sep = ",\\s+") %>%
@@ -1194,7 +1512,11 @@ ggplot( aes(y = freq ,axis1 = Journal_Category_Allocated_Broad, axis2 = reportin
   organochlorTHEME() 
 
 alluvial_report
+```
 
+<img src="organochlorineSRM_analysis_files/figure-html/unnamed-chunk-21-1.png" width="1536" />
+
+```r
 # ggsave(here("figures", "alluvial_report.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 # ggsave(here("figures", "alluvial_report.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 ```
@@ -1202,7 +1524,8 @@ alluvial_report
 
 ## Database bar plot
 Bar plot showing the percentage and total count of scientific literature databases used in meta-analyses investigating the impacts of organochlorine pesticides. Note that some meta-analyses may contribute to multiple sections if the study involved multiple scientific literature databases. The "Other databases" category includes all databases with a count of 3 or less. Percentage is showing the proportion of studies.
-```{r, fig.width=16, fig.height=10}
+
+```r
 # Calculate the total count for each category
 database_count <- sd %>% 
   separate_rows(database_search, sep = ",\\s+") %>% 
@@ -1231,14 +1554,19 @@ database_bar <- database_count %>%
   organochlorTHEME() 
 
 database_bar
+```
 
+<img src="organochlorineSRM_analysis_files/figure-html/unnamed-chunk-22-1.png" width="1536" />
+
+```r
 # ggsave(here("figures", "database_bar.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 # ggsave(here("figures", "database_bar.svg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 ```
 
 ## Alluvial plot for literature database
 Alluvial plot showing the relationship between the Journal Citation Report Category and the scientific literature database used. Filtered for scientific literature database counts greater than or equal to 3. 
-```{r, fig.width=16, fig.height=10}
+
+```r
 # Rename Environmental Science
 sd <- sd %>%
   mutate(Journal_Category_Allocated_Broad = str_replace(Journal_Category_Allocated_Broad, "Environmental Science", "Environmental\nScience"))
@@ -1267,15 +1595,19 @@ ggplot(aes(y = freq ,axis1 = Journal_Category_Allocated_Broad, axis2 = database_
   organochlorTHEME() 
 
 alluvial_database
+```
 
+<img src="organochlorineSRM_analysis_files/figure-html/unnamed-chunk-23-1.png" width="1536" />
+
+```r
 # ggsave(here("figures", "alluvial_database.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 # ggsave(here("figures", "alluvial_database.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
-
 ```
 
 ## Software bar plot
 Bar plot showing the percentage and total count of software for analysis used in meta-analyses investigating the impacts of organochlorine pesticides. Note that some meta-analyses may contribute to multiple sections if the study involved multiple software. Percentage is showing the proportion of studies.
-```{r, fig.width=16, fig.height=10}
+
+```r
 # Calculate the total count for each category
 software_count <- sd %>%
   separate_rows(software_analysis, sep = ",\\s+") %>%
@@ -1305,15 +1637,19 @@ software_bar <- software_count %>%
   organochlorTHEME() 
 
 software_bar
+```
 
+<img src="organochlorineSRM_analysis_files/figure-html/unnamed-chunk-24-1.png" width="1536" />
+
+```r
 # ggsave(here("figures", "software_bar.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 # ggsave(here("figures", "software_bar.svg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
-
 ```
 
 ## Alluvial plot for software
 Alluvial plot showing the relationship between the Journal Citation Report Category and the software used for analysis.
-```{r, fig.width=16, fig.height=10}
+
+```r
 # Data Transformation 
 software_analysis_alluvial <- sd %>% 
     separate_rows(software_analysis, sep = ",\\s+") %>%
@@ -1339,14 +1675,19 @@ alluvial_software <- software_analysis_alluvial %>%
   organochlorTHEME() 
 
 alluvial_software
+```
 
+<img src="organochlorineSRM_analysis_files/figure-html/unnamed-chunk-25-1.png" width="1536" />
+
+```r
 # ggsave(here("figures", "alluvial_software.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 # ggsave(here("figures", "alluvial_software.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 ```
 
 ## Effect size bar
 Bar plot showing the percentage and total count of effect size calculation types used in meta-analyses investigating the impacts of organochlorine pesticides. Note that some meta-analyses may contribute to multiple sections if the study involved multiple effect size calculations. The "Other effect sizes" category includes all effect sizes with a count of 2 or less. Percentage is showing the proportion of studies.
-```{r, fig.width=16, fig.height=10}
+
+```r
 # Calculate the total count for each category
 effectsize_count <- sd %>% 
   separate_rows(effect_size, sep = ",\\s+") %>% 
@@ -1374,14 +1715,19 @@ effect_bar <-  effectsize_count %>%
   organochlorTHEME() 
 
 effect_bar
+```
 
+<img src="organochlorineSRM_analysis_files/figure-html/unnamed-chunk-26-1.png" width="1536" />
+
+```r
 # ggsave(here("figures", "effect_bar.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 # ggsave(here("figures", "effect_bar.svg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 ```
 
 ## Alluvial plot for effect size estimates
 Alluvial plot showing the relationship between the Journal Citation Report Category and the effect size used. Filtered for scientific literature database counts greater than or equal to 3.
-```{r, fig.width=16, fig.height=10}
+
+```r
 # Data Transformation 
 effectsize_alluvial <- sd %>% 
     separate_rows(effect_size, sep = ",\\s+") %>%
@@ -1408,14 +1754,19 @@ ggplot(aes(y = freq ,axis1 = Journal_Category_Allocated_Broad, axis2 = effect_si
   organochlorTHEME() 
   
 alluvial_effect
+```
 
+<img src="organochlorineSRM_analysis_files/figure-html/unnamed-chunk-27-1.png" width="1536" />
+
+```r
 # ggsave(here("figures", "alluvial_effect.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 # ggsave(here("figures", "alluvial_effect.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 ```
 
 ## Bar plot for visualisation method
 Bar plot showing the percentage and total count of visualization methods used in meta-analyses investigating the impacts of organochlorine pesticides. Note that some meta-analyses may contribute to multiple sections if the study involved the use of multiple visualization methods.
-```{r, fig.width=16, fig.height=10}
+
+```r
 # Calculate the total count for each category
 visualization_count <- sd %>% 
   separate_rows(visualization_method, sep = ",\\s+") %>% 
@@ -1442,14 +1793,19 @@ bar_vis <- visualization_count %>%
   organochlorTHEME() 
 
 bar_vis
+```
 
+<img src="organochlorineSRM_analysis_files/figure-html/unnamed-chunk-28-1.png" width="1536" />
+
+```r
 # ggsave(here("figures", "bar_vis.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 # ggsave(here("figures", "bar_vis.svg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 ```
 
 ## Alluvial plot for visualisation method
 Alluvial plot showing the relationship between the Journal Citation Report Category and visualization method. 
-```{r, fig.width=16, fig.height=10}
+
+```r
 # Data Transformation 
 visualization_alluvial <- sd %>% 
     separate_rows(visualization_method, sep = ",\\s+") %>%
@@ -1474,14 +1830,19 @@ ggplot(aes(y = freq ,axis1 = Journal_Category_Allocated_Broad, axis2 = visualiza
   organochlorTHEME() 
 
 alluvial_vis
+```
 
+<img src="organochlorineSRM_analysis_files/figure-html/unnamed-chunk-29-1.png" width="1536" />
+
+```r
 # ggsave(here("figures", "alluvial_vis.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 # ggsave(here("figures", "alluvial_vis.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 ```
 
 ## Bar plot for risk of bias 
 Bar plot showing the percentage and total count of risk of bias tests used in meta-analyses investigating the impacts of organochlorine pesticides. Note that some meta-analyses may contribute to multiple sections if the study involved the use of multiple risk of bias tests. 
-```{r, fig.width=16, fig.height=10}
+
+```r
 # Calculate the total count for each category
 rob_method_count <- sd %>% 
   separate_rows(rob_assessment_method, sep = ",\\s+") %>% 
@@ -1513,15 +1874,19 @@ bar_risk_of_bias <- rob_method_count %>%
   organochlorTHEME() 
 
 bar_risk_of_bias
+```
 
+<img src="organochlorineSRM_analysis_files/figure-html/unnamed-chunk-30-1.png" width="1536" />
+
+```r
 # ggsave(here("figures", "bar_plot_risk_of_bias.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 # ggsave(here("figures", "bar_plot_risk_of_bias.svg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
-
 ```
 
 ## Alluvial plot for risk of bias
 Alluvial plot showing the relationship between the Journal Citation Report Category and risk of bias methodology. 
-```{r, fig.width=16, fig.height=10}
+
+```r
 # Data Transformation 
 robmethod_alluvial <- sd %>% 
   separate_rows(rob_assessment_method, sep = ",\\s+") %>%
@@ -1545,16 +1910,20 @@ alluvial_risk_of_bias <- robmethod_alluvial %>%
   organochlorTHEME() 
 
 alluvial_risk_of_bias
+```
 
+<img src="organochlorineSRM_analysis_files/figure-html/unnamed-chunk-31-1.png" width="1536" />
+
+```r
 # ggsave(here("figures", "alluvial_plot_risk_of_bias.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 # ggsave(here("figures", "alluvial_plot_risk_of_bias.jpg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
-
 ```
 
 
 ## Bar plot for bias visualizations
 Bar plot showing the percentage and total count of bias visualizations used in meta-analyses investigating the impacts of organochlorine pesticides. Note that some meta-analyses may contribute to multiple sections if the study involved the use of multiple bias visualizations. 
-```{r, fig.width=16, fig.height=10}
+
+```r
 # Calculate the total count for each category
 bias_visualization_count <- sd %>% 
   separate_rows(bias_assessment_visualization, sep = ",\\s+") %>% 
@@ -1583,14 +1952,19 @@ bar_bias_visualization <- bias_visualization_count %>%
   organochlorTHEME() 
 
 bar_bias_visualization
+```
 
+<img src="organochlorineSRM_analysis_files/figure-html/unnamed-chunk-32-1.png" width="1536" />
+
+```r
 # ggsave(here("figures", "bar_plot_bias_visualization.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 # ggsave(here("figures", "bar_plot_bias_visualization.svg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 ```
 
 ## Alluvial plot for bias visualization method
 Alluvial plot showing the relationship between the Journal Citation Report Category and bias visualization method.
-```{r, fig.width=16, fig.height=10}
+
+```r
 # Data Transformation 
 bias_vizualisation_alluvial <- sd %>% 
     separate_rows(bias_assessment_visualization, sep = ",\\s+") %>%
@@ -1614,7 +1988,11 @@ alluvial_bias_visualization <- bias_vizualisation_alluvial %>%
   organochlorTHEME() 
 
 alluvial_bias_visualization
+```
 
+<img src="organochlorineSRM_analysis_files/figure-html/unnamed-chunk-33-1.png" width="1536" />
+
+```r
 # ggsave(here("figures", "alluvial_plot_bias_visualization.pdf"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 # ggsave(here("figures", "alluvial_plot_bias_visualization.svg"), width = 16, height = 10, units = "cm", scale = 2, dpi = 800)
 ```
@@ -1622,7 +2000,8 @@ alluvial_bias_visualization
 
 ## Circular treemap for existing methodological approaches
 A circular treemap showing the counts of each methodological item in existing meta-analysis investigating the impacts of organochlorine pesticides
-```{r, fig.width=21, fig.height=15}
+
+```r
 # Grouping "Medline" and "Pubmed" under "PubMed" and summing the counts
 database_count <- database_count %>%
   mutate(database_search = if_else(database_search %in% c("Medline", "Pubmed"), "PubMed", database_search)) %>%
@@ -1759,14 +2138,19 @@ circular_treemap_methods <- ggraph(mygraph, layout = 'circlepack', weight = size
     theme(legend.position = "none") 
 
 circular_treemap_methods
+```
 
+<img src="organochlorineSRM_analysis_files/figure-html/unnamed-chunk-34-1.png" width="2016" />
+
+```r
 # ggsave(here("figures", "circular_treemap_methods.pdf"), width = 18, height = 15, units = "cm", scale = 2, dpi = 800)
 # ggsave(here("figures", "circular_treemap_methods.jpg"), width = 18, height = 15, units = "cm", scale = 2, dpi = 800)
 ```
 
 ## Donut plot for confound analysis
 Donut plot showing the proportion of studies which included confounds (through risk of bias assessments) in the analysis (green = not reported, orange = reported).
-```{r}
+
+```r
 # Remove NA values and count Yes/No
 confound_data <- sd %>%
   filter(!is.na(confound_analysis)) %>%
@@ -1796,7 +2180,6 @@ donut_plot <- ggplot(confound_data, aes(x = 2, y = percentage, fill = confound_a
 # Save figures
 # ggsave(here("figures", "donut_confound.pdf"), plot = donut_plot, width = 8, height = 8, units = "cm", dpi = 800)
 # ggsave(here("figures", "donut_confound.svg"), plot = donut_plot, width = 8, height = 8, units = "cm", dpi = 800)
-
 ```
 
 
@@ -1806,7 +2189,8 @@ To explore the various characteristics of the organochlorine pesticides literatu
 ## Bar plot for organochlorine pesticides investigated
 
 A bar plot showing the percentage and total count of total of pesticides investigate in meta-analysis investigating the impacts of organochlorine pesticides. Note: some meta-analysis may contribute to multiple sections if the study involves multiple organochlorine pesticides. Filtered for pesticide counts greater than 6. 
-```{r,fig.width=16, fig.height=10}
+
+```r
 # Function to replace long OCP names with abbreviations
 replace_ocp <- function(df) {
   df %>% 
@@ -1864,17 +2248,21 @@ bar_plot_ocp <- ocp_count %>%
   theme(axis.text.y = element_text(size = 20))  
 
 bar_plot_ocp
+```
 
+<img src="organochlorineSRM_analysis_files/figure-html/unnamed-chunk-36-1.png" width="1536" />
+
+```r
 # ggsave(here("figures", "bar_plot_pesticide_investigation.pdf"), 
 #        plot = bar_plot_ocp, width = 25, height = 15, units = "cm", scale = 2, dpi = 800)
 # ggsave(here("figures", "bar_plot_pesticide_investigation.svg"), 
 #        plot = bar_plot_ocp, width = 25, height = 15, units = "cm", scale = 2, dpi = 800)
-
 ```
 
 ## Bar plot for subjects investigated
 A bar plot showing the percentage and total count of total of subjects investigate in meta-analysis investigating the impacts of organochlorine pesticides. Note: some meta-analysis may contribute to multiple sections if the study involves multiple subjects
-```{r,fig.width=16, fig.height=10}
+
+```r
 # Calculate total count for each category
 subject_count <- sub %>% 
   separate_rows(subject, sep = ",\\s+") %>% 
@@ -1902,17 +2290,21 @@ bar_plot_subject <- subject_count %>%
   organochlorTHEME()
 
 bar_plot_subject
+```
 
+<img src="organochlorineSRM_analysis_files/figure-html/unnamed-chunk-37-1.png" width="1536" />
+
+```r
 # ggsave(here("figures", "bar_plot_subject_investigation.pdf"), 
 #        plot = bar_plot_subject, width = 25, height = 15, units = "cm", scale = 2, dpi = 800)
 # ggsave(here("figures", "bar_plot_subject_investigation.svg"), 
 #        plot = bar_plot_subject, width = 25, height = 15, units = "cm", scale = 2, dpi = 800)
-
 ```
 
 ## Bar plot for impacts investigated (filtered)
 A bar plot showing the percentage and total count of total of subjects investigate in meta-analysis investigating the impacts of organochlorine pesticides. Note: some meta-analysis may contribute to multiple sections if the study involves multiple subjects. Filtered for impact counts greater than 1. 
-```{r,fig.width=16, fig.height=10}
+
+```r
 # Calculate total count for each category
 impact_count <- im %>% 
   separate_rows(impact, sep = ",\\s+") %>% 
@@ -1942,20 +2334,23 @@ bar_plot_impact_filtered <- impact_count %>%
   organochlorTHEME()
 
 bar_plot_impact_filtered
+```
 
+<img src="organochlorineSRM_analysis_files/figure-html/unnamed-chunk-38-1.png" width="1536" />
+
+```r
 # ggsave(here("figures", "bar_plot_impact_investigated_filtered.pdf"),
 #        plot = bar_plot_impact_filtered, width = 25, height = 15, units = "cm", scale = 2, dpi = 800)
 # ggsave(here("figures", "bar_plot_impact_investigated_filtered.jpg"),
 #        plot = bar_plot_impact_filtered, width = 25, height = 15, units = "cm", scale = 2, dpi = 800)
-
-
 ```
 
 ## Bar plot for broad impact categories
 
 A bar plot showing the percentage and total count of total of impact categories investigated in meta-analysis investigating the impacts of organochlorine pesticides. 
 Note: some meta-analysis may contribute to multiple sections if the study involves multiple impacts
-```{r,fig.width=16, fig.height=10}
+
+```r
 # Create a column for broad impacts
 im <- im %>%
   separate_rows(impact, sep = ",\\s+") %>% 
@@ -2001,20 +2396,22 @@ bar_plot_impact_broad <- impact_count_broad %>%
   organochlorTHEME()
 
 bar_plot_impact_broad
+```
 
+<img src="organochlorineSRM_analysis_files/figure-html/unnamed-chunk-39-1.png" width="1536" />
+
+```r
 # ggsave(here("figures", "bar_plot_broad_impact_category.pdf"),
 #        plot = bar_plot_impact_broad, width = 25, height = 15, units = "cm", scale = 2, dpi = 800)
 # ggsave(here("figures", "bar_plot_broad_impact_category.svg"),
 #        plot = bar_plot_impact_broad, width = 25, height = 15, units = "cm", scale = 2, dpi = 800)
-
-
 ```
 
 ## Alluvial plot: pesticide exposure, subject, and impact
 
 An alluvial plot showing the relationships between the pesticide of exposure, the subject being exposed and the impact of exposure 
-```{r,fig.width=18, fig.height=12}
 
+```r
 # Function to change OCP to be more general
 replace_ocp2 <- function(df) {
   df %>% 
@@ -2079,7 +2476,11 @@ alluvial_plot_exposure <- alluvial_data %>%
   scale_fill_brewer(palette = "Dark2", name = "Subject Category")
 
 alluvial_plot_exposure
+```
 
+<img src="organochlorineSRM_analysis_files/figure-html/unnamed-chunk-40-1.png" width="1728" />
+
+```r
 # ggsave(here("figures", "alluvial_plot_exposure_subject_impact.pdf"), 
 #        plot = alluvial_plot_exposure, width = 25, height = 15, units = "cm", scale = 2, dpi = 800)
 # ggsave(here("figures", "alluvial_plot_exposure_subject_impact.jpg"), 
@@ -2092,8 +2493,8 @@ alluvial_plot_exposure
 
 ## Figure 4
 A bubble plot showing the counts of each pesticide per impact included in current meta-analysis on the impacts of organochlorine pesticides 
-```{r,fig.width=25, fig.height=15}
 
+```r
 # Join the organochlorine pesticide details with the impact details
 ocp_im <- left_join(ocp, im ,sub, by = "study_id") 
 
@@ -2138,10 +2539,21 @@ fig4 <- ocp_im_summary_filtered %>%
   scale_size_continuous(range = c(30, 80))
 
 fig4
+```
 
+<img src="organochlorineSRM_analysis_files/figure-html/unnamed-chunk-41-1.png" width="2400" />
+
+```r
  ggsave(here("figures", "fig4.pdf"), width = 40, height = 25, units = "cm", scale = 2, dpi = 800)
  ggsave(here("figures", "fig4.svg "), width = 40, height = 25, units = "cm", scale = 2, dpi = 800)
-  
+```
+
+```
+## Error in `ggsave()`:
+## ! Can't save to C:/Users/khtmo/OneDrive -
+##   UNSW/University/PhD_Chapters/ocp_srm/organochlorineSRM_analysis/figures/fig4.svg
+##   .
+## ℹ Either supply `filename` with a file extension or supply `device`.
 ```
 
 # Section 3
@@ -2149,7 +2561,8 @@ To investigate global research output and collaboration networks
 
 ## Exploratory bibliometric analysis
 
-```{r,fig.width=16, fig.height=10}
+
+```r
 # Perform bibliometric analysis
 bibliometric_analysis <- biblioAnalysis(bib_sco)
 
@@ -2158,14 +2571,238 @@ par(cex=1.5)
 
 # Explore results
 plot(bibliometric_analysis)
-summary(bibliometric_analysis)
-str(bibliometric_analysis)
+```
 
+<img src="organochlorineSRM_analysis_files/figure-html/unnamed-chunk-42-1.png" width="1536" /><img src="organochlorineSRM_analysis_files/figure-html/unnamed-chunk-42-2.png" width="1536" /><img src="organochlorineSRM_analysis_files/figure-html/unnamed-chunk-42-3.png" width="1536" /><img src="organochlorineSRM_analysis_files/figure-html/unnamed-chunk-42-4.png" width="1536" /><img src="organochlorineSRM_analysis_files/figure-html/unnamed-chunk-42-5.png" width="1536" />
+
+```r
+summary(bibliometric_analysis)
+```
+
+```
+## 
+## 
+## MAIN INFORMATION ABOUT DATA
+## 
+##  Timespan                              1993 : 2022 
+##  Sources (Journals, Books, etc)        45 
+##  Documents                             100 
+##  Annual Growth Rate %                  9.25 
+##  Document Average Age                  9.78 
+##  Average citations per doc             58.6 
+##  Average citations per year per doc    5.07 
+##  References                            7548 
+##  
+## DOCUMENT TYPES                     
+##  article               50 
+##  conference paper      2 
+##  review                48 
+##  
+## DOCUMENT CONTENTS
+##  Keywords Plus (ID)                    1592 
+##  Author's Keywords (DE)                258 
+##  
+## AUTHORS
+##  Authors                               544 
+##  Author Appearances                    684 
+##  Authors of single-authored docs       1 
+##  
+## AUTHORS COLLABORATION
+##  Single-authored docs                  1 
+##  Documents per Author                  0.184 
+##  Co-Authors per Doc                    6.84 
+##  International co-authorships %        41 
+##  
+## 
+## Annual Scientific Production
+## 
+##  Year    Articles
+##     1993        1
+##     1995        1
+##     1999        1
+##     2000        1
+##     2004        2
+##     2006        3
+##     2007        1
+##     2008        2
+##     2009        1
+##     2010        4
+##     2011        3
+##     2012        5
+##     2013        5
+##     2014        9
+##     2015        7
+##     2016       11
+##     2017        4
+##     2018        2
+##     2019        7
+##     2020        8
+##     2021        9
+##     2022       13
+## 
+## Annual Percentage Growth Rate 9.25 
+## 
+## 
+## Most Productive Authors
+## 
+##       Authors        Articles    Authors        Articles Fractionalized
+## 1  LISON D                  7 LISON D                             2.000
+## 2  VAN MAELE-FABRY G        7 VAN MAELE-FABRY G                   2.000
+## 3  BONDE JP                 5 DAVIS WJ                            1.000
+## 4  BALLESTER F              4 GAMET-PAYRASTRE L                   0.867
+## 5  CHEVRIER C               4 KREWSKI D                           0.867
+## 6  EGGESBØ M                4 HOET P                              0.833
+## 7  GOVARTS E                4 FU X                                0.750
+## 8  SCHOETERS G              4 MUÑOZ CC                            0.750
+## 9  TRNOVEC T                4 VERMEIREN P                         0.750
+## 10 ZHANG Y                  4 LEVY LS                             0.700
+## 
+## 
+## Top manuscripts per citations
+## 
+##                                       Paper                                      DOI  TC TCperYear  NTC
+## 1  BROWN TP, 2006, ENVIRON HEALTH PERSPECT           10.1289/ehp.8095                329     16.45 1.85
+## 2  GOVARTS E, 2012, ENVIRON HEALTH PERSPECT          10.1289/ehp.1103767             228     16.29 1.81
+## 3  PEZZOLI G, 2013, NEUROLOGY                        10.1212/WNL.0b013e318294b3c8    207     15.92 2.08
+## 4  BONDE JP, 2016, HUM REPROD UPDATE                 10.1093/HUMUPD/DMW036           188     18.80 2.24
+## 5  RIGÉT F, 2010, SCI TOTAL ENVIRON                  10.1016/j.scitotenv.2009.07.036 162     10.12 1.50
+## 6  VAN DER MARK M, 2012, ENVIRON HEALTH PERSPECT     10.1289/ehp.1103881             161     11.50 1.28
+## 7  OJAJÄRVI IA, 2000, OCCUP ENVIRON MED              10.1136/oem.57.5.316            153      5.88 1.00
+## 8  SCHINASI L, 2014, INT J ENVIRON RES PUBLIC HEALTH 10.3390/ijerph110404449         148     12.33 2.90
+## 9  SONG Y, 2016, J DIABETES                          10.1111/1753-0407.12325         140     14.00 1.67
+## 10 ADAMI HO, 1995, CANCER CAUSES CONTROL             10.1007/BF00054165              140      4.52 1.00
+## 
+## 
+## Corresponding Author's Countries
+## 
+##           Country Articles   Freq SCP MCP MCP_Ratio
+## 1  CHINA                17 0.1753  12   5     0.294
+## 2  USA                  11 0.1134   9   2     0.182
+## 3  BELGIUM               7 0.0722   5   2     0.286
+## 4  CANADA                6 0.0619   3   3     0.500
+## 5  FRANCE                6 0.0619   2   4     0.667
+## 6  BRAZIL                5 0.0515   5   0     0.000
+## 7  DENMARK               5 0.0515   0   5     1.000
+## 8  SPAIN                 5 0.0515   0   5     1.000
+## 9  NETHERLANDS           4 0.0412   3   1     0.250
+## 10 UNITED KINGDOM        4 0.0412   3   1     0.250
+## 
+## 
+## SCP: Single Country Publications
+## 
+## MCP: Multiple Country Publications
+## 
+## 
+## Total Citations per Country
+## 
+##      Country      Total Citations Average Article Citations
+## 1  DENMARK                    687                     137.4
+## 2  USA                        686                      62.4
+## 3  CHINA                      607                      35.7
+## 4  UNITED KINGDOM             567                     141.8
+## 5  BELGIUM                    488                      69.7
+## 6  CANADA                     417                      69.5
+## 7  FRANCE                     389                      64.8
+## 8  NETHERLANDS                259                      64.8
+## 9  ITALY                      207                     207.0
+## 10 SPAIN                      181                      36.2
+## 
+## 
+## Most Relevant Sources
+## 
+##                                  Sources        Articles
+## 1  ENVIRONMENTAL HEALTH PERSPECTIVES                  10
+## 2  SCIENCE OF THE TOTAL ENVIRONMENT                    9
+## 3  ENVIRONMENT INTERNATIONAL                           7
+## 4  CANCER CAUSES AND CONTROL                           5
+## 5  ENVIRONMENTAL RESEARCH                              5
+## 6  ENVIRONMENTAL SCIENCE AND POLLUTION RESEARCH        5
+## 7  ENVIRONMENTAL SCIENCE AND TECHNOLOGY                4
+## 8  SCIENTIFIC REPORTS                                  4
+## 9  CHEMOSPHERE                                         3
+## 10 ENVIRONMENTAL POLLUTION                             3
+## 
+## 
+## Most Relevant Keywords
+## 
+##    Author Keywords (DE)      Articles Keywords-Plus (ID)     Articles
+## 1      META-ANALYSIS               43 ENVIRONMENTAL EXPOSURE       92
+## 2      PESTICIDES                  28 HUMAN                        84
+## 3      SYSTEMATIC REVIEW           18 PESTICIDE                    79
+## 4      OCCUPATIONAL EXPOSURE        8 HUMANS                       71
+## 5      DDT                          7 FEMALE                       70
+## 6      CHILD                        6 META ANALYSIS                64
+## 7      DDE                          5 PESTICIDES                   60
+## 8      BREAST CANCER                4 OCCUPATIONAL EXPOSURE        57
+## 9      INSECTICIDES                 4 MALE                         56
+## 10     ORGANOCHLORINES              4 PRIORITY JOURNAL             53
+```
+
+```r
+str(bibliometric_analysis)
+```
+
+```
+## List of 26
+##  $ Articles            : int 100
+##  $ Authors             : 'table' int [1:544(1d)] 7 7 5 4 4 4 4 4 4 4 ...
+##   ..- attr(*, "dimnames")=List of 1
+##   .. ..$ AU: chr [1:544] "LISON D" "VAN MAELE-FABRY G" "BONDE JP" "BALLESTER F" ...
+##  $ AuthorsFrac         :'data.frame':	544 obs. of  2 variables:
+##   ..$ Author   : chr [1:544] "LISON D" "VAN MAELE-FABRY G" "DAVIS WJ" "GAMET-PAYRASTRE L" ...
+##   ..$ Frequency: num [1:544] 2 2 1 0.867 0.867 ...
+##  $ FirstAuthors        : chr [1:100] "LAMAT H" "YIPEI Y" "MOTA TFM" "HE H" ...
+##  $ nAUperPaper         : int [1:100] 8 7 4 6 5 6 2 5 5 2 ...
+##  $ Appearances         : int 684
+##  $ nAuthors            : int 544
+##  $ AuMultiAuthoredArt  : int 543
+##  $ AuSingleAuthoredArt : int 1
+##  $ MostCitedPapers     :'data.frame':	100 obs. of  5 variables:
+##   ..$ Paper         : chr [1:100] "BROWN TP, 2006, ENVIRON HEALTH PERSPECT" "GOVARTS E, 2012, ENVIRON HEALTH PERSPECT" "PEZZOLI G, 2013, NEUROLOGY" "BONDE JP, 2016, HUM REPROD UPDATE" ...
+##   ..$ DOI           : chr [1:100] "10.1289/ehp.8095" "10.1289/ehp.1103767" "10.1212/WNL.0b013e318294b3c8" "10.1093/HUMUPD/DMW036" ...
+##   ..$ TC            : num [1:100] 329 228 207 188 162 161 153 148 140 140 ...
+##   ..$ TCperYear     : num [1:100] 16.4 16.3 15.9 18.8 10.1 ...
+##   ..$ NTC           : num [1:100] 1.85 1.81 2.08 2.24 1.5 ...
+##  $ Years               : num [1:100] 2022 2022 2022 2022 2022 ...
+##  $ FirstAffiliation    : chr [1:100] "UNIVERSITÉ CLERMONT AUVERGNE" "PEKING UNIVERSITY HEALTH SCIENCE CENTER" "UNIVERSIDADE ESTADUAL DO PARANÁ (UNESPAR)" "ANHUI MEDICAL UNIVERSITY" ...
+##  $ Affiliations        : 'table' int [1:289(1d)] 7 7 6 6 6 5 5 5 5 5 ...
+##   ..- attr(*, "dimnames")=List of 1
+##   .. ..$ AFF: chr [1:289] "UNIVERSITÉ CATHOLIQUE DE LOUVAIN" "UNIVERSITY OF COPENHAGEN" "HUAZHONG UNIVERSITY OF SCIENCE AND TECHNOLOGY" "IMPERIAL COLLEGE LONDON" ...
+##  $ Aff_frac            :'data.frame':	289 obs. of  2 variables:
+##   ..$ Affiliation: chr [1:289] "UNIVERSITÉ CATHOLIQUE DE LOUVAIN" "HUAZHONG UNIVERSITY OF SCIENCE AND TECHNOLOGY" "UNIVERSIDADE FEDERAL DO PARANÁ" "UNIVERSITY OF OTTAWA" ...
+##   ..$ Frequency  : num [1:289] 4.67 2.67 2 1.89 1.5 ...
+##  $ CO                  : chr [1:100] "FRANCE" "CHINA" "BRAZIL" "CHINA" ...
+##  $ Countries           : 'table' int [1:28(1d)] 17 11 7 6 6 5 5 5 4 4 ...
+##   ..- attr(*, "dimnames")=List of 1
+##   .. ..$ Tab: chr [1:28] "CHINA" "USA" "BELGIUM" "CANADA" ...
+##  $ CountryCollaboration:'data.frame':	28 obs. of  3 variables:
+##   ..$ Country: chr [1:28] "CHINA" "USA" "BELGIUM" "CANADA" ...
+##   ..$ SCP    : num [1:28] 12 9 5 3 2 5 0 0 3 3 ...
+##   ..$ MCP    : num [1:28] 5 2 2 3 4 0 5 5 1 1 ...
+##  $ TotalCitation       : num [1:100] 4 1 3 4 8 2 22 11 1 1 ...
+##  $ TCperYear           : num [1:100] 1 0.25 0.75 1 2 0.5 5.5 2.75 0.25 0.25 ...
+##  $ Sources             : 'table' int [1:45(1d)] 10 9 7 5 5 5 4 4 3 3 ...
+##   ..- attr(*, "dimnames")=List of 1
+##   .. ..$ SO: chr [1:45] "ENVIRONMENTAL HEALTH PERSPECTIVES" "SCIENCE OF THE TOTAL ENVIRONMENT" "ENVIRONMENT INTERNATIONAL" "CANCER CAUSES AND CONTROL" ...
+##  $ DE                  : 'table' int [1:258(1d)] 43 28 18 8 7 6 5 4 4 4 ...
+##   ..- attr(*, "dimnames")=List of 1
+##   .. ..$ Tab: chr [1:258] "META-ANALYSIS" "PESTICIDES" "SYSTEMATIC REVIEW" "OCCUPATIONAL EXPOSURE" ...
+##  $ ID                  : 'table' int [1:1592(1d)] 92 84 79 71 70 64 60 57 56 53 ...
+##   ..- attr(*, "dimnames")=List of 1
+##   .. ..$ Tab: chr [1:1592] "ENVIRONMENTAL EXPOSURE" "HUMAN" "PESTICIDE" "HUMANS" ...
+##  $ Documents           : 'table' int [1:3(1d)] 50 2 48
+##   ..- attr(*, "dimnames")=List of 1
+##   .. ..$ : chr [1:3] "ARTICLE              " "CONFERENCE PAPER     " "REVIEW               "
+##  $ IntColl             : num 41
+##  $ nReferences         : int 7548
+##  $ DB                  : chr "SCOPUS"
+##  - attr(*, "class")= chr "bibliometrix"
 ```
 
 ## Bar plot of most productive countries
 Most productive countries for meta-analyses included in the systematic review map Blue is for single country publications (i.e., countries with authors from a single country) and red is for multiple country publications (i.e., countries with authors from multiple countries).
-```{r,fig.width=16, fig.height=10}
+
+```r
 # Extract country collaboration information
 country_data <- bibliometric_analysis$CountryCollaboration
 country_tibble <- as_tibble(country_data)
@@ -2192,16 +2829,19 @@ bar_plot_countries <- ggplot(country_tibble_long_filtered, aes(fill = Country_Co
   organochlorTHEME()
 
 bar_plot_countries
+```
 
+<img src="organochlorineSRM_analysis_files/figure-html/unnamed-chunk-43-1.png" width="1536" />
+
+```r
 # ggsave(here("figures", "bar_plot_countries.pdf"), width = 25, height = 15, units = "cm", scale = 2, dpi = 800)
 # ggsave(here("figures", "bar_plot_countries.svg"), width = 25, height = 15, units = "cm", scale = 2, dpi = 800)
-
-
 ```
 
 ##  Bar plot of top authors
 
-```{r,fig.width=16, fig.height=10}
+
+```r
 authors_data <- bibliometric_analysis$Authors
 authors_tibble <- as_tibble(authors_data)
 
@@ -2216,15 +2856,19 @@ bar_plot_authors <- ggplot(authors_tibble_filtered, aes(y = n, x = reorder(AU, n
   organochlorTHEME()
 
 bar_plot_authors
+```
 
+<img src="organochlorineSRM_analysis_files/figure-html/unnamed-chunk-44-1.png" width="1536" />
+
+```r
 # ggsave(here("figures", "bar_plot_top_authors.pdf"), width = 25, height = 15, units = "cm", scale = 2, dpi = 800)
 # ggsave(here("figures", "bar_plot_top_authors.svg"), width = 25, height = 15, units = "cm", scale = 2, dpi = 800)
-
 ```
 
 ## Figure 5
 Heat map of world showing the country-level counts for first authors’ country of affiliation of meta-analysis investigating the impacts of organochlorine pesticides. Grey indicates no publications affiliated with a given country in our data set. 
-```{r,fig.width= 21, fig.height=12}
+
+```r
 # Extract country information from the "AU1_CO" and "AU_CO" fields of the "bib_sco" dataset
 bibmap <- metaTagExtraction(bib_sco, Field = "AU1_CO", sep = ";") 
 bibmap <- metaTagExtraction(bibmap, Field = "AU_CO", sep = ";") 
@@ -2315,16 +2959,19 @@ fig5 <- fullmap %>%
   )
 
 fig5
+```
 
+<img src="organochlorineSRM_analysis_files/figure-html/unnamed-chunk-45-1.png" width="2016" />
 
+```r
 # ggsave(here("figures", "fig5.pdf"), width = 21, height = 12, units = "cm", scale = 2, dpi = 800)
 # ggsave(here("figures", "fig5.svg"), width = 21, height = 12, units = "cm", scale = 2, dpi = 800)
-
 ```
 
 ## Europe map of first-author affiliations
 Heat map of Europe showing the country-level counts for first authors’ country of affiliation of meta-analysis investigating the impacts of organochlorine pesticides. Grey indicates no publications affiliated with a given country in our data set. 
-```{r,fig.width= 21, fig.height=12}
+
+```r
 heat_map_europe <- fullmap %>%
   ggplot(aes(fill = n, map_id = region)) +
   geom_map(map = world_map, color = "gray50") +
@@ -2348,16 +2995,20 @@ heat_map_europe <- fullmap %>%
   )
 
 heat_map_europe
+```
 
+<img src="organochlorineSRM_analysis_files/figure-html/unnamed-chunk-46-1.png" width="2016" />
+
+```r
 # ggsave(here("figures", "heat_map_europe_authors.pdf"), width = 25, height = 15, units = "cm", scale = 2, dpi = 800)
 # ggsave(here("figures", "heat_map_europe_authors.svg"), width = 25, height = 15, units = "cm", scale = 2, dpi = 800)
-
 ```
 
 
 ## Chord diagram of country collaborations
 Chord diagram of collaborations across countries. Countries represent the location of the primary authors’ affiliated institution. 
-```{r,fig.width= 12, fig.height=12}
+
+```r
 svg(filename = here("figures", "chord_diagram_country_collaborations.svg"),
     width = 8, height = 8)   # inches are easier to reason about than pixels
 
@@ -2433,9 +3084,15 @@ circos.trackPlotRegion(
 dev.off()
 ```
 
+```
+## png 
+##   2
+```
+
 ## Chord diagram (no within-country collaborations)
 Chord diagram illustration of collaborations across countries. Countries represent the location of the primary authors’ affiliated institution. Collaborations within countries are not shown.
-```{r,fig.width= 12, fig.height=12}
+
+```r
 # ── 1. Build (or re‑use) the collaboration matrix ───────────────────────────
 bib_sco2 <- metaTagExtraction(bib_sco, Field = "AU_CO", sep = ";")
 NetMatrix_country <- biblioNetwork(bib_sco2,
@@ -2507,14 +3164,21 @@ circos.trackPlotRegion(
 )
 
 dev.off()
+```
 
+```
+## png 
+##   2
+```
+
+```r
 # ── 4. OPTIONAL
-
 ```
 
 ## Figure 5b
 Chord diagram illustration of collaborations across continents. Continents represent the location of the primary authors’ affiliated institution. Collaborations within countries are not shown.
-```{r,fig.width= 12, fig.height=12}
+
+```r
 # ── libraries ────────────────────────────────────────────────────────────────
 library(circlize)
 library(dplyr)
@@ -2569,7 +3233,13 @@ link_label_cutoff  <- 0.10          # fraction of max to label (e.g. top 10 %)
 
 # ── 5. plotting ─────────────────────────────────────────────────────────────
 pdf("figures/fig5b.pdf", width = 15, height = 15)
+```
 
+```
+## Error in pdf("figures/fig5b.pdf", width = 15, height = 15): cannot open file 'figures/fig5b.pdf'
+```
+
+```r
 circos.clear()
 circos.par(start.degree = 90,
            gap.after    = c(4, 4, 4, 10),
@@ -2597,19 +3267,27 @@ circos.trackPlotRegion(track.index = 1, panel.fun = function(x, y) {
     col    = "black"
   )
 }, bg.border = NA)
+```
 
+<img src="organochlorineSRM_analysis_files/figure-html/unnamed-chunk-49-1.png" width="1152" />
 
+```r
 dev.off()
+```
+
+```
+## null device 
+##           1
+```
+
+```r
 circos.clear()
-
-
-
-
 ```
 
 ## Chord diagram of collaborations across continents
 Chord diagram illustration of collaborations across disciplines. Disciplines have been allocated based on the Journal Citation Categories on Web of Science. Collaborations within disciplines are not shown.
-```{r,fig.width= 12, fig.height=12}
+
+```r
 # Copy the country matrix into a “continent” matrix
 NetMatrix_continent <- NetMatrix_country
 
@@ -2629,13 +3307,23 @@ diag(merge_matrix2) <- 0  # remove diagonal if you do not want within-continent 
 
 # Create the chord diagram
 chordDiagramFromMatrix(merge_matrix2)
+```
 
+<img src="organochlorineSRM_analysis_files/figure-html/unnamed-chunk-50-1.png" width="1152" />
+
+```r
 # Optionally define color palette
 my_colors <- c("#1B9E77", "#D95F02", "#7570B3", "#E6AB02")
 my_colors <- rep(my_colors, length.out = ncol(merge_matrix2))
 
 jpeg("figures/continent_chord_diagram.jpg", width = 25, height = 25, units = "cm", res = 300)
+```
 
+```
+## Error in jpeg("figures/continent_chord_diagram.jpg", width = 25, height = 25, : unable to start jpeg() device
+```
+
+```r
 # Draw chord diagram with some styling
 chordDiagram(merge_matrix2, 
              annotationTrack = "grid", 
@@ -2652,8 +3340,16 @@ circos.trackPlotRegion(track.index = 1, panel.fun = function(x, y) {
               facing = "bending.inside", niceFacing = TRUE, 
               adj = c(0.5, 1.75), col = "white", cex = 1.2)
 }, bg.border = NA)
+```
 
+<img src="organochlorineSRM_analysis_files/figure-html/unnamed-chunk-50-2.png" width="1152" />
+
+```r
 dev.off()
+```
 
+```
+## null device 
+##           1
 ```
 
