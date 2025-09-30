@@ -9,8 +9,13 @@ output:
     toc_depth: 4
 editor_options: 
   chunk_output_type: console
-  
 ---
+
+> **Reference**  
+> Morrison, K., Yang, Y., Williams, C. et al. *Mapping meta-analyses on organochlorine pesticides reveals low methodological quality*. *Nat Sustain* (2025). https://doi.org/10.1038/s41893-025-01634-5
+
+
+
 ```{r, include = FALSE}
 rm(list = ls())
 # knitr setting
@@ -22,9 +27,6 @@ knitr::opts_chunk$set(
   echo=TRUE
 )
 ```
-
-
-# Reference: Morrison, K., Yang, Y., Williams, C. et al. Mapping meta-analyses on organochlorine pesticides reveals low methodological quality. Nat Sustain (2025). https://doi.org/10.1038/s41893-025-01634-5
 
 In this Rmarkdown document we provide the following workflow:   
 
