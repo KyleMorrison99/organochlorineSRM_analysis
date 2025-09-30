@@ -1,4 +1,6 @@
-# Sixty years since Silent Spring: a map of meta-analyses on organochlorine pesticides reveals urgent needs for improving methodological quality
+# Mapping meta-analyses on organochlorine pesticides reveals low methodological quality
+> **Reference**  
+> Morrison, K., Yang, Y., Williams, C. et al. *Mapping meta-analyses on organochlorine pesticides reveals low methodological quality*. *Nat Sustain* (2025). https://doi.org/10.1038/s41893-025-01634-5
 
 The repository described below contains the data, bibliometric files, and code used for this study. A pre-compiled file is also provided:
 
